@@ -1,16 +1,16 @@
 version: '2.1'
 orbs:
   coveralls: coveralls/coveralls@1.0.6
-  jobs:
-    build:
-      docker:
-        - image: circleci/node:10.0.0
-          steps:
-            - checkout
-        - run:
-            command: npm install && npm test -- --coverage
-            name: Install and Test
-        - coveralls/upload
+jobs:
+  build:
+    docker:
+      - image: circleci/node:10.0.0
+        steps:
+          - checkout
+      - run:
+          command: npm install && npm test -- --coverage
+          name: Install and Test
+      - coveralls/upload
 workflows: 
   main-workflow:
       jobs:
