@@ -12,8 +12,8 @@ jobs:
           command: npm install
       - run:
           name: Testing
-          command: npm run test
-      - coveralls/upload:
+          command: npm test -- --coverage 
+      - coveralls/upload
 workflows:
   main-workflow:
     jobs:
