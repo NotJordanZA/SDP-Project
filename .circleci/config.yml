@@ -12,9 +12,8 @@ jobs:
           command: npm install
       - run:
           name: Testing
-          command: npm run test
+          command: npm test -- --coverage
       - coveralls/upload:
-          path: coverage/lcov.info
 workflows:
   main-workflow:
     jobs:
