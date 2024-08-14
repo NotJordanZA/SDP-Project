@@ -11,4 +11,7 @@ orbs:
             command: npm install && npm test -- --coverage
             name: Install and Test
         - coveralls/upload
-workflows: null
+workflows: 
+  main-workflow:
+      jobs:
+        - build
