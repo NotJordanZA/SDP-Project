@@ -19,11 +19,11 @@ jobs:
       - image: cimg/node:current
     steps:
       - run:
-            name: Build application for production
-            command: npm run build
+          name: Build application for production
+          command: npm run build
       - run:
-            name: Deploy app to Firebase
-            command: ./node_modules/.bin/firebase deploy --token=$FIREBASE_TOKEN
+          name: Deploy app to Firebase
+          command: ./node_modules/.bin/firebase deploy --token=$FIREBASE_TOKEN
 workflows:
   main-workflow:
     jobs:
