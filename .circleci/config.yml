@@ -21,7 +21,7 @@ jobs:
       - image: cimg/node:current
     steps:
       - checkout
-       - run:
+      - run:
           name: Install local dependencies
           command: npm install
       - run:
