@@ -14,6 +14,9 @@ jobs:
       - run:
           name: Testing
           command: npm test -- --coverage
+      - run:
+          name: Build application for production
+          command: npm run build
       - coveralls/upload
 
   deploy:
@@ -21,9 +24,6 @@ jobs:
       - image: cimg/node:current
     steps:
       - checkout
-      - run:
-          name: Build application for production
-          command: npm run build
       - run:
           name: Deploy app to Firebase
           command: ./node_modules/.bin/firebase deploy --token=$FIREBASE_TOKEN
