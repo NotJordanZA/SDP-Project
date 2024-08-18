@@ -18,6 +18,7 @@ jobs:
      docker:
       - image: cimg/node:current
     steps:
+      - checkout
       - run:
           name: Build application for production
           command: npm run build
