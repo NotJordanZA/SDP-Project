@@ -26,7 +26,7 @@ jobs:
       - checkout
       - run:
           name: Deploy app to Firebase
-          command: firebase deploy --token=$FIREBASE_TOKEN
+          command: npm install firebase-tools && firebase deploy --only hosting --token ${FIREBASE_TOKEN}
 
 workflows:
   main-workflow:
