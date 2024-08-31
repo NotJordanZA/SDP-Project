@@ -56,7 +56,7 @@ function Login(){
             if(isWitsEmail){
               let displayName = user.displayName;
               let firstName = displayName.split(" ")[0];
-              let lastName = displayName.slice(displayName.indexOf(firstName) + firstName.length);
+              let lastName = displayName.slice(displayName.indexOf(firstName) + firstName.length + 1);
               addNewUser(email, firstName, lastName);
               navigate("/temp");
             }else{
@@ -67,6 +67,7 @@ function Login(){
                 // An error ocurred
                 console.log('Error deleting user:', error);
               });
+              // deleteUser(user);
 
               signOut(auth).then(() => {
                 console.log(user);
@@ -80,12 +81,12 @@ function Login(){
             // ...
         }).catch((error) => {
             // Handle Errors here.
-            const errorCode = error.code;
-            const errorMessage = error.message;
-            // The email of the user's account used.
-            const email = error.customData.email;
-            // The AuthCredential type that was used.
-            const credential = GoogleAuthProvider.credentialFromError(error);
+            // const errorCode = error.code;
+            // const errorMessage = error.message;
+            // // The email of the user's account used.
+            // const email = error.customData.email;
+            // // The AuthCredential type that was used.
+            // const credential = GoogleAuthProvider.credentialFromError(error);
             // ...
         });
     }
