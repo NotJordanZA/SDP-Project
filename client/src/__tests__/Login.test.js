@@ -70,6 +70,8 @@ jest.mock('react-router-dom', () => ({
             accessToken: 'token',
         });
 
+        // addNewUser.mockRejectedValueOnce(new Error('Error adding user'));
+
         render(<Login/>);
         const loginButton = screen.getByText("Sign In with Google");
 
@@ -109,6 +111,9 @@ jest.mock('react-router-dom', () => ({
             accessToken: 'token',
         });
 
+        deleteUser.mockRejectedValueOnce(new Error('Error deleting user'));
+        signOut.mockRejectedValueOnce(new Error('Sign-out error'));
+
         render(<Login/>);
         const loginButton = screen.getByText("Sign In with Google");
 
@@ -124,9 +129,9 @@ jest.mock('react-router-dom', () => ({
             console.log("Checking if signOut was called..."),
             expect(signOut).toHaveBeenCalled()
         );
-        // await waitFor(() =>
-        //     console.log("Checking if deleteUser was called..."),
-        //     expect(deleteUser).toHaveBeenCalledWith(user)
-        // );
+        await waitFor(() =>
+            console.log("Checking if deleteUser was called..."),
+            expect(deleteUser).toHaveBeenCalledWith(user)
+        );
     });
   });
