@@ -35,7 +35,7 @@ function Login(){
           console.error('Error updating user:', data.error);
         }
       } catch (error) {
-        console.error('Error:', error);
+        console.log('Error:', error);
       }
     }
 
@@ -60,6 +60,14 @@ function Login(){
               addNewUser(email, firstName, lastName);
               navigate("/temp");
             }else{
+              signOut(auth).then(() => {
+                //console.log(user);
+                console.log("Signout succesful");
+                console.log(user);
+              }).catch((error) =>{
+                console.log('Signout Error:', error);
+              });
+
               deleteUser(user).then(() => {
                 // User deleted.
                 console.log('Successfully deleted user');
@@ -69,18 +77,14 @@ function Login(){
               });
               // deleteUser(user);
 
-              signOut(auth).then(() => {
-                console.log(user);
-                console.log("Signout succesful");
-              }).catch((error) =>{
-                console.error(error);
-              });
+              
             }
             
             // IdP data available using getAdditionalUserInfo(result)
             // ...
         }).catch((error) => {
             // Handle Errors here.
+            console.log(error); // REVIEW: The app running doesn't like `console.error` here, but the tests don't like `console.log`
             // const errorCode = error.code;
             // const errorMessage = error.message;
             // // The email of the user's account used.
