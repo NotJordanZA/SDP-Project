@@ -3,7 +3,7 @@ import { auth } from "../firebase";
 import TextButton from "../components/styledButtons";
 import { useNavigate } from "react-router-dom";
 import '../styles/Login.css'
-import logo from '../assets/inverseLogo.png';
+import logo from '../assets/logoBlue.png';
 
 const USER_REGEX = /^[\w-\.]+@([\w-]+\.)?(wits\.ac\.za)$/; //Only Wits emails allowed.
 
