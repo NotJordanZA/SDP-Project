@@ -2,6 +2,8 @@ import { GoogleAuthProvider, signInWithPopup, getRedirectResult, signOut, delete
 import { auth } from "../firebase";
 import TextButton from "../components/styledButtons";
 import { useNavigate } from "react-router-dom";
+import '../styles/Login.css'
+import logo from '../assets/inverseLogo.png';
 
 const USER_REGEX = /^[\w-\.]+@([\w-]+\.)?(wits\.ac\.za)$/; //Only Wits emails allowed.
 
@@ -30,12 +32,12 @@ function Login(){
 
         const data = await response.json();
         if (response.ok) {
-          console.log('User updated successfully:', data);
+          console.log('User added successfully:', data);
         } else {
           console.error('Error updating user:', data.error);
         }
       } catch (error) {
-        console.error('Error:', error);
+        console.log('Error:', error);
       }
     }
 
@@ -56,10 +58,18 @@ function Login(){
             if(isWitsEmail){
               let displayName = user.displayName;
               let firstName = displayName.split(" ")[0];
-              let lastName = displayName.slice(displayName.indexOf(firstName) + firstName.length);
+              let lastName = displayName.slice(displayName.indexOf(firstName) + firstName.length + 1);
               addNewUser(email, firstName, lastName);
               navigate("/temp");
             }else{
+              signOut(auth).then(() => {
+                //console.log(user);
+                console.log("Signout succesful");
+                console.log(user);
+              }).catch((error) =>{
+                console.log('Signout Error:', error);
+              });
+
               deleteUser(user).then(() => {
                 // User deleted.
                 console.log('Successfully deleted user');
@@ -67,25 +77,22 @@ function Login(){
                 // An error ocurred
                 console.log('Error deleting user:', error);
               });
+              // deleteUser(user);
 
-              signOut(auth).then(() => {
-                console.log(user);
-                console.log("Signout succesful");
-              }).catch((error) =>{
-                console.error(error);
-              });
+              
             }
             
             // IdP data available using getAdditionalUserInfo(result)
             // ...
         }).catch((error) => {
             // Handle Errors here.
-            const errorCode = error.code;
-            const errorMessage = error.message;
-            // The email of the user's account used.
-            const email = error.customData.email;
-            // The AuthCredential type that was used.
-            const credential = GoogleAuthProvider.credentialFromError(error);
+            console.log(error); // REVIEW: The app running doesn't like `console.error` here, but the tests don't like `console.log`
+            // const errorCode = error.code;
+            // const errorMessage = error.message;
+            // // The email of the user's account used.
+            // const email = error.customData.email;
+            // // The AuthCredential type that was used.
+            // const credential = GoogleAuthProvider.credentialFromError(error);
             // ...
         });
     }
@@ -99,8 +106,11 @@ function Login(){
     //   });
 
     return (
-      <div className="Login">
-        <TextButton text="Sign In with Google" onClickFunction={signInWithGoogle}/>
+      <div className="login-page">
+        <main className="main-content">
+          <img src={logo} alt="Logo" className="login-logo" />
+          <TextButton text="Sign In with Google" onClickFunction={signInWithGoogle}/>
+        </main>
       </div>
     );
   }
