@@ -2,6 +2,8 @@ import { GoogleAuthProvider, signInWithPopup, getRedirectResult, signOut, delete
 import { auth } from "../firebase";
 import TextButton from "../components/styledButtons";
 import { useNavigate } from "react-router-dom";
+import '../styles/Login.css'
+import logo from '../assets/inverseLogo.png';
 
 const USER_REGEX = /^[\w-\.]+@([\w-]+\.)?(wits\.ac\.za)$/; //Only Wits emails allowed.
 
@@ -104,8 +106,11 @@ function Login(){
     //   });
 
     return (
-      <div className="Login">
-        <TextButton text="Sign In with Google" onClickFunction={signInWithGoogle}/>
+      <div className="login-page">
+        <main className="main-content">
+          <img src={logo} alt="Logo" className="login-logo" />
+          <TextButton text="Sign In with Google" onClickFunction={signInWithGoogle}/>
+        </main>
       </div>
     );
   }
