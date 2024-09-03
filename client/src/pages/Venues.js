@@ -1,8 +1,14 @@
-import CalendarpPopup from "../components/CalendarPopup";
+import CalendarPopup from "../components/CalendarPopup";
+import DateHeader from "../components/DateHeader";
+import "../styles/Venues.css";
 
 function Venues(){
+    
+
     return (
-        <CalendarpPopup/>
+        <main>
+            <DateHeader/>
+        </main>
     );
 }
 

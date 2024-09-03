@@ -1,7 +1,7 @@
 import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
 
-function CalendarpPopup(){
+function CalendarPopup(){
     const today = new Date();
     const finalDayofYear = new Date((new Date().getFullYear().toString())+"-12-31");
     return (
@@ -13,4 +13,4 @@ function CalendarpPopup(){
     );
 }
 
-export default CalendarpPopup;
+export default CalendarPopup;
