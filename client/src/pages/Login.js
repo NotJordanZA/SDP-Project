@@ -60,7 +60,7 @@ function Login(){
               let firstName = displayName.split(" ")[0];
               let lastName = displayName.slice(displayName.indexOf(firstName) + firstName.length + 1);
               addNewUser(email, firstName, lastName);
-              navigate("/temp");
+              navigate("/venues");
             }else{
               signOut(auth).then(() => {
                 //console.log(user);
