@@ -33,7 +33,8 @@ function Venues(){
     //Map the elements of venueList onto VenueRow components and push them to an array
     {venueList.map((venue) => (
         venueComponents.push(
-            <VenueRow 
+            <VenueRow
+                key={venue.venueName} 
                 venueName={venue.venueName}
             />
         )

@@ -31,17 +31,17 @@ function DateHeader(){
 
     return (
         <main className="date-container">
-        <div className="date-content">
-            <button className="arrow-button" onClick={() => handleDateChange(false)}><FontAwesomeIcon icon={faCaretLeft} /></button>
-            <button className="date-button"  onClick = {toggleCalendar}>{displayDate.toDateString()}</button>
-            <button className="arrow-button" onClick={() => handleDateChange(true)}><FontAwesomeIcon icon={faCaretRight} /></button>
-        </div>
-        {isOpen &&(
-            <CalendarPopup
-            onChange = {handleCalendarChange}
-            value = {displayDate}
-            />
-        )}
+            <div className="date-content">
+                <button className="arrow-button" onClick={() => handleDateChange(false)}><FontAwesomeIcon icon={faCaretLeft} /></button>
+                <button className="date-button"  onClick = {toggleCalendar}>{displayDate.toDateString()}</button>
+                <button className="arrow-button" onClick={() => handleDateChange(true)}><FontAwesomeIcon icon={faCaretRight} /></button>
+            </div>
+            <div className={`calendar-popup ${isOpen ? "open" : "closed"}`}>
+                <CalendarPopup
+                onChange = {handleCalendarChange}
+                value = {displayDate}
+                />
+            </div>
         </main>
     );
 }
