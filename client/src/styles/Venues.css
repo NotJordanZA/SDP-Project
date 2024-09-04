@@ -23,7 +23,7 @@
     /* padding: 2px 20px 0 20px; */
     display: flex;
     justify-content:space-between;
-    align-items: center;
+    align-items: start;
     flex-direction: column;
     /* gap: 10px; */
     box-shadow: 0 2px 2px rgba(0,0,0,.1);
@@ -52,11 +52,32 @@
     flex-direction: column;
 }
 
+.venue-info-container{
+  justify-content: start;
+  display: flex;
+  align-items: start;
+  flex-direction: row;
+  padding-left: 20px;
+}
+
+.venue-info-text-category{
+    justify-content: start;
+    font-weight: bold;
+    padding-right: 5px;
+}
+
+.venue-info-text{
+  justify-content: start;
+}
+
 .popup {
     max-height: 0;
     overflow: hidden;
     opacity: 0;
     transition: max-height 0.3s ease-out, opacity 0.3s ease-out;
+    display: flex;
+    flex-direction: column;
+    padding-bottom: 10px;
   }
   
   .popup.open {

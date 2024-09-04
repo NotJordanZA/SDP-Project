@@ -36,6 +36,9 @@ function Venues(){
             <VenueRow
                 key={venue.venueName} 
                 venueName={venue.venueName}
+                campus={venue.campus}
+                venueType={venue.venueType}
+                venueCapacity={venue.venueCapacity}
             />
         )
     ))}
