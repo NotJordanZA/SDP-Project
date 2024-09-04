@@ -9,13 +9,12 @@ function VenueRow({venueName, campus, venueType, venueCapacity}) {
     const toggleBookingDates = () => setIsOpen(!isOpen);
 
     return(
-        <div className="venue-row-content">
+        <div className="venue-row-content" onClick={() => toggleBookingDates()}>
             <div className="venue-row-main">
                 <h1 className="venue-row-text">{venueName}</h1>
                 <TextButton text={"Book"} onClickFunction={toggleBookingDates}/>
             </div>
             <div className={`popup ${isOpen ? "open" : "closed"}`}>
-                {/*<p>This is a popup!!</p>*/}
                 <div className="venue-info-container">
                     <div className="venue-info-text-category">
                         Campus: 

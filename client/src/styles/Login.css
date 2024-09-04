@@ -18,6 +18,7 @@
   }
 
   .login-logo {
+    object-fit: cover;
     height: 50vh;              /* Adjust height as needed */
     width: auto;               /* Maintain aspect ratio */
   }
