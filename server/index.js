@@ -1,4 +1,4 @@
-const { getDoc, setDoc, updateDoc, doc, deleteDoc } = require('firebase/firestore');
+const { getDoc, setDoc, updateDoc, doc, deleteDoc, getDocs, collection } = require('firebase/firestore');
 const { initializeApp } = require('firebase/app');
 const { getFirestore } = require("firebase/firestore");
 const express = require("express");
@@ -37,8 +37,7 @@ app.get("/users/:userEmail", async (req, res) => {
         
         if (userDocData.exists()) {
             // Send the user data back as JSON
-            res.json(userDocData.data());
-            res.status(200).json({ message: "User fetched successfully" });
+            res.status(200).json(userDocData.data());
         } else {
             // Handle the case where the document does not exist
             res.status(404).json({ error: "User not found" });
@@ -152,6 +151,26 @@ app.delete("/users/:userEmail", async (req, res) => {
     } catch (error) {
         // Handle any internal errors
         console.error("Error fetching user document:", error);
+        res.status(500).json({ error: "Internal Server Error" });
+    }
+});
+
+// Get all venues
+app.get('/venues', async (req, res) => {
+    try {
+        const venuesSnapshot = await getDocs(collection(db, 'Venues'));
+        const venuesList = [];
+
+        venuesSnapshot.forEach(doc => {
+            venuesList.push({
+                id: doc.id,
+                ...doc.data()
+            });
+        });
+
+        res.status(200).json(venuesList);
+    } catch (error) {
+        console.error("Error getting venues:", error);
         res.status(500).json({ error: "Internal Server Error" });
     }
 });
