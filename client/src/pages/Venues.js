@@ -39,6 +39,7 @@ function Venues(){
                 campus={venue.campus}
                 venueType={venue.venueType}
                 venueCapacity={venue.venueCapacity}
+                timeSlots={venue.timeSlots}
             />
         )
     ))}

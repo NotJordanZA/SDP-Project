@@ -11,7 +11,6 @@
     padding: 60px 20px;
     display: flex;
     flex-direction: column;
-    flex-wrap: wrap;
     justify-content: center; /* Center the icons */
     gap: 20px; /* Add space between the icons */
     align-items:center;
@@ -21,4 +20,18 @@
     object-fit: cover;
     height: 50vh;              /* Adjust height as needed */
     width: auto;               /* Maintain aspect ratio */
+  }
+
+  .login-button{
+    background-color: #043673;
+    border-radius: 4px;
+    padding: 10px 10px;
+    color: white;
+    font-weight: bold;
+    font-size: 1.1rem;
+    border: none;
+  }
+
+  .login-button:hover{
+    background-color: #917248;
   }

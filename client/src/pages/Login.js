@@ -109,7 +109,9 @@ function Login(){
       <div className="login-page">
         <main className="main-content">
           <img src={logo} alt="Logo" className="login-logo" />
-          <TextButton text="Sign In with Google" onClickFunction={signInWithGoogle}/>
+          <button className="login-button" onClick={()=>signInWithGoogle()}>
+            Sign in with Google
+          </button>
         </main>
       </div>
     );
