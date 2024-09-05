@@ -1,0 +1,41 @@
+/* src/styles/mainIcon.css */
+.main-icon {
+    background-color: #043673;  /* Background color */
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;              /* Slightly larger padding for better spacing */
+    border-radius: 10px;        /* Smooth rounded corners */
+    width: 140px;               /* Increased width for better visual balance */
+    height: 160px;              /* Increased height to comfortably fit icon and text */
+    margin: 20px;               /* Adequate margin for spacing between icons */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2); /* Slightly stronger shadow for emphasis */
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    text-decoration: none;      /* Ensure there's no text underline */
+    color: white;               /* Ensure text color remains white */
+}
+
+.main-icon:hover {
+    transform: translateY(-5px);  /* Lift effect on hover */
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);  /* Increased shadow on hover */
+}
+
+/* Icon text styling */
+.icon-text {
+    font-size: 1.1em;             /* Slightly larger font for readability */
+    font-family: 'Helvetica', Arial, sans-serif;
+    margin: 0.7em 0 1em 0;              /* Adequate spacing around the text */
+    text-align: center;
+    max-width: 100%;              /* Ensure the text does not overflow */
+    font-weight: bold;
+    word-wrap: break-word;        /* Ensure long text doesn't overflow */
+}
+
+/* Icon styling */
+.icon-img {
+    font-size: 3em;               /* Larger icon size for visual impact */
+    margin-bottom: 0em;         /* Space between icon and text */
+    margin-top: 0.5em;
+    color: white;                 /* Ensure icon remains white */
+}
