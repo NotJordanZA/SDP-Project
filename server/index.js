@@ -175,6 +175,39 @@ app.get('/venues', async (req, res) => {
     }
 });
 
+// POST - create Booking 
+app.post("/bookings/create", async (req, res) => {
+    const { venueBooker, venueID, bookingDate, bookingStartTime, bookingEndTime, bookingDescription } = req.body;
+
+    // make sure all the fields are entered 
+    if (!venueBooker || !venueID || !bookingDate || !bookingStartTime || !bookingEndTime || !bookingDescription) {
+        return res.status(400).json({ error: "All fields are required." });
+    }
+
+    try {
+        // adding a document to the Bookings collection
+        const newBookingRef = doc(db, 'Bookings', `${venueID}-${bookingDate}-${bookingStartTime}`);//the document name/id is the venueID with the date and start time of the bookings
+        const bookingData = {
+            venueBooker,
+            venueID,
+            bookingDate,
+            bookingStartTime,
+            bookingEndTime,
+            bookingDescription,
+           
+        };
+
+        // Save the booking data 
+        await setDoc(newBookingRef, bookingData);
+
+        // Returns the  ID of the newly created booking
+        res.status(200).json({ message: "Booking created successfully", bookingID: newBookingRef.id });
+    } catch (error) {
+        console.error("Error creating booking:", error);
+        res.status(500).json({ error: "Internal Server Error" });
+    }
+});
+
 // Get bookings by field API
 app.get("/bookings/findByField", async (req, res) => {
     // Extract optional query parameters from the request

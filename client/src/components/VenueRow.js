@@ -8,6 +8,12 @@ function VenueRow({venueName, campus, venueType, venueCapacity, timeSlots, booki
 
     const [isOpen, setIsOpen] = useState(false);
 
+    const [isBooking, setIsBooking] = useState(false);
+
+    const [bookingTime, setBookingTime] = useState("");
+
+    const toggleIsBooking = () => setIsBooking(!isBooking);
+
     const toggleBookingDates = () => setIsOpen(!isOpen);
 
     const [timeSlotsArray, setTimeSlotsArray] = useState([]);
@@ -15,6 +21,33 @@ function VenueRow({venueName, campus, venueType, venueCapacity, timeSlots, booki
     useEffect(() => {
         setTimeSlotsArray(timeSlots);
     }, []);
+
+    const makeBooking = async(venueBooker, venueID, bookingDate, bookingStartTime, bookingEndTime, bookingDescription) => {
+        try{
+            const response = await fetch(`/bookings/create`, {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    venueBooker,
+                    venueID,
+                    bookingDate,
+                    bookingStartTime,
+                    bookingEndTime,
+                    bookingDescription,
+                }),
+            });
+    
+            const data = await response.json();
+            if (response.ok) {
+                console.log('Booking added successfully:', data);
+            } else {
+                console.error('Error making booking:', data.error);            }
+          } catch (error) {
+            console.log('Error:', error);
+          }
+    }
 
     const isTimeSlotInactive = (timeSlot) => {
         const slotStart = new Date(`1970-01-01T${timeSlot}:00`); 
@@ -36,7 +69,10 @@ function VenueRow({venueName, campus, venueType, venueCapacity, timeSlots, booki
             <button  
                 key={time} 
                 className={buttonClass}
-                onClick={(e) => { e.stopPropagation() }}>
+                onClick={(e) => { e.stopPropagation();
+                    toggleIsBooking();
+                    setBookingTime(time);
+                 }}>
                 {time}
             </button>
         );
@@ -83,6 +119,9 @@ function VenueRow({venueName, campus, venueType, venueCapacity, timeSlots, booki
                 </div>
                 <div className="timeslot-buttons-container">
                     {timeSlotButtons}
+                </div>
+                <div className="book-button-container">
+                    <button className={`book-button ${isBooking ? "shown" : "hidden"}`}>Book</button>
                 </div>
             </div>
         </div>

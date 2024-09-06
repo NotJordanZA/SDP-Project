@@ -41,7 +41,7 @@
 
 .venue-row-main{
     height: 50px;
-    /* padding-top: 2px; */
+    padding: 0 8px;
     display: flex;
     justify-content:space-between;
     align-items: center;
@@ -51,7 +51,7 @@
 }
 
 .venue-row-text{
-  padding-left: 5px;
+  /* padding-left: 5px; */
   font-size: 1.2rem;
 }
 
@@ -128,8 +128,36 @@
   opacity: 0;
 }
 
-.expand-row-button{
+.book-button-container{
+  display: flex;
+  justify-content: flex-end;
+  padding-right: 10px;
+}
+
+.book-button {
   padding-top: 3px;
+  background-color: #043673;
+  color: white;
+  font-size: 1.4rem;
+  border: none;
+  width: fit-content;
+  border-radius: 4px;
+  align-items: center;
+}
+  
+.book-button.shown {
+  max-height: fit-content; /*Adjust according to content height*/
+  opacity: 1;
+}
+
+.book-button.hidden {
+  max-height: 0px;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.expand-row-button{
+  padding: 3px 0 0 0;
   /* padding-right: 30px; */
   color: #043673;
   font-size: 2.4rem;
@@ -188,14 +216,15 @@
     transform: translate(-50%, -63%);
   } */
 
-  .venue-row-main{
+  /* .venue-row-main{
     padding: 2px 10px 0 10px;
-  }
+  } */
 
   .timeslot-buttons-container{
-    justify-content: space-between;
+    /* justify-content: space-around;
     width: auto;
-    margin-right: 20px;
+    margin-right: 20px; */
+    align-items: center;
   }
 
 }
