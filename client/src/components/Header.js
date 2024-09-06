@@ -5,7 +5,7 @@ import { Outlet } from "react-router-dom";
 
 const Header = ({ title, toggleSidebar }) => {
   return (
-    <main>
+    <main className="whole-page">
       <header className="app-header">
         <i onClick={toggleSidebar} className="fa-solid fa-bars icon-img"></i>
         <h1>{title}</h1>

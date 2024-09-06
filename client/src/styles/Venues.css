@@ -31,6 +31,9 @@
     flex-direction: column;
     /* gap: 10px; */
     box-shadow: 0 2px 2px rgba(0,0,0,.1);
+    background-color: #ffffff;
+    border-radius: 10px;
+    margin: 0px 10px 10px 10px;
     /* width: 98%;
     border-radius: 4px;
     background-color: white; */
@@ -38,7 +41,7 @@
 
 .venue-row-main{
     height: 50px;
-    padding-top: 2px;
+    /* padding-top: 2px; */
     display: flex;
     justify-content:space-between;
     align-items: center;
@@ -57,7 +60,8 @@
   justify-content: center;
   align-items: center;
   flex-direction: column;
-  
+  background-color: #ffffff;
+  margin-bottom: 10px;
 }
 
 .venue-info-container{
@@ -146,6 +150,7 @@
   margin-left: 20px;
   margin-bottom: 10px;
   align-items: center;
+  width: fit-content;
 }
 
 .timeslot-button:hover{
