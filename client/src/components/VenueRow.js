@@ -121,7 +121,7 @@ function VenueRow({venueName, campus, venueType, venueCapacity, timeSlots, booki
                     {timeSlotButtons}
                 </div>
                 <div className="book-button-container">
-                    <button className={`book-button ${isBooking ? "shown" : "hidden"}`}>Book</button>
+                    <button className={`book-button ${isBooking ? "shown" : "hidden"}`} onClick={()=> makeBooking()}>Book</button>
                 </div>
             </div>
         </div>
