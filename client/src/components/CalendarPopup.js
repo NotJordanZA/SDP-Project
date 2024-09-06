@@ -1,5 +1,7 @@
 import Calendar from 'react-calendar';
-import 'react-calendar/dist/Calendar.css';
+// import 'react-calendar/dist/Calendar.css';
+import "../styles/Venues.css";
+import "../styles/Calendars.css"
 
 function CalendarPopup({ onChange, value }){
     const today = new Date();
@@ -7,6 +9,7 @@ function CalendarPopup({ onChange, value }){
     return (
         <div>
         <Calendar 
+        className="react-calendar"
         minDate={today}
         maxDate={finalDayofYear}
         onChange={onChange}

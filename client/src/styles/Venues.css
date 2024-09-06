@@ -62,6 +62,7 @@
   flex-direction: column;
   background-color: #ffffff;
   margin-bottom: 10px;
+  position: relative;
 }
 
 .venue-info-container{
@@ -106,15 +107,16 @@
 }
 
 .calendar-popup {
-  position: fixed; 
-  top: 50%;
+  position: absolute; 
+  top: 590%;
   left: 50%;
   transform: translate(-50%, -76.5%);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 8px 8px rgba(0, 0, 0, 0.1);
   overflow: hidden;
   opacity: 0;
   transition: opacity 0.3s ease-out;
   z-index: -1;
+  border-radius: 10px;
 }
 
 .calendar-popup.open {
@@ -182,11 +184,18 @@
 }
 
 @media screen and (max-width: 768px){
-  .calendar-popup {
+  /* .calendar-popup {
     transform: translate(-50%, -63%);
-  }
+  } */
 
   .venue-row-main{
     padding: 2px 10px 0 10px;
-}
+  }
+
+  .timeslot-buttons-container{
+    justify-content: space-between;
+    width: auto;
+    margin-right: 20px;
+  }
+
 }
