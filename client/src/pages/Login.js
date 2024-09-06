@@ -5,11 +5,13 @@ import TextButton from "../components/styledButtons";
 import { useNavigate } from "react-router-dom";
 import '../styles/Login.css'
 import logo from '../assets/logoBlue.png';
+import { useState } from "react";
 
 const USER_REGEX = /^[\w-\.]+@([\w-]+\.)?(wits\.ac\.za)$/; //Only Wits emails allowed.
 
 function Login(){
     const navigate = useNavigate();
+    const [loginFailed, setLoginFailed] = useState(false);
 
     const signInWithGoogle = () =>{
       const provider = new GoogleAuthProvider();
@@ -30,12 +32,13 @@ function Login(){
               let firstName = displayName.split(" ")[0];
               let lastName = displayName.slice(displayName.indexOf(firstName) + firstName.length + 1);
               addNewUser(email, firstName, lastName);
-              navigate("/temp");
+              navigate("/home");
             }else{
               signOut(auth).then(() => {
                 //console.log(user);
                 console.log("Signout succesful");
                 console.log(user);
+                setLoginFailed(true);
               }).catch((error) =>{
                 console.log('Signout Error:', error);
               });
@@ -80,6 +83,7 @@ function Login(){
         <main className="main-content">
           <img src={logo} alt="Logo" className="login-logo" />
           <TextButton text="Sign In with Google" onClickFunction={signInWithGoogle}/>
+          <div className={`info-text ${loginFailed ? "open" : "closed"}`}>Please log in with valid Wits credentials.</div>
         </main>
       </div>
     );

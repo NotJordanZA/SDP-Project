@@ -21,3 +21,21 @@
     height: 50vh;              /* Adjust height as needed */
     width: auto;               /* Maintain aspect ratio */
   }
+
+  .info-text {
+    text-align: center;
+    font-family: Roboto;
+    font-weight: 500;
+    font-size: 110%;
+    width: 20%;
+    color: #043673;
+  }
+
+  .info-text.open {
+    opacity: 1;
+    z-index: 999;
+  }
+  
+  .info-text.closed {
+    opacity: 0;
+  }
