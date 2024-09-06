@@ -1,11 +1,39 @@
 import React, { useState, useEffect } from 'react';
-import './ManageReports.css'; // Assuming you have a CSS file for styling
-import { getAllReports, updateRep, getReportByType } from "../api"; // Use your API functions
+import './ManageReports.css'; 
+const API_URL = process.env.NODE_ENV === 'production' ? 'https://your-production-site.com' : 'http://localhost:3002'; 
+
+
+export const getAllReports = async () => {
+  const response = await fetch(`${API_URL}/Reports`);
+  return await response.json();
+};
+export const updateRep= async (id, RepData) => {
+  const response = await fetch(`${API_URL}/Reports/${id}`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(RepData),
+  });
+
+
+ if (!response.ok) {
+    throw new Error('Failed to update report');
+  }
+  return response.json();
+
+};
+
+export const getReportByType = async (reportType) => {
+  const response = await fetch(`${API_URL}/Reports/type/${reportType}`);
+  return await response.json();
+};
+
 
 function Reports() {
-  const [reports, setReports] = useState([]); // Ensure reports is initialized as an empty array
-  const [allReports, setAllReports] = useState([]); // Store all reports for reset when no type is selected
-  const [activeTab, setActiveTab] = useState('Pending'); // Tabs for 'Pending', 'In Progress', or 'Resolved'
+  const [reports, setReports] = useState([]);
+  const [allReports, setAllReports] = useState([]); 
+  const [activeTab, setActiveTab] = useState('Pending');
   const [selectedReportType, setSelectedReportType] = useState(''); // Store selected report type
   const [editingLogId, setEditingLogId] = useState(null); // Track which report's resolution log is being edited
   const [newResolutionLog, setNewResolutionLog] = useState(''); // Track the new resolution log
@@ -15,10 +43,10 @@ function Reports() {
     const fetchAllReports = async () => {
       try {
         const response = await getAllReports();
-        console.log("API Response:", response); // Log the API response to inspect
+        console.log("API Response:", response); 
         const reportData = Array.isArray(response.rep) ? response.rep : [];
         setReports(reportData);
-        setAllReports(reportData); // Store all reports
+        setAllReports(reportData); 
       } catch (error) {
         console.error("Error fetching all reports:", error);
         setReports([]); // Set to an empty array in case of an error
@@ -56,7 +84,7 @@ function Reports() {
     );
     setReports(updatedReports);
 
-    // API call to update the report status
+    
     try {
       await updateRep(reportId, { reportStatus: "Resolved" });
       console.log(`Report ${reportId} marked as Resolved`);
@@ -73,7 +101,7 @@ function Reports() {
     );
     setReports(updatedReports);
 
-    // API call to update the report status
+    
     try {
       await updateRep(reportId, { reportStatus: "In Progress" });
       console.log(`Report ${reportId} marked as In Progress`);
@@ -85,7 +113,7 @@ function Reports() {
   // Start editing the resolution log
   const handleEditLogClick = (reportId, currentLog) => {
     setEditingLogId(reportId);
-    setNewResolutionLog(currentLog || ''); // Set the current resolution log or empty if not available
+    setNewResolutionLog(currentLog || ''); 
   };
 
   // Save the updated resolution log

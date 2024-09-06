@@ -271,8 +271,65 @@
 
 import React, { useState, useEffect } from 'react';
 import './ManageBookings.css';
-import { getAllBookings, deleteBooking, updateBooking, createBooking, getAllVenues } from "../api";
+// import { getAllBookings, deleteBooking, updateBooking, createBooking, getAllVenues } from "../api";
 import EditBooking from './ManageBookingsEdit.js';
+
+
+const API_URL = process.env.NODE_ENV === 'production' ? 'https://your-production-site.com' : 'http://localhost:3002';
+
+const getAllBookings = async () => {
+  const response = await fetch(`${API_URL}/bookings`);
+  return await response.json();
+};
+
+const getBookingById = async (id) => {
+  const response = await fetch(`${API_URL}/bookings/${id}`);
+  return await response.json();
+};
+
+const createBooking = async (bookingData) => {
+  const response = await fetch(`${API_URL}/bookings/create`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(bookingData),
+  });
+  return await response.json();
+};
+
+const updateBooking = async (id, bookingData) => {
+  const response = await fetch(`${API_URL}/bookings/${id}`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(bookingData),
+  });
+
+  if (!response.ok) {
+    throw new Error('Failed to update booking');
+  }
+  return response.json();
+};
+
+const deleteBooking = async (id) => {
+  const response = await fetch(`${API_URL}/bookings/${id}`, {
+    method: "DELETE",
+  });
+  return await response.json();
+};
+
+const getAllVenues = async () => {
+  try {
+    const response = await fetch(`${API_URL}/venues`);
+    const data = await response.json();
+    return { venues: data };
+  } catch (error) {
+    console.error("Error fetching venues:", error);
+    return { venues: [] };
+  }
+};
 
 const BookingTabs = () => {
   const [activeTab, setActiveTab] = useState('all');
@@ -282,7 +339,7 @@ const BookingTabs = () => {
   const [filterBookerEmail, setFilterBookerEmail] = useState('');
   const [filterVenue, setFilterVenue] = useState('');
 
-  // State for creating bookings
+
   const [venueBooker, setVenueBooker] = useState('');
   const [venueID, setVenueID] = useState('');
   const [bookingDate, setBookingDate] = useState('');

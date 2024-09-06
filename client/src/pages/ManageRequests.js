@@ -230,13 +230,35 @@
 
 import React, { useState, useEffect } from 'react';
 import './ManageRequests.css';
-import { getAllRequests, updateReq } from "../api";
+const API_URL = process.env.NODE_ENV === 'production' ? 'https://your-production-site.com' : 'http://localhost:3002'; 
+export const getAllRequests = async () => {
+  const response = await fetch(`${API_URL}/adminRequests`);
+  return await response.json();
+};
+
+// update a Request- change status from pending to approved
+export const updateReq= async (id, ReqData) => {
+const response = await fetch(`${API_URL}/adminRequests/${id}`, {
+  method: "PUT",
+  headers: {
+    "Content-Type": "application/json",
+  },
+  body: JSON.stringify(ReqData),
+});
+
+// return await response.json();
+if (!response.ok) {
+  throw new Error('Failed to update request');
+}
+return response.json();
+
+};
 
 function AdminRequests() {
   const [requests, setRequests] = useState([]);
-  const [activeTab, setActiveTab] = useState('pending'); // 'pending', 'approved', or 'denied'
+  const [activeTab, setActiveTab] = useState('pending'); 
 
-  // Fetch all requests from the API
+
   useEffect(() => {
     const fetchRequests = async () => {
       try {

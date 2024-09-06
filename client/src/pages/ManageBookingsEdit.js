@@ -1,7 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import './ManageBookingsEdit.css';
-import { getAllBookings } from '../api'; 
+ 
+const API_URL = process.env.NODE_ENV === 'production' ? 'https://your-production-site.com' : 'http://localhost:3002';
 
+const getAllBookings = async () => {
+  const response = await fetch(`${API_URL}/bookings`);
+  return await response.json();
+};
 const EditBookingForm = ({ booking, onSave, onCancel }) => {
  
   const [venueBooker, setVenueBooker] = useState(booking.venueBooker || '');
