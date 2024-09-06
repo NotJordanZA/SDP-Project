@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSquareCaretDown, faSquareCaretUp} from '@fortawesome/free-solid-svg-icons';
 
-function VenueRow({venueName, campus, venueType, venueCapacity, timeSlots}) {
+function VenueRow({venueName, campus, venueType, venueCapacity, timeSlots, bookings}) {
 
     const [isOpen, setIsOpen] = useState(false);
 
@@ -16,19 +16,40 @@ function VenueRow({venueName, campus, venueType, venueCapacity, timeSlots}) {
         setTimeSlotsArray(timeSlots);
     }, []);
 
-    const timeSlotButtons = [];
-    //Map the elements of venueList onto VenueRow components and push them to an array
-    {timeSlotsArray.map((time) => (
-        timeSlotButtons.push(
-            <button  key={time} className="timeslot-button">{time}</button>
-        )
-    ))}
+    const isTimeSlotInactive = (timeSlot) => {
+        const slotStart = new Date(`1970-01-01T${timeSlot}:00`); 
+        const slotEnd = new Date(slotStart.getTime() + 45 * 60000);
+    
+        return bookings.some(booking => {
+            const bookingStart = new Date(`1970-01-01T${booking.bookingStartTime}:00`);
+            const bookingEnd = new Date(`1970-01-01T${booking.bookingEndTime}:00`);
+    
+            return (slotStart >= bookingStart && slotStart < bookingEnd) || 
+                (slotEnd > bookingStart && slotEnd <= bookingEnd) ||
+                (slotStart <= bookingStart && slotEnd >= bookingEnd);
+        });
+    };
+
+    const timeSlotButtons = timeSlotsArray.map((time) => {
+        const buttonClass = isTimeSlotInactive(time) ? "timeslot-button booked" : "timeslot-button";
+        return (
+            <button  
+                key={time} 
+                className={buttonClass}
+                onClick={(e) => { e.stopPropagation() }}>
+                {time}
+            </button>
+        );
+    });
 
     return(
         <div className="venue-row-content" onClick={() => toggleBookingDates()}>
             <div className="venue-row-main">
                 <h1 className="venue-row-text">{venueName}</h1>
-                <button className="expand-row-button" onClick={() => setIsOpen}>
+                <button className="expand-row-button" onClick={(e) => { 
+                    e.stopPropagation(); // Prevents the event from bubbling up
+                    toggleBookingDates(); // Correctly toggles the state
+                }}>
                     <FontAwesomeIcon
                         icon={isOpen ? faSquareCaretUp : faSquareCaretDown} 
                         className="caret-icon"

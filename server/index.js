@@ -1,4 +1,4 @@
-const { getDoc, setDoc, updateDoc, doc, deleteDoc, getDocs, collection } = require('firebase/firestore');
+const { getDoc, setDoc, updateDoc, doc, deleteDoc, getDocs, collection, query, where } = require('firebase/firestore');
 const { initializeApp } = require('firebase/app');
 const { getFirestore } = require("firebase/firestore");
 const express = require("express");
@@ -174,6 +174,62 @@ app.get('/venues', async (req, res) => {
         res.status(500).json({ error: "Internal Server Error" });
     }
 });
+
+// Get bookings by field API
+app.get("/bookings/findByField", async (req, res) => {
+    // Extract optional query parameters from the request
+    const { venueID, bookingDate, bookingEndTime, bookingStartTime, venueBooker, bookingDescription} = req.query;
+    const bookingsCollection = collection(db, "Bookings"); // Reference to the "Bookings" collection in Firestore
+
+    try {
+        // Start building the query
+        let bookingsQuery = bookingsCollection;
+
+        // Apply filters if query parameters are provided
+        if (venueID) {
+            bookingsQuery = query(bookingsQuery, where("venueID", "==", venueID));
+        }
+
+        if (bookingDate) {
+            bookingsQuery = query(bookingsQuery, where("bookingDate", "==", bookingDate));
+        }
+
+        if (bookingEndTime) {
+            bookingsQuery = query(bookingsQuery, where("bookingEndTime", "==", bookingEndTime));
+        }
+
+        if (bookingStartTime) {
+            bookingsQuery = query(bookingsQuery, where("bookingStartTime", "==", bookingStartTime));
+        }
+
+        if (venueBooker) {
+            bookingsQuery = query(bookingsQuery, where("venueBooker", "==", venueBooker));
+        }
+
+        if (bookingDescription) {
+            bookingsQuery = query(bookingsQuery, where("bookingDescription", "==", bookingDescription));
+        }
+
+        // Execute the query
+        const bookingsSnapshot = await getDocs(bookingsQuery);
+        const bookingsList = [];
+
+        // Iterate over each document and push it to the list
+        bookingsSnapshot.forEach((doc) => {
+            bookingsList.push({
+                id: doc.id,
+                ...doc.data()
+            });
+        });
+
+        // Send the filtered bookings as a JSON response
+        res.status(200).json(bookingsList);
+    } catch (error) {
+        console.error("Error getting bookings:", error);
+        res.status(500).json({ error: "Internal Server Error" });
+    }
+});
+
 
 //Prints to console the port of the server
 app.listen(PORT, () => {

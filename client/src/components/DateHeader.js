@@ -4,11 +4,11 @@ import {faCaretRight, faCaretLeft} from '@fortawesome/free-solid-svg-icons'
 import CalendarPopup from "../components/CalendarPopup";
 import { useState } from "react";
 
-function DateHeader(){
+function DateHeader( {displayDate, onDateChange} ){
     const today = new Date();
     const maxDate = new Date((new Date().getFullYear().toString())+"-12-31");
     
-    const [displayDate, setDisplayDate] = useState(today);
+    // const [displayDate, setDisplayDate] = useState(today);
 
     const [isOpen, setIsOpen] = useState(false);
 
@@ -21,11 +21,11 @@ function DateHeader(){
         }else if(direction && maxDate > displayDate){
             newDate.setDate(newDate.getDate()+1);
         }
-        setDisplayDate(newDate);
+        onDateChange(newDate);
     };
 
     const handleCalendarChange = (date) => {
-        setDisplayDate(date);
+        onDateChange(date);
         setIsOpen(false);
     };
 
