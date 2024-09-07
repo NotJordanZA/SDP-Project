@@ -1,26 +1,71 @@
 import TextButton from "../components/styledButtons";
 import '../styles/Venues.css';
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
+import { auth } from "../firebase";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSquareCaretDown, faSquareCaretUp} from '@fortawesome/free-solid-svg-icons';
 
-function VenueRow({venueName, campus, venueType, venueCapacity, timeSlots, bookings}) {
+function VenueRow({venueName, campus, venueType, venueCapacity, timeSlots, bookings, relevantDate, getCurrentDatesBookings}) {
 
+    const user = auth.currentUser;
+    
     const [isOpen, setIsOpen] = useState(false);
 
     const [isBooking, setIsBooking] = useState(false);
 
     const [bookingTime, setBookingTime] = useState("");
 
+    const [bookingEndingTime, setBookingEndingTime] = useState("");
+
+    const [bookingDescriptionText, setBookingDescriptionText] = useState("");
+
+    const [timeSlotsArray, setTimeSlotsArray] = useState([]);
+
     const toggleIsBooking = () => setIsBooking(!isBooking);
 
     const toggleBookingDates = () => setIsOpen(!isOpen);
-
-    const [timeSlotsArray, setTimeSlotsArray] = useState([]);
     
     useEffect(() => {
         setTimeSlotsArray(timeSlots);
     }, []);
+
+    const firstRender = useRef(true);
+
+    useEffect(() => {
+        if (firstRender.current){
+            console.log("First Render: "+ firstRender.current);
+            firstRender.current = false;
+            return;
+        }
+        if (bookingTime && bookingEndingTime) {
+            compileBookingData();
+        }
+    }, [bookingEndingTime]);
+
+    const updateBookingEndTime = () => {
+        const slotEnd = new Date((new Date(`1970-01-01T${bookingTime}:00`)).getTime() + 45 * 60000);
+        setBookingEndingTime(((slotEnd.getHours() < 10 ? '0' : '') + slotEnd.getHours())+":"+((slotEnd.getMinutes() < 10 ? '0' : '') + slotEnd.getMinutes()));
+    }
+
+    const compileBookingData = () => {
+        
+        const booker = user.email;
+
+        console.log("Booker: " + booker);
+        console.log("Venue: " + venueName);
+        console.log("Date: " + relevantDate);
+        console.log("Start: " + bookingTime);
+        console.log("End: " + bookingEndingTime);
+        console.log("Desc: " + bookingDescriptionText);
+
+        if (bookingDescriptionText != ""){
+            makeBooking(booker, venueName, relevantDate, bookingTime, bookingEndingTime, bookingDescriptionText);
+        }
+        else{
+            makeBooking(booker, venueName, relevantDate, bookingTime, bookingEndingTime, null);
+        }
+        
+    }
 
     const makeBooking = async(venueBooker, venueID, bookingDate, bookingStartTime, bookingEndTime, bookingDescription) => {
         try{
@@ -42,6 +87,11 @@ function VenueRow({venueName, campus, venueType, venueCapacity, timeSlots, booki
             const data = await response.json();
             if (response.ok) {
                 console.log('Booking added successfully:', data);
+                setIsOpen(false);
+                toggleIsBooking();
+                // handleDateChange(new Date((new Date(`${relevantDate}T${bookingTime}:00`)).getTime()));
+                getCurrentDatesBookings(relevantDate);
+                setBookingDescriptionText("");
             } else {
                 console.error('Error making booking:', data.error);            }
           } catch (error) {
@@ -52,6 +102,7 @@ function VenueRow({venueName, campus, venueType, venueCapacity, timeSlots, booki
     const isTimeSlotInactive = (timeSlot) => {
         const slotStart = new Date(`1970-01-01T${timeSlot}:00`); 
         const slotEnd = new Date(slotStart.getTime() + 45 * 60000);
+        // console.log("End: " + slotEnd);
     
         return bookings.some(booking => {
             const bookingStart = new Date(`1970-01-01T${booking.bookingStartTime}:00`);
@@ -64,7 +115,8 @@ function VenueRow({venueName, campus, venueType, venueCapacity, timeSlots, booki
     };
 
     const timeSlotButtons = timeSlotsArray.map((time) => {
-        const buttonClass = isTimeSlotInactive(time) ? "timeslot-button booked" : "timeslot-button";
+
+        const buttonClass = isTimeSlotInactive(time) ? "timeslot-button booked" : ((time === bookingTime && isBooking) ? "timeslot-button clicked" : "timeslot-button");
         return (
             <button  
                 key={time} 
@@ -120,8 +172,9 @@ function VenueRow({venueName, campus, venueType, venueCapacity, timeSlots, booki
                 <div className="timeslot-buttons-container">
                     {timeSlotButtons}
                 </div>
-                <div className="book-button-container">
-                    <button className={`book-button ${isBooking ? "shown" : "hidden"}`} onClick={()=> makeBooking()}>Book</button>
+                <div className="book-action-container">
+                    <textarea className={`description-input ${isBooking ? "shown" : "hidden"}`} value = { bookingDescriptionText } onChange={(e) => setBookingDescriptionText(e.target.value)} required placeholder="Input a booking description" onClick={(e) => e.stopPropagation()}></textarea>
+                    <button className={`book-button ${isBooking ? "shown" : "hidden"}`} onClick={(e) => { e.stopPropagation(); updateBookingEndTime();}}>Book</button>
                 </div>
             </div>
         </div>

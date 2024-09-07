@@ -4,6 +4,7 @@
   background-size: cover;
   width: 100vw;
   min-height: 100vh;
+  scrollbar-width: none;
 }
 
 .app-header {
@@ -14,6 +15,7 @@
   align-items: center;       /* Center items vertically */
   position: relative;        /* Relative positioning for the container */
   height: 65px;
+  scrollbar-width: none;
 }
 
 .app-header h1 {

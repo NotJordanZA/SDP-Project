@@ -65,6 +65,44 @@
   position: relative;
 }
 
+.greater-search-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  /* align-content: center; */
+  margin-bottom: 10px;
+  padding: 0px 20px;
+}
+
+.search-container {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  background-color: white;
+  padding: 10px 10px;
+  border-radius: 10px;
+  width: 100%;
+  margin: 0px 10px 10px 10px;
+  /* transform: translateY(10px); */
+}
+
+.search-input {
+  font-family: Roboto;
+  background-color: #f0f0f0;
+  color: black;
+  /* padding: 2px 5px; */
+  border-radius: 20px;
+  height: 40px;
+  border: none;
+  width: 100%;
+  resize: none;
+  padding: 0 10px;
+  box-sizing: border-box;
+  line-height: 40px;
+}
+
 .venue-info-container{
   justify-content: start;
   display: flex;
@@ -128,10 +166,11 @@
   opacity: 0;
 }
 
-.book-button-container{
+.book-action-container{
   display: flex;
-  justify-content: flex-end;
+  justify-content: space-between;
   padding-right: 10px;
+  padding-left: 20px;
 }
 
 .book-button {
@@ -146,11 +185,36 @@
 }
   
 .book-button.shown {
-  max-height: fit-content; /*Adjust according to content height*/
+  max-height: fit-content;
   opacity: 1;
 }
 
 .book-button.hidden {
+  max-height: 0px;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.description-input {
+  font-family: Roboto;
+  background-color: #f0f0f0;
+  color: black;
+  padding: 2px 5px;
+  border-radius: 4px;
+  width: 60%;
+  resize: none;
+}
+
+.description-input::placeholder {
+  /* color: rgb(119, 119, 119); */
+  opacity: 0.5;
+}
+
+.description-input.shown {
+  opacity: 1;
+}
+
+.description-input.hidden {
   max-height: 0px;
   opacity: 0;
   pointer-events: none;
@@ -191,6 +255,10 @@
 }
 
 .timeslot-button:hover{
+  background-color: #917248;
+}
+
+.timeslot-button.clicked{
   background-color: #917248;
 }
 

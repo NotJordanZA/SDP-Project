@@ -22,6 +22,7 @@ function DateHeader( {displayDate, onDateChange} ){
             newDate.setDate(newDate.getDate()+1);
         }
         onDateChange(newDate);
+        setIsOpen(false);
     };
 
     const handleCalendarChange = (date) => {
