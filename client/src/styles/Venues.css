@@ -89,7 +89,7 @@
 }
 
 .search-input {
-  font-family: Roboto;
+  /* font-family: Roboto; */
   background-color: #f0f0f0;
   color: black;
   /* padding: 2px 5px; */
@@ -101,6 +101,7 @@
   padding: 0 10px;
   box-sizing: border-box;
   line-height: 40px;
+  font-size: 1.2rem;
 }
 
 .venue-info-container{
@@ -225,6 +226,12 @@
   /* padding-right: 30px; */
   color: #043673;
   font-size: 2.4rem;
+  border: none;
+  background: none;
+}
+.search-row-button{
+  color: #043673;
+  font-size: 2.2rem;
   border: none;
   background: none;
 }

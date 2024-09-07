@@ -6,6 +6,7 @@ import Search from "../components/Search";
 import { useState, useEffect } from "react";
 
 function Venues(){
+    const [allVenues, setAllVenues] = useState([]);
     const [venueList, setVenueList] = useState([]);
     const [bookingsList, setBookingsList] = useState([]);
     const [displayDate, setDisplayDate] = useState(new Date());
@@ -22,6 +23,7 @@ function Venues(){
           if (response.ok) {
             console.log('Venues fetched successfully');
             setVenueList(data);
+            setAllVenues(data);
           } else {
             console.error('Error fetching venues:', data.error);
           }
@@ -113,7 +115,7 @@ function Venues(){
     return (
         <main>
             <DateHeader displayDate={displayDate} onDateChange={handleDateChange}/>
-            <Search />
+            <Search venueList = {allVenues} setVenueList = {setVenueList}/>
             {venueComponents}
         </main>
     );

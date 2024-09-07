@@ -51,13 +51,6 @@ function VenueRow({venueName, campus, venueType, venueCapacity, timeSlots, booki
         
         const booker = user.email;
 
-        console.log("Booker: " + booker);
-        console.log("Venue: " + venueName);
-        console.log("Date: " + relevantDate);
-        console.log("Start: " + bookingTime);
-        console.log("End: " + bookingEndingTime);
-        console.log("Desc: " + bookingDescriptionText);
-
         if (bookingDescriptionText != ""){
             makeBooking(booker, venueName, relevantDate, bookingTime, bookingEndingTime, bookingDescriptionText);
         }
@@ -89,7 +82,6 @@ function VenueRow({venueName, campus, venueType, venueCapacity, timeSlots, booki
                 console.log('Booking added successfully:', data);
                 setIsOpen(false);
                 toggleIsBooking();
-                // handleDateChange(new Date((new Date(`${relevantDate}T${bookingTime}:00`)).getTime()));
                 getCurrentDatesBookings(relevantDate);
                 setBookingDescriptionText("");
             } else {
