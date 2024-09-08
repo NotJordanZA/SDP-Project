@@ -156,6 +156,39 @@ app.delete("/users/:userEmail", async (req, res) => {
     }
 });
 
+// Submit a report API
+app.post("/reports", async (req, res) => {
+    const { venueID, roomNumber, reportType, reportText, photos } = req.body;
+
+    // Check that the necessary fields are provided
+    if (!venueID || !roomNumber || !reportType || !reportText) {
+        return res.status(400).json({ error: "All fields are required." });
+    }
+
+    // Create a new report document in the Reports collection
+    try {
+        const newReportRef = doc(collection(db, "Reports"));  // Generate a new document reference
+        const newReportData = {
+            venueID,
+            roomNumber,
+            reportType,
+            reportText,
+            reportStatus: "Pending",  // Default status
+            resolutionLog: "No action yet",  // Default resolution log
+            photos: photos || null,  // Handle photos if any
+            createdAt: new Date()  // Timestamp
+        };
+
+        // Add the new report to Firestore
+        await setDoc(newReportRef, newReportData);
+        res.status(201).json({ message: "Report submitted successfully" });
+    } catch (error) {
+        console.error("Error submitting report:", error);
+        res.status(500).json({ error: "Failed to submit report" });
+    }
+});
+
+
 //Prints to console the port of the server
 app.listen(PORT, () => {
 console.log(`Server listening on ${PORT}`);

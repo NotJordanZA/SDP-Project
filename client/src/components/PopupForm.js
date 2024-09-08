@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import '../styles/PopupForm.css'; // Ensure your styles are correctly set
+import { collection, addDoc } from 'firebase/firestore';
+import { db } from '../firebase'; // Ensure correct path to your firebase.js
+import '../styles/PopupForm.css';
 
 const PopupForm = ({ isOpen, onClose }) => {
-  // Define the state for the form
   const [formData, setFormData] = useState({
     venue: '',
     roomNumber: '',
@@ -26,18 +27,37 @@ const PopupForm = ({ isOpen, onClose }) => {
   const handleFileChange = (e) => {
     setFormData((prevData) => ({
       ...prevData,
-      photos: e.target.files[0], // Assume single file upload for simplicity
+      photos: e.target.files[0], // Assuming single file upload for simplicity
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('Form submitted:', formData);
-    // Handle form submission (e.g., send data to a server)
-    onClose(); // Close the popup after submission
+
+    try {
+      // If needed, you can upload the photos to Firebase Storage, and store the file URL in Firestore.
+      const reportData = {
+        venue: formData.venue,
+        roomNumber: formData.roomNumber,
+        reportType: formData.reportType,
+        reportText: formData.reportText,
+        createdAt: new Date().toISOString(),
+        // You can add more metadata as needed
+      };
+
+      // Add the report to the "Reports" collection in Firestore
+      await addDoc(collection(db, 'Reports'), reportData);
+      
+      alert('Report submitted successfully!');
+      setFormData({ venue: '', roomNumber: '', reportType: '', reportText: '', photos: null });
+      onClose(); // Close the popup after submission
+    } catch (error) {
+      console.error('Error submitting report:', error);
+      alert('Failed to submit the report. Please try again.');
+    }
   };
 
-  if (!isOpen) return null; // Don't render the form if it's not open
+  if (!isOpen) return null;
 
   return (
     <div className="popup-overlay">
@@ -121,7 +141,7 @@ const PopupForm = ({ isOpen, onClose }) => {
               onChange={handleFileChange}
             />
           </div>
-          
+
           <button type="submit" className="submit-button">Submit</button>
         </form>
       </div>
