@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import './ManageReports.css'; 
+import '../styles/ManageReports.css'; 
 const API_URL = process.env.NODE_ENV === 'production' ? 'https://your-production-site.com' : 'http://localhost:3002'; 
 
 
@@ -34,11 +34,10 @@ function Reports() {
   const [reports, setReports] = useState([]);
   const [allReports, setAllReports] = useState([]); 
   const [activeTab, setActiveTab] = useState('Pending');
-  const [selectedReportType, setSelectedReportType] = useState(''); // Store selected report type
-  const [editingLogId, setEditingLogId] = useState(null); // Track which report's resolution log is being edited
-  const [newResolutionLog, setNewResolutionLog] = useState(''); // Track the new resolution log
+  const [selectedReportType, setSelectedReportType] = useState(''); 
+  const [editingLogId, setEditingLogId] = useState(null); 
+  const [newResolutionLog, setNewResolutionLog] = useState(''); 
 
-  // Fetch all reports initially
   useEffect(() => {
     const fetchAllReports = async () => {
       try {
@@ -49,36 +48,35 @@ function Reports() {
         setAllReports(reportData); 
       } catch (error) {
         console.error("Error fetching all reports:", error);
-        setReports([]); // Set to an empty array in case of an error
+        setReports([]); 
       }
     };
 
     fetchAllReports();
   }, []);
 
-  // Fetch reports by selected report type
   useEffect(() => {
     const fetchReportsByType = async () => {
       if (selectedReportType === "") {
-        setReports(allReports); // If no type is selected, reset to all reports
+        setReports(allReports); 
       } else {
         try {
           const response = await getReportByType(selectedReportType);
-          console.log("API Response:", response); // Log the API response to inspect
-          setReports(Array.isArray(response.filteredReports) ? response.filteredReports : []); // Ensure it's an array
+          console.log("API Response:", response); 
+          setReports(Array.isArray(response.filteredReports) ? response.filteredReports : []); 
         } catch (error) {
           console.error("Error fetching reports by type:", error);
-          setReports([]); // Set to an empty array in case of an error
+          setReports([]); 
         }
       }
     };
 
     fetchReportsByType();
-  }, [selectedReportType, allReports]); // Re-fetch reports every time the selected report type changes
+  }, [selectedReportType, allReports]); //re-fetch data every time the report changes
 
-  // Handle marking the report as resolved with optimistic UI update
+  
   const handleResolveClick = async (reportId) => {
-    // Optimistic UI update
+  
     const updatedReports = reports.map(report =>
       report.id === reportId ? { ...report, reportStatus: "Resolved" } : report
     );
@@ -93,9 +91,9 @@ function Reports() {
     }
   };
 
-  // Handle marking the report as 'In Progress'
+  
   const handleInProgressClick = async (reportId) => {
-    // Optimistic UI update
+  
     const updatedReports = reports.map(report =>
       report.id === reportId ? { ...report, reportStatus: "In Progress" } : report
     );
@@ -110,21 +108,21 @@ function Reports() {
     }
   };
 
-  // Start editing the resolution log
+  //edit resolution log
   const handleEditLogClick = (reportId, currentLog) => {
     setEditingLogId(reportId);
     setNewResolutionLog(currentLog || ''); 
   };
 
-  // Save the updated resolution log
+  //save the changedd resolution log
   const handleSaveLogClick = async (reportId) => {
     const updatedReports = reports.map(report =>
       report.id === reportId ? { ...report, resolutionLog: newResolutionLog } : report
     );
     setReports(updatedReports);
-    setEditingLogId(null); // Exit edit mode
+    setEditingLogId(null); 
 
-    // API call to save the updated resolution log
+   
     try {
       await updateRep(reportId, { resolutionLog: newResolutionLog });
       console.log(`Resolution log updated for report ${reportId}`);
@@ -159,12 +157,12 @@ function Reports() {
         </button>
       </div>
 
-      {/* Report Type Dropdown */}
+      {/* dropdown showing types of reports*/}
       <div className="report-type-container">
         <label>Select Report Type:</label>
         <select
           value={selectedReportType}
-          onChange={(e) => setSelectedReportType(e.target.value)} // Update selected report type
+          onChange={(e) => setSelectedReportType(e.target.value)} 
           className="report-type-dropdown"
         >
           <option value="">-- Select Report Type --</option>
@@ -180,7 +178,7 @@ function Reports() {
       {reports.length > 0 ? (
         <div className="reports-list">
           {reports
-            .filter(report => report.reportStatus.toLowerCase() === activeTab.toLowerCase()) // Filter by tab
+            .filter(report => report.reportStatus.toLowerCase() === activeTab.toLowerCase()) 
             .map(report => (
               <div key={report.id} className={`report-card ${report.reportStatus}`}>
                 <h3>{report.reportText}</h3>

@@ -540,25 +540,6 @@ app.put("/adminRequests/:id", async (req, res) => {
 
 
 
-app.delete("/adminRequests/:id", async (req, res) => {
-    const reqId = req.params.id;
-
-    try {
-        const ReqDocRef = doc(db, 'AdminRequests', reqId);
-        const bookingDoc = await getDoc(ReqDocRef);
-
-        if (!bookingDoc.exists()) {
-            return res.status(404).json({ error: "Request not found" });
-        }
-
-        // Delete the document from Firestore
-        await deleteDoc(ReqDocRef);
-        res.status(200).json({ message: "Request deleted successfully", bookingID: reqId });
-    } catch (error) {
-        console.error("Error deleting Request:", error.message);
-        res.status(500).json({ error: "Internal Server Error" });
-    }
-});
 
 //Get Requests
 app.get("/adminRequests", async (req, res) => {
@@ -648,26 +629,7 @@ app.put("/Reports/:id", async (req, res) => {
         res.status(500).json({ error: "Internal Server Error" });
     }
 });
-//Delete
-app.delete("/Reports/:id", async (req, res) => {
-    const repId = req.params.id;
 
-    try {
-        const RepDocRef = doc(db, 'Reports', repId);
-        const bookingDoc = await getDoc(RepDocRef);
-
-        if (!bookingDoc.exists()) {
-            return res.status(404).json({ error: "Request not found" });
-        }
-
-        // Delete the document from Firestore
-        await deleteDoc(RepDocRef);
-        res.status(200).json({ message: "Request deleted successfully", bookingID: repId });
-    } catch (error) {
-        console.error("Error deleting Request:", error.message);
-        res.status(500).json({ error: "Internal Server Error" });
-    }
-});
 
 //Get
 app.get("/Reports", async (req, res) => {

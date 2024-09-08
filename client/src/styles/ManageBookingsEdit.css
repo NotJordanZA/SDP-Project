@@ -1,0 +1,103 @@
+/* General form styling */
+.edit-booking-form {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border: 1px solid #e0e0e0;
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Center elements */
+    justify-content: center;
+  }
+  
+  /* Form labels */
+  .edit-booking-form label {
+    font-weight: bold;
+    color: #043673;
+    margin-bottom: 8px;
+    display: block;
+    text-align: center; /* Center labels */
+  }
+  
+  /* Form inputs */
+  .edit-booking-form input[type="text"],
+  .edit-booking-form input[type="date"],
+  .edit-booking-form input[type="time"],
+  .edit-booking-form textarea {
+    width: 80%;
+    padding: 12px;
+    margin: 8px 0 20px 0;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+    color: #043673;
+    font-size: 16px;
+    text-align: center; /* Center input text */
+  }
+  
+  /* Textarea styling */
+  .edit-booking-form textarea {
+    height: 100px;
+    resize: vertical;
+  }
+  
+  /* Buttons styling */
+  .edit-booking-form button[type="submit"],
+  .edit-booking-form button[type="button"] {
+    padding: 12px 25px;
+    font-size: 16px;
+    font-weight: bold;
+    border-radius: 50px;
+    cursor: pointer;
+    margin-right: 10px;
+    width: 50%; /* Adjust width to 50% */
+    margin-top: 10px;
+  }
+  
+  /* Save button */
+  .edit-booking-form button[type="submit"] {
+    background-color: #043673;
+    color: white;
+    border: none;
+    transition: background-color 0.3s ease;
+  }
+  
+  .edit-booking-form button[type="submit"]:hover {
+    background-color: #032d4e;
+  }
+  
+  /* Cancel button */
+  .edit-booking-form button[type="button"] {
+    background-color: #ccc;
+    color: #333;
+    border: none;
+    transition: background-color 0.3s ease;
+  }
+  
+  .edit-booking-form button[type="button"]:hover {
+    background-color: #bbb;
+  }
+  
+  /* Responsive layout */
+  @media (max-width: 768px) {
+    .edit-booking-form {
+      width: 90%;
+      padding: 15px;
+    }
+  
+    .edit-booking-form input[type="text"],
+    .edit-booking-form input[type="date"],
+    .edit-booking-form input[type="time"],
+    .edit-booking-form textarea {
+      width: 100%; /* Full width on small screens */
+    }
+  
+    .edit-booking-form button[type="submit"],
+    .edit-booking-form button[type="button"] {
+      width: 100%; /* Full width on small screens */
+    }
+  }
+  

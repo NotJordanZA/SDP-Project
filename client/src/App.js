@@ -28,12 +28,13 @@
 import React, { useState } from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import Home from './pages/Home';
+
 import ManageBookings from './pages/ManageBookings';
 import ManageReports from './pages/ManageReports';
 import ManageRequests from './pages/ManageRequests';
 import ManageVenues from './pages/ManageVenues';
-import BookVenue from './pages/BookVenue'; // Import the new page
-import './App.css';  // Import the main CSS file
+import BookVenue from './pages/BookVenue'; 
+import './App.css';  
 
 function App() {
   const [isOpen, setIsOpen] = useState(false);
@@ -50,13 +51,13 @@ function App() {
     &#9776;  {/* Hamburger icon */}
   </div>
   <h1>Venues @ Wits</h1>
-  <img src="../images/logo1.png" alt="Logo" className="logo" />
+  <img src="../assets/logo1.png" alt="Logo" className="logo" />
 </header>
 
 
         <div className={`sidebar ${isOpen ? 'open' : ''}`}>
           <button className="close-btn" onClick={toggleMenu}>
-            &times;  {/* Close icon (×) */}
+            &times;  {/* close*/}
           </button>
           <ul>
             <li><a href="/">Home</a></li>

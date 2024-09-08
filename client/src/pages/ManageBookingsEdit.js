@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import './ManageBookingsEdit.css';
+import '../styles/ManageBookingsEdit.css';
  
 const API_URL = process.env.NODE_ENV === 'production' ? 'https://your-production-site.com' : 'http://localhost:3002';
 
