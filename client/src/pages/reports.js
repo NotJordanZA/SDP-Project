@@ -40,7 +40,6 @@ const Reports = () => {
                                 <span className="report-text">{report.reportText}</span>
                                 <span className="report-status">{report.reportStatus}</span>
                                 <span className="report-venue">Venue: {report.venueID || report.venue}</span>
-                                <span className="report-room">Room: {report.roomNumber}</span>
                             </li>
                         ))
                     ) : (

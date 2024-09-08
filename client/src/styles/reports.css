@@ -20,12 +20,6 @@
     margin-bottom: 20px; /* Add space below button */
 }
 
-/* Hover effect for the button */
-.open-popup-button:hover {
-    background-color: #004494;
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
-}
-
 /* Container for the reports to grow and fill the page */
 .report-page {
     display: flex;
@@ -65,11 +59,9 @@
 }
 
 .report-list li {
-    display: grid;
-    grid-template-columns: 1fr 3fr 1fr 1fr 1fr;
-    grid-gap: 10px;
-    align-items: center;
-    padding: 15px 20px;
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
     border-bottom: 1px solid #ddd;
     transition: background-color 0.3s ease;
 }
@@ -78,91 +70,29 @@
     background-color: #f1f1f1;
 }
 
+/* Report details styling */
 .report-title {
     font-weight: bold;
-    font-size: 1.1rem;
+    font-size: 1.2rem;
     color: #333;
+    margin-bottom: 10px; /* Space between title and other content */
 }
 
 .report-text {
     font-size: 1rem;
     color: #555;
+    margin-bottom: 10px; /* Add space between text and venue */
 }
 
 .report-status {
-    font-size: 0.95rem;
+    font-size: 1rem;
     color: #007BFF;
+    margin-bottom: 5px;
 }
 
-.report-venue,
-.report-room {
-    font-size: 0.95rem;
+.report-venue {
+    font-size: 1rem;
     color: #666;
 }
 
-/* Media Queries for Mobile Devices */
-@media (max-width: 1024px) {
-    .report-list {
-        max-height: 60vh;
-    }
-
-    .report-list li {
-        grid-template-columns: 1fr 2fr 1fr 1fr; /* Reduce columns for smaller screens */
-    }
-}
-
-@media (max-width: 768px) {
-    .report-page {
-        padding: 10px;
-    }
-
-    .open-popup-button {
-        padding: 10px 20px;
-        font-size: 1rem;
-    }
-
-    .report-list {
-        max-height: 50vh;
-    }
-
-    .report-list h2 {
-        font-size: 1.4rem;
-        padding: 10px 15px;
-    }
-
-    .report-list li {
-        grid-template-columns: 1fr 1fr; /* Stack report info in two columns */
-    }
-}
-
-@media (max-width: 576px) {
-    .open-popup-button {
-        width: 100%; /* Full-width button for small screens */
-        padding: 12px;
-        font-size: 1rem;
-    }
-
-    .report-list {
-        max-height: 40vh;
-    }
-
-    .report-list h2 {
-        font-size: 1.2rem;
-        padding: 10px;
-    }
-
-    .report-list li {
-        grid-template-columns: 1fr; /* Stack all elements vertically */
-        text-align: left;
-        padding: 10px;
-    }
-
-    .report-title,
-    .report-text,
-    .report-status,
-    .report-venue,
-    .report-room {
-        font-size: 1rem; /* Consistent font size for small screens */
-        margin-bottom: 8px; /* Space between stacked elements */
-    }
-}
+/* Mobile-friendly adjustments */
