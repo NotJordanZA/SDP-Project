@@ -1,23 +1,29 @@
+/* General reset for list and padding */
+* {
+    box-sizing: border-box;
+}
+
 /* Improved style for the open-popup-button */
 .open-popup-button {
-    background-color:  #043673; /* Slightly lighter blue for better contrast */
+    background-color: #043673;
     color: white;
     border: none;
-    border-radius: 8px; /* Increased border radius for a more rounded look */
-    padding: 12px 24px; /* Increased padding for better spacing */
-    font-size: 1.1rem; /* Slightly larger font size */
+    border-radius: 8px;
+    padding: 12px 24px;
+    font-size: 1.1rem;
     cursor: pointer;
     transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Added shadow for depth */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     display: flex;
     justify-content: center;
     align-items: center;
+    margin-bottom: 20px; /* Add space below button */
 }
 
 /* Hover effect for the button */
 .open-popup-button:hover {
-    background-color: #004494; /* Darker blue on hover */
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3); /* More pronounced shadow on hover */
+    background-color: #004494;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
 }
 
 /* Container for the reports to grow and fill the page */
@@ -25,31 +31,31 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
-    height: calc(100vh - 40px); /* Full height minus margins/padding */
-    padding: 20px; /* Padding for spacing */
+    justify-content: flex-start;
+    height: 100vh;
+    padding: 20px;
+    background-color: #f0f4f9;
 }
 
 /* Improved style for the report list */
 .report-list {
-    flex-grow: 1; /* Allow the list to grow and fill available space */
-    width: 100%; /* Full width of the container */
-    max-width: 1200px; /* Optional: Set a maximum width */
-    margin-top: 20px; /* Space above the list */
-    background-color: #f9f9f9; /* Light background color */
-    border-radius: 8px; /* Rounded corners for the list container */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
-    overflow-y: auto; /* Add vertical scrollbar when content overflows */
-    max-height: 80vh; /* Limit height to allow space for the scrollbar */
+    width: 100%;
+    max-width: 1200px;
+    margin-top: 20px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    overflow-y: auto;
+    max-height: 70vh;
 }
 
 .report-list h2 {
-    font-size: 1.6rem; /* Larger font size for the title */
-    color: #003d7d; /* Darker shade of blue */
-    padding: 15px 20px; /* Padding around the title */
-    background-color: #e6f0ff; /* Light blue background for the title */
+    font-size: 1.6rem;
+    color: #003d7d;
+    padding: 15px 20px;
+    background-color: #e6f0ff;
     margin: 0;
-    border-bottom: 1px solid #ddd; /* Border to separate the title from the list */
+    border-bottom: 1px solid #ddd;
 }
 
 .report-list ul {
@@ -59,20 +65,104 @@
 }
 
 .report-list li {
+    display: grid;
+    grid-template-columns: 1fr 3fr 1fr 1fr 1fr;
+    grid-gap: 10px;
+    align-items: center;
+    padding: 15px 20px;
     border-bottom: 1px solid #ddd;
-    padding: 15px 20px; /* Padding for better spacing */
-    display: flex;
-    justify-content: space-between;
-    align-items: center; /* Vertically center content */
-    transition: background-color 0.3s ease; /* Smooth background color change */
+    transition: background-color 0.3s ease;
+}
+
+.report-list li:hover {
+    background-color: #f1f1f1;
 }
 
 .report-title {
     font-weight: bold;
-    font-size: 1.1rem; /* Larger font size for titles */
+    font-size: 1.1rem;
+    color: #333;
 }
 
-.report-date {
-    color: #777; /* Lighter color for dates */
-    font-size: 0.9rem; /* Slightly smaller font size for dates */
+.report-text {
+    font-size: 1rem;
+    color: #555;
+}
+
+.report-status {
+    font-size: 0.95rem;
+    color: #007BFF;
+}
+
+.report-venue,
+.report-room {
+    font-size: 0.95rem;
+    color: #666;
+}
+
+/* Media Queries for Mobile Devices */
+@media (max-width: 1024px) {
+    .report-list {
+        max-height: 60vh;
+    }
+
+    .report-list li {
+        grid-template-columns: 1fr 2fr 1fr 1fr; /* Reduce columns for smaller screens */
+    }
+}
+
+@media (max-width: 768px) {
+    .report-page {
+        padding: 10px;
+    }
+
+    .open-popup-button {
+        padding: 10px 20px;
+        font-size: 1rem;
+    }
+
+    .report-list {
+        max-height: 50vh;
+    }
+
+    .report-list h2 {
+        font-size: 1.4rem;
+        padding: 10px 15px;
+    }
+
+    .report-list li {
+        grid-template-columns: 1fr 1fr; /* Stack report info in two columns */
+    }
+}
+
+@media (max-width: 576px) {
+    .open-popup-button {
+        width: 100%; /* Full-width button for small screens */
+        padding: 12px;
+        font-size: 1rem;
+    }
+
+    .report-list {
+        max-height: 40vh;
+    }
+
+    .report-list h2 {
+        font-size: 1.2rem;
+        padding: 10px;
+    }
+
+    .report-list li {
+        grid-template-columns: 1fr; /* Stack all elements vertically */
+        text-align: left;
+        padding: 10px;
+    }
+
+    .report-title,
+    .report-text,
+    .report-status,
+    .report-venue,
+    .report-room {
+        font-size: 1rem; /* Consistent font size for small screens */
+        margin-bottom: 8px; /* Space between stacked elements */
+    }
 }
