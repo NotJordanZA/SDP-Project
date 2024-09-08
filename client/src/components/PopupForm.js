@@ -4,15 +4,16 @@ import '../styles/PopupForm.css'; // Ensure your styles are correctly set
 const PopupForm = ({ isOpen, onClose }) => {
   // Define the state for the form
   const [formData, setFormData] = useState({
-    venueID: '',
+    venue: '',
+    roomNumber: '',
     reportType: '',
     reportText: '',
     photos: null,
   });
 
-  const venues = ['CLM132', 'FNB132', 'Solomon Mahlangu House132', 'WSS132', 'MSL132'];
+  const venues = ['CLM', 'FNB', 'Solomon Mahlangu House', 'WSS', 'MSL'];
+  const roomNumbers = ['100', '101', '102', '103', '104', '105'];
   const typesTypes = ['Equipment', 'Safety', 'Room Details', 'Other'];
-  const reportTexts = ['Broken projector', 'Slippery floor', 'Dirty whiteboard', 'Other'];
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -48,8 +49,8 @@ const PopupForm = ({ isOpen, onClose }) => {
             <label htmlFor="venue">Venue:</label>
             <select
               id="venue"
-              name="venueID"
-              value={formData.venueID}
+              name="venue"
+              value={formData.venue}
               onChange={handleInputChange}
               required
             >
@@ -57,6 +58,24 @@ const PopupForm = ({ isOpen, onClose }) => {
               {venues.map((venue) => (
                 <option key={venue} value={venue}>
                   {venue}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div className="form-group">
+            <label htmlFor="roomNumber">Room Number:</label>
+            <select
+              id="roomNumber"
+              name="roomNumber"
+              value={formData.roomNumber}
+              onChange={handleInputChange}
+              required
+            >
+              <option value="" disabled>Select a room number</option>
+              {roomNumbers.map((room) => (
+                <option key={room} value={room}>
+                  {room}
                 </option>
               ))}
             </select>
@@ -82,20 +101,15 @@ const PopupForm = ({ isOpen, onClose }) => {
 
           <div className="form-group">
             <label htmlFor="reportText">Report Text:</label>
-            <select
+            <input
+              type="text"
               id="reportText"
               name="reportText"
               value={formData.reportText}
               onChange={handleInputChange}
+              placeholder="Describe the issue"
               required
-            >
-              <option value="" disabled>Select a report</option>
-              {reportTexts.map((text) => (
-                <option key={text} value={text}>
-                  {text}
-                </option>
-              ))}
-            </select>
+            />
           </div>
 
           <div className="form-group">
