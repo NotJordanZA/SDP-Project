@@ -12,6 +12,7 @@ export default function Search({venueList, setVenueList }) {
     const [selectedCampusOption, setSelectedCampusOption] = useState("");
     const [selectedVenueTypeOption, setSelectedVenueTypeOption] = useState("");
     const [selectedClosureOption, setSelectedClosureOption] = useState("");
+    const [selectedCapacity, setSelectedCapacity] = useState(0);
 
     const searchVenue = () => {
         setVenueList(venueList.filter((venue) => venue.venueName.toLowerCase().includes(searchInput.toLowerCase())));
@@ -85,6 +86,10 @@ export default function Search({venueList, setVenueList }) {
                             className="capacity-slider"
                             thumbClassName="slider-thumb"
                             trackClassName="slider-track"
+                            min={0}
+                            max={500}
+                            value={selectedCapacity}
+                            onChange={setSelectedCapacity}
                         />
                     </div>
                 </div>
