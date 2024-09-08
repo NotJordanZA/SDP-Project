@@ -1,4 +1,4 @@
-const { getDoc, setDoc, updateDoc, doc, deleteDoc } = require('firebase/firestore');
+const { getDoc, setDoc, updateDoc, doc, deleteDoc, collection, query, where, getDocs } = require('firebase/firestore');
 const { initializeApp } = require('firebase/app');
 const { getFirestore } = require("firebase/firestore");
 const express = require("express");
@@ -185,6 +185,42 @@ app.post("/reports", async (req, res) => {
     } catch (error) {
         console.error("Error submitting report:", error);
         res.status(500).json({ error: "Failed to submit report" });
+    }
+});
+// Get reports API
+app.get("/reports", async (req, res) => {
+    const { venueID, roomNumber, reportType } = req.query;  // Extract query parameters
+
+    try {
+        const reportsQuery = collection(db, "Reports");
+        let queryRef = reportsQuery;
+
+        // Optional filters based on query parameters
+        if (venueID) {
+            queryRef = query(queryRef, where("venueID", "==", venueID));
+        }
+        if (roomNumber) {
+            queryRef = query(queryRef, where("roomNumber", "==", roomNumber));
+        }
+        if (reportType) {
+            queryRef = query(queryRef, where("reportType", "==", reportType));
+        }
+
+        // Execute the query
+        const querySnapshot = await getDocs(queryRef);
+        const reports = [];
+
+        querySnapshot.forEach((doc) => {
+            reports.push({
+                id: doc.id,
+                ...doc.data()
+            });
+        });
+
+        res.status(200).json(reports);
+    } catch (error) {
+        console.error("Error retrieving reports:", error);
+        res.status(500).json({ error: "Failed to retrieve reports" });
     }
 });
 

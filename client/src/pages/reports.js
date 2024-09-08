@@ -1,21 +1,29 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import '../styles/reports.css';
 import PopupForm from '../components/PopupForm';
+
 const Reports = () => {
     const [isPopupOpen, setIsPopupOpen] = useState(false);
+    const [reports, setReports] = useState([]);
 
     const togglePopup = () => {
         setIsPopupOpen(!isPopupOpen);
     };
 
-    // Mock data for My Reports
-    const mockReports = [
-        { id: 1, title: 'Report 1', date: '2024-08-01' },
-        { id: 2, title: 'Report 2', date: '2024-08-05' },
-        { id: 3, title: 'Report 3', date: '2024-08-10' },
-        { id: 4, title: 'Report 4', date: '2024-08-15' },
-        { id: 5, title: 'Report 5', date: '2024-08-20' }
-    ];
+    // Fetch reports from the API
+    useEffect(() => {
+        const fetchReports = async () => {
+            try {
+                const response = await fetch('/reports');  // Adjust the endpoint if necessary
+                const data = await response.json();
+                setReports(data); // Update the state with the fetched reports
+            } catch (error) {
+                console.error('Error fetching reports:', error);
+            }
+        };
+
+        fetchReports();
+    }, []);  // Empty dependency array to run only on mount
 
     return (
         <section className="report-page">
@@ -25,12 +33,19 @@ const Reports = () => {
             <div className="report-list">
                 <h2>My Reports</h2>
                 <ul>
-                    {mockReports.map(report => (
-                        <li key={report.id}>
-                            <span className="report-title">{report.title}</span>
-                            <span className="report-date">{report.date}</span>
-                        </li>
-                    ))}
+                    {reports.length > 0 ? (
+                        reports.map(report => (
+                            <li key={report.id}>
+                                <span className="report-title">{report.reportType}</span>
+                                <span className="report-text">{report.reportText}</span>
+                                <span className="report-status">{report.reportStatus}</span>
+                                <span className="report-venue">Venue: {report.venueID || report.venue}</span>
+                                <span className="report-room">Room: {report.roomNumber}</span>
+                            </li>
+                        ))
+                    ) : (
+                        <li>No reports available</li>
+                    )}
                 </ul>
             </div>
         </section>
