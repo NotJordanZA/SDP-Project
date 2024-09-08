@@ -5,7 +5,7 @@ import { auth } from "../firebase";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSquareCaretDown, faSquareCaretUp} from '@fortawesome/free-solid-svg-icons';
 
-function VenueRow({venueName, campus, venueType, venueCapacity, timeSlots, bookings, relevantDate, getCurrentDatesBookings}) {
+function VenueRow({venueName, campus, venueType, venueCapacity, timeSlots, isClosed, bookings, relevantDate, getCurrentDatesBookings}) {
 
     const user = auth.currentUser;
     
@@ -122,21 +122,36 @@ function VenueRow({venueName, campus, venueType, venueCapacity, timeSlots, booki
         );
     });
 
-    return(
-        <div className="venue-row-content" onClick={() => toggleBookingDates()}>
-            <div className="venue-row-main">
-                <h1 className="venue-row-text">{venueName}</h1>
+    const conditionalDropdown = (isClosed) => {
+        if (isClosed){
+            return(
+                <div className="closed-marker">
+                    CLOSED
+                </div>
+            )
+        }
+        else{
+            return(
                 <button className="expand-row-button" onClick={(e) => { 
                     e.stopPropagation(); // Prevents the event from bubbling up
                     toggleBookingDates(); // Correctly toggles the state
                 }}>
                     <FontAwesomeIcon
-                        icon={isOpen ? faSquareCaretUp : faSquareCaretDown} 
+                        icon={(isOpen && !isClosed) ? faSquareCaretUp : faSquareCaretDown} 
                         className="caret-icon"
                     />
                 </button>
+            )
+        }
+    }
+
+    return(
+        <div className="venue-row-content" onClick={() => toggleBookingDates()}>
+            <div className="venue-row-main">
+                <h1 className="venue-row-text">{venueName}</h1>
+                {conditionalDropdown(isClosed)}
             </div>
-            <div className={`popup ${isOpen ? "open" : "closed"}`}>
+            <div className={`popup ${(isOpen && !isClosed) ? "open" : "closed"}`}>
                 <div className="venue-info-container">
                     <div className="venue-info-text-category">
                         Campus: 

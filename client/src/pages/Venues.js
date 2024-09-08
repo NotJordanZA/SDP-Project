@@ -103,6 +103,7 @@ function Venues(){
           venueType={venue.venueType}
           venueCapacity={venue.venueCapacity}
           timeSlots={venue.timeSlots}
+          isClosed={venue.isClosed}
           bookings={matchingBookings}
           relevantDate={formattedDate}
           getCurrentDatesBookings={getCurrentDatesBookings}
