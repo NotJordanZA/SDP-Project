@@ -35,14 +35,15 @@ const PopupForm = ({ isOpen, onClose }) => {
     e.preventDefault();
 
     try {
-      // If needed, you can upload the photos to Firebase Storage, and store the file URL in Firestore.
+      // Concatenate venue and room number to form venueID
+      const venueID = `${formData.venue}${formData.roomNumber}`;
+
       const reportData = {
-        venue: formData.venue,
-        roomNumber: formData.roomNumber,
+        venueID, // This is now venue + roomNumber concatenated
         reportType: formData.reportType,
         reportText: formData.reportText,
-        createdAt: new Date().toISOString(),
-        // You can add more metadata as needed
+        reportStatus: 'pending', // Default value for reportStatus
+        resolutionLog: '', // Default value for resolutionLog
       };
 
       // Add the report to the "Reports" collection in Firestore
