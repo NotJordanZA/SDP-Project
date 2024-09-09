@@ -4,12 +4,14 @@
     text-shadow: 0 5px 5px rgba(0,0,0,.1);
     border: none;
     background: none;
+    cursor: pointer;
 }
 
 .date-button{
     font-size: 1.6rem;
     border: none;
     background: none;
+    cursor: pointer;
 }
 
 .date-content{
@@ -316,6 +318,11 @@
 
 .filter-dropdown {
   margin-right: 20px;
+}
+
+.filter-button-container{
+  margin-left: 20px;
+  padding-left: 20px;
 }
 
 .slider-text {

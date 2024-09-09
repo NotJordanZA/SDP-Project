@@ -11,22 +11,56 @@ export default function Search({venueList, setVenueList }) {
     const [isFilterOpen, setIsFilterOpen] = useState(false);
     const [selectedCampusOption, setSelectedCampusOption] = useState("");
     const [selectedVenueTypeOption, setSelectedVenueTypeOption] = useState("");
-    const [selectedClosureOption, setSelectedClosureOption] = useState("");
+    const [selectedClosureOption, setSelectedClosureOption] = useState(false);
     const [selectedCapacity, setSelectedCapacity] = useState(0);
 
     const searchVenue = () => {
         setVenueList(venueList.filter((venue) => venue.venueName.toLowerCase().includes(searchInput.toLowerCase())));
     }
 
+    const filterVenues = () => {
+        setVenueList(venueList.filter((venue) => {
+            var matchesCampus = false;
+            var matchesVenueType = false;
+            var matchesClosureStatus = false;
+            var matchesCapacity = false;
+
+            if (!selectedCampusOption){
+                matchesCampus = true;
+            }else{
+                matchesCampus = venue.campus.toLowerCase().includes(selectedCampusOption.value);
+            }
+            if (!selectedVenueTypeOption){
+                matchesVenueType = true;
+            }else{
+                matchesVenueType = venue.venueType.toLowerCase().includes(selectedVenueTypeOption.value);
+            }
+            if (!selectedClosureOption){
+                matchesClosureStatus = true;
+            }else{
+                if(venue.isClosed == selectedClosureOption){
+                    matchesClosureStatus = true;
+                }else{
+                    matchesClosureStatus = false;
+                }
+            }
+            if (!selectedCapacity){
+                matchesCapacity = true;
+            }else{
+                if(selectedCapacity<venue.venueCapacity){
+                    matchesCapacity = true;
+                }else{
+                    matchesCapacity = false;
+                }
+            }
+
+            return matchesCampus && matchesVenueType && matchesClosureStatus && matchesCapacity;
+        }));
+    }
+
     const handleInputChange = (event) => {
         setSearchInput(event.target.value);
     };
-
-    const handleCapacityChange = (event) => {
-        const newCapacityValue = event.target.value;
-        setSelectedCapacity(newCapacityValue);
-        console.log(selectedCapacity);
-    }
 
     const toggleFilterDropwdown = () => {
         setIsFilterOpen(!isFilterOpen);
@@ -38,7 +72,7 @@ export default function Search({venueList, setVenueList }) {
     ]
 
     const venueTypeOptions = [
-        {value:"lecture hall", label:"Lecture Hall"},
+        {value:"lecture venue", label:"Lecture Venue"},
         {value:"study room", label:"Study Room"},
         {value:"test venue", label:"Test Venue"},
         {value:"theatre", label:"Theatre"},
@@ -46,8 +80,8 @@ export default function Search({venueList, setVenueList }) {
     ]
 
     const closureOptions = [
-        {value:"open", label:"Open"},
-        {value:"closed", label:"Closed"}
+        {value:false, label:"Open"},
+        {value:true, label:"Closed"}
     ]
 
     return (
@@ -123,13 +157,16 @@ export default function Search({venueList, setVenueList }) {
                             thumbClassName="slider-thumb"
                             trackClassName="slider-track"
                             min={0}
-                            max={500}
+                            max={2000}
                             value={selectedCapacity}
                             onChange={setSelectedCapacity}
                         />
                         <p className="slider-text" >
                             {selectedCapacity}
                         </p>
+                    </div>
+                    <div className='filter-button-container'>
+                        <button className='book-button' onClick={filterVenues}>Filter</button>
                     </div>
                 </div>
             </div>
