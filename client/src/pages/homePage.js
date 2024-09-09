@@ -29,7 +29,7 @@ const HomePage = () => {
         <MainIcon iconClass="fa-solid fa-house icon-img" text="BOOK A VENUE" onClickFunction ={() =>reroute("/venues")}/>
         <MainIcon iconClass="fa-solid fa-calendar icon-img" text="VIEW CALENDAR" />
         <MainIcon iconClass="fa-solid fa-clipboard-check icon-img" text="MY BOOKINGS" />
-        <MainIcon iconClass="fa-solid fa-file-alt icon-img" text="FILE A REPORT" /> 
+        <MainIcon iconClass="fa-solid fa-file-alt icon-img" text="FILE A REPORT" onClickFunction ={() =>reroute("/reports")}/> 
     </article>
   );
 
