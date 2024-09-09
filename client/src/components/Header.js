@@ -1,6 +1,6 @@
 import React from 'react';
 import '../styles/Header.css'; // Ensure the correct path for your CSS
-import logo from '../assets/logoWhite.png'; // Adjust the path as needed
+import logo from './assets/logoWhite.png'; // Adjust the path as needed
 import { Outlet } from "react-router-dom";
 
 const Header = ({ title, toggleSidebar }) => {

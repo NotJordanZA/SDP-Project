@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import './BookVenue.css';
+import '../styles/BookVenue.css';
 
 function BookVenue() {
   const [selectedTime, setSelectedTime] = useState(null);
