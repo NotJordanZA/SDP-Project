@@ -682,3 +682,21 @@ app.get("/Reports/type/:reportType", async (req, res) => {
         res.status(500).json({ error: "Internal Server Error" });
     }
 });
+//Getting each report  type for Admin to filter reports by type
+app.get("/Reports/types", async (req, res) => {
+    try {
+      
+        const reportsCollectionRef = collection(db, 'Reports');
+        const snapshot = await getDocs(reportsCollectionRef);
+
+        //get unique report type
+        const allReportTypes = snapshot.docs.map(doc => doc.data().reportType);
+
+        const uniqueReportTypes = [...new Set(allReportTypes)];
+
+        res.status(200).json(uniqueReportTypes);
+    } catch (error) {
+        console.error("Error retrieving unique report types:", error);
+        res.status(500).json({ error: "Internal Server Error" });
+    }
+});
