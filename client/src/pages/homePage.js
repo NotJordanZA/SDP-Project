@@ -7,18 +7,18 @@ import { auth } from "../firebase";
 const HomePage = () => {
 
   const navigate = useNavigate();
-  // const user = auth.currentUser;
-  // useEffect(() => {
-  //   if (user === null) {
-  //     console.log(user);
-  //     navigate("/login");
-  //   }
-  // }, [user, navigate]); // Effect will run when the user or navigate changes
+  const user = auth.currentUser;
+  useEffect(() => {
+    if (user === null) {
+      console.log(user);
+      navigate("/login");
+    }
+  }, [user, navigate]); // Effect will run when the user or navigate changes
 
-  // if (user === null) {
-  //   // Optionally, return null or a loading indicator to avoid rendering content before navigation
-  //   return null;
-  // }
+  if (user === null) {
+    // Optionally, return null or a loading indicator to avoid rendering content before navigation
+    return null;
+  }
 
   const reroute = (path) => {
     navigate(path);
