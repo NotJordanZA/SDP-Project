@@ -22,6 +22,12 @@ export default function Search({venueList, setVenueList }) {
         setSearchInput(event.target.value);
     };
 
+    const handleCapacityChange = (event) => {
+        const newCapacityValue = event.target.value;
+        setSelectedCapacity(newCapacityValue);
+        console.log(selectedCapacity);
+    }
+
     const toggleFilterDropwdown = () => {
         setIsFilterOpen(!isFilterOpen);
     }
@@ -54,34 +60,64 @@ export default function Search({venueList, setVenueList }) {
                 </div>
                 <div className={`filter-dropdown ${isFilterOpen ? "open" : "closed"}`}>
                     <div className="filter-row">
-                        <p>Campus:</p>
+                        <p className="filter-text">Campus:</p>
                         <Select
                             defaultValue={selectedCampusOption}
                             onChange={setSelectedCampusOption}
                             options={campusOptions}
                             isClearable={true}
+                            styles={{
+                                control: (provided) => ({
+                                  ...provided,
+                                  marginRight: '20px',
+                                }),
+                                menu: (provided) => ({
+                                  ...provided,
+                                  zIndex: 9999, // Set z-index to a high value to ensure it's on top
+                                }),
+                            }}
                         />
                     </div>
                     <div className="filter-row">
-                        <p>Venue Type:</p>
+                        <p className="filter-text">Venue Type:</p>
                         <Select
                             defaultValue={selectedVenueTypeOption}
                             onChange={setSelectedVenueTypeOption}
                             options={venueTypeOptions}
                             isClearable={true}
+                            styles={{
+                                control: (provided) => ({
+                                  ...provided,
+                                  marginRight: '20px',
+                                }),
+                                menu: (provided) => ({
+                                  ...provided,
+                                  zIndex: 9999, // Set z-index to a high value to ensure it's on top
+                                }),
+                            }}
                         />
                     </div>
                     <div className="filter-row">
-                        <p>Closure Status:</p>
+                        <p className="filter-text">Closure Status:</p>
                         <Select
                             defaultValue={selectedClosureOption}
                             onChange={setSelectedClosureOption}
                             options={closureOptions}
                             isClearable={true}
+                            styles={{
+                                control: (provided) => ({
+                                  ...provided,
+                                  marginRight: '20px',
+                                }),
+                                menu: (provided) => ({
+                                  ...provided,
+                                  zIndex: 9999, // Set z-index to a high value to ensure it's on top
+                                }),
+                            }}
                         />
                     </div>
                     <div className="filter-row">
-                        <p>Capacity:</p>
+                        <p className="filter-text">Capacity:</p>
                         <ReactSlider
                             className="capacity-slider"
                             thumbClassName="slider-thumb"
@@ -91,6 +127,9 @@ export default function Search({venueList, setVenueList }) {
                             value={selectedCapacity}
                             onChange={setSelectedCapacity}
                         />
+                        <p className="slider-text" >
+                            {selectedCapacity}
+                        </p>
                     </div>
                 </div>
             </div>
