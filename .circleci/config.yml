@@ -9,9 +9,6 @@ jobs:
     steps:
       - checkout
       - run:
-          name: Navigate to client directory
-          command: cd client
-      - run:
           name: Install local dependencies
           command: npm install
           working_directory: client
@@ -26,9 +23,6 @@ jobs:
       - image: cimg/node:current
     steps:
       - checkout
-      - run:
-          name: Navigate to the Node.js project directory
-          command: cd client
       - run:
           name: Install local dependencies
           command: npm install
