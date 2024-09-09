@@ -1,6 +1,7 @@
 import { render, screen, fireEvent, waitFor} from '@testing-library/react';
 import { MemoryRouter } from "react-router-dom";
 import Login from '../pages/Login';
+import { addNewUser } from "../utils/addNewUserUtil";
 import * as router from 'react-router-dom';
 import { GoogleAuthProvider, signInWithPopup, getRedirectResult, signOut, deleteUser } from "firebase/auth";
 import { act } from 'react';
@@ -20,6 +21,10 @@ jest.mock('react-router-dom', () => ({
         signOut: jest.fn().mockResolvedValueOnce(),
         deleteUser: jest.fn().mockResolvedValueOnce(),
     //};
+  }));
+
+  jest.mock('../utils/addNewUserUtil', () => ({
+    addNewUser: jest.fn(),
   }));
   
   GoogleAuthProvider.credentialFromResult = jest.fn();
@@ -82,6 +87,13 @@ jest.mock('react-router-dom', () => ({
         await waitFor(() =>
             expect(signInWithPopup).toHaveBeenCalled()
         );
+        await waitFor(() => {
+            expect(addNewUser).toHaveBeenCalledWith(
+                'test@wits.ac.za',
+                'Test',
+                'User'
+            );
+        });
         // await waitFor(() => {
         //     expect(Login.prototype.addNewUser).toHaveBeenCalledWith(
         //         'Logintest@wits.ac.za',
@@ -96,8 +108,18 @@ jest.mock('react-router-dom', () => ({
 
     test("Login with non wits email", async () => {
         const user = {
-            email: "test@gmail.com",
             displayName: "Test User",
+            email: "test@gmail.com",
+            emailVerified: true,
+            isAnonymous: false,
+            //metadata: ,
+            metadata: null,
+            //metadata: Object { createdAt: "1725361949472", lastLoginAt: "1725361949472", lastSignInTime: "Tue, 03 Sep 2024 11:12:29 GMT"},
+            //multiFactor: ,
+            phoneNumber: null,
+            photoURL: "https://lh3.googleusercontent.com/a/ACg8ocJvTlfXalUHj1OlyHD7ZIGZmcxflSyEeg7uEugyYlU6S22H3nfg=s96-c",
+            providerId: "firebase",
+            uid: "qxmkjstnQKMvteZN8e69bErvB803",
         };
 
         signInWithPopup.mockResolvedValueOnce({

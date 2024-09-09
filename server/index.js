@@ -263,6 +263,74 @@ app.get("/bookings/findByField", async (req, res) => {
     }
 });
 
+// Submit a report API
+app.post("/reports", async (req, res) => {
+    const { venueID, roomNumber, reportType, reportText, photos } = req.body;
+
+    // Check that the necessary fields are provided
+    if (!venueID || !roomNumber || !reportType || !reportText) {
+        return res.status(400).json({ error: "All fields are required." });
+    }
+
+    // Create a new report document in the Reports collection
+    try {
+        const newReportRef = doc(collection(db, "Reports"));  // Generate a new document reference
+        const newReportData = {
+            venueID,
+            roomNumber,
+            reportType,
+            reportText,
+            reportStatus: "Pending",  // Default status
+            resolutionLog: "No action yet",  // Default resolution log
+            photos: photos || null,  // Handle photos if any
+            createdAt: new Date()  // Timestamp
+        };
+
+        // Add the new report to Firestore
+        await setDoc(newReportRef, newReportData);
+        res.status(201).json({ message: "Report submitted successfully" });
+    } catch (error) {
+        console.error("Error submitting report:", error);
+        res.status(500).json({ error: "Failed to submit report" });
+    }
+});
+
+// Get reports API
+app.get("/reports", async (req, res) => {
+    const { venueID, roomNumber, reportType } = req.query;  // Extract query parameters
+
+    try {
+        const reportsQuery = collection(db, "Reports");
+        let queryRef = reportsQuery;
+
+        // Optional filters based on query parameters
+        if (venueID) {
+            queryRef = query(queryRef, where("venueID", "==", venueID));
+        }
+        if (roomNumber) {
+            queryRef = query(queryRef, where("roomNumber", "==", roomNumber));
+        }
+        if (reportType) {
+            queryRef = query(queryRef, where("reportType", "==", reportType));
+        }
+
+        // Execute the query
+        const querySnapshot = await getDocs(queryRef);
+        const reports = [];
+
+        querySnapshot.forEach((doc) => {
+            reports.push({
+                id: doc.id,
+                ...doc.data()
+            });
+        });
+        res.status(200).json(reports);
+    } catch (error) {
+        console.error("Error retrieving reports:", error);
+        res.status(500).json({ error: "Failed to retrieve reports" });
+    }
+});
+
 
 //Prints to console the port of the server
 app.listen(PORT, () => {

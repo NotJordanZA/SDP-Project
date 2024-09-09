@@ -8,44 +8,43 @@
 }
 
 .app-header {
-  background-color: #043673; /* Background color */
-  color: white;              /* Text color */
-  padding: 0;                /* Remove all padding */
-  display: flex;             /* Flexbox for alignment */
-  align-items: center;       /* Center items vertically */
-  position: relative;        /* Relative positioning for the container */
-  height: 65px;
-  scrollbar-width: none;
-}
-
-.app-header h1 {
-  margin: 0;
-  font-size: 2rem;
-  flex-grow: 1;              /* Allow the title to grow and take available space */
-  text-align: center;        /* Center text in its flex item */
-  padding-left: 20px;        /* Add padding to align the title properly */
-}
-
-.logo {
-  height: 55px;              /* Adjust height as needed */
-  width: auto;               /* Maintain aspect ratio */
-}
-
-.icon-img {
-  color: white;               /* Icon color */
-  font-size: 1.5rem;          /* Adjust font size as needed */
-  cursor: pointer;            /* Pointer cursor on hover */
-  margin-left: 10px;          /* Margin to the left of the icon */
-  margin-right: 10px;         /* Margin to the right of the icon */
-  padding: 10px;              /* Padding around the icon */
-  transition: color 0.3s ease, transform 0.3s ease; /* Smooth transitions */
-}
-
-.icon-img:hover {
-  color: #f0f0f0;             /* Lighter color on hover */
-  transform: scale(1.1);      /* Slightly enlarge the icon on hover */
-}
-
-.icon-img:active {
-  transform: scale(0.95);     /* Slightly shrink the icon on click */
-}
+    background-color: #043673; /* Background color */
+    color: white;              /* Text color */
+    padding: 0;                /* Remove all padding */
+    display: flex;             /* Flexbox for alignment */
+    align-items: center;       /* Center items vertically */
+    position: relative;        /* Relative positioning for the container */
+    height: 65px;
+  }
+  
+  .app-header h1 {
+    margin: 0;
+    font-size: 2rem;
+    flex-grow: 1;              /* Allow the title to grow and take available space */
+    text-align: center;        /* Center text in its flex item */
+    padding-left: 20px;        /* Add padding to align the title properly */
+  }
+  
+  .logo {
+    height: 55px;              /* Adjust height as needed */
+    width: auto;               /* Maintain aspect ratio */
+  }
+  
+  .icon-img {
+    color: white;               /* Icon color */
+    font-size: 1.5rem;          /* Adjust font size as needed */
+    cursor: pointer;            /* Pointer cursor on hover */
+    margin-left: 10px;          /* Margin to the left of the icon */
+    margin-right: 10px;         /* Margin to the right of the icon */
+    padding: 10px;              /* Padding around the icon */
+    transition: color 0.3s ease, transform 0.3s ease; /* Smooth transitions */
+  }
+  
+  .icon-img:hover {
+    color: #f0f0f0;             /* Lighter color on hover */
+    transform: scale(1.1);      /* Slightly enlarge the icon on hover */
+  }
+  
+  .icon-img:active {
+    transform: scale(0.95);     /* Slightly shrink the icon on click */
+  }
