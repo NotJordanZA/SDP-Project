@@ -103,7 +103,7 @@ jest.mock('react-router-dom', () => ({
         // });
         //Login.prototype.addNewUser = originalAddNewUser
         
-        expect(navigate).toHaveBeenCalledWith("/temp");
+        expect(navigate).toHaveBeenCalledWith("/home");
     });
 
     test("Login with non wits email", async () => {

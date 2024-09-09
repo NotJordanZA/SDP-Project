@@ -16,7 +16,7 @@ jobs:
           name: Testing
           command: npm test -- --coverage
           working_directory: client
-      - coveralls/upload:
+      - coveralls/upload
 
   deploy:
     docker:
@@ -43,7 +43,7 @@ jobs:
           name: Deploy app to Firebase
           command: ./node_modules/.bin/firebase deploy --only hosting --token ${FIREBASE_TOKEN}
           working_directory: client
-      - coveralls/upload:
+      - coveralls/upload
 
 workflows:
   main-workflow:

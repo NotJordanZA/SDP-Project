@@ -83,7 +83,7 @@ function Login(){
         <main className="main-content">
           <img src={logo} alt="Logo" className="login-logo" />
           <button className="login-button" onClick={()=>signInWithGoogle()}>
-            Sign in with Google
+            Sign In with Google
           </button>
           <div className={`info-text ${loginFailed ? "open" : "closed"}`}>Please log in with valid Wits credentials.</div>
         </main>
