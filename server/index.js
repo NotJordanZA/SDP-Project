@@ -1,4 +1,4 @@
-const { getDoc, setDoc, updateDoc, doc, deleteDoc, collection, query, where, getDocs } = require('firebase/firestore');
+const { getDoc, setDoc, updateDoc, doc, deleteDoc, getDocs, collection, query, where } = require('firebase/firestore');
 const { initializeApp } = require('firebase/app');
 const { getFirestore } = require("firebase/firestore");
 const express = require("express");
@@ -37,8 +37,7 @@ app.get("/users/:userEmail", async (req, res) => {
         
         if (userDocData.exists()) {
             // Send the user data back as JSON
-            res.json(userDocData.data());
-            res.status(200).json({ message: "User fetched successfully" });
+            res.status(200).json(userDocData.data());
         } else {
             // Handle the case where the document does not exist
             res.status(404).json({ error: "User not found" });
@@ -156,6 +155,114 @@ app.delete("/users/:userEmail", async (req, res) => {
     }
 });
 
+// Get all venues
+app.get('/venues', async (req, res) => {
+    try {
+        const venuesSnapshot = await getDocs(collection(db, 'Venues'));
+        const venuesList = [];
+
+        venuesSnapshot.forEach(doc => {
+            venuesList.push({
+                id: doc.id,
+                ...doc.data()
+            });
+        });
+
+        res.status(200).json(venuesList);
+    } catch (error) {
+        console.error("Error getting venues:", error);
+        res.status(500).json({ error: "Internal Server Error" });
+    }
+});
+
+// POST - create Booking 
+app.post("/bookings/create", async (req, res) => {
+    const { venueBooker, venueID, bookingDate, bookingStartTime, bookingEndTime, bookingDescription } = req.body;
+
+    // make sure all the fields are entered 
+    if (!venueBooker || !venueID || !bookingDate || !bookingStartTime || !bookingEndTime || !bookingDescription) {
+        return res.status(400).json({ error: "All fields are required." });
+    }
+
+    try {
+        // adding a document to the Bookings collection
+        const newBookingRef = doc(db, 'Bookings', `${venueID}-${bookingDate}-${bookingStartTime}`);//the document name/id is the venueID with the date and start time of the bookings
+        const bookingData = {
+            venueBooker,
+            venueID,
+            bookingDate,
+            bookingStartTime,
+            bookingEndTime,
+            bookingDescription,
+           
+        };
+
+        // Save the booking data 
+        await setDoc(newBookingRef, bookingData);
+
+        // Returns the  ID of the newly created booking
+        res.status(200).json({ message: "Booking created successfully", bookingID: newBookingRef.id });
+    } catch (error) {
+        console.error("Error creating booking:", error);
+        res.status(500).json({ error: "Internal Server Error" });
+    }
+});
+
+// Get bookings by field API
+app.get("/bookings/findByField", async (req, res) => {
+    // Extract optional query parameters from the request
+    const { venueID, bookingDate, bookingEndTime, bookingStartTime, venueBooker, bookingDescription} = req.query;
+    const bookingsCollection = collection(db, "Bookings"); // Reference to the "Bookings" collection in Firestore
+
+    try {
+        // Start building the query
+        let bookingsQuery = bookingsCollection;
+
+        // Apply filters if query parameters are provided
+        if (venueID) {
+            bookingsQuery = query(bookingsQuery, where("venueID", "==", venueID));
+        }
+
+        if (bookingDate) {
+            bookingsQuery = query(bookingsQuery, where("bookingDate", "==", bookingDate));
+        }
+
+        if (bookingEndTime) {
+            bookingsQuery = query(bookingsQuery, where("bookingEndTime", "==", bookingEndTime));
+        }
+
+        if (bookingStartTime) {
+            bookingsQuery = query(bookingsQuery, where("bookingStartTime", "==", bookingStartTime));
+        }
+
+        if (venueBooker) {
+            bookingsQuery = query(bookingsQuery, where("venueBooker", "==", venueBooker));
+        }
+
+        if (bookingDescription) {
+            bookingsQuery = query(bookingsQuery, where("bookingDescription", "==", bookingDescription));
+        }
+
+        // Execute the query
+        const bookingsSnapshot = await getDocs(bookingsQuery);
+        const bookingsList = [];
+
+        // Iterate over each document and push it to the list
+        bookingsSnapshot.forEach((doc) => {
+            bookingsList.push({
+                id: doc.id,
+                ...doc.data()
+            });
+        });
+
+        // Send the filtered bookings as a JSON response
+        res.status(200).json(bookingsList);
+    } catch (error) {
+        console.error("Error getting bookings:", error);
+        res.status(500).json({ error: "Internal Server Error" });
+    }
+});
+
 // Submit a report API
 app.post("/reports", async (req, res) => {
     const { venueID, roomNumber, reportType, reportText, photos } = req.body;
@@ -187,6 +294,7 @@ app.post("/reports", async (req, res) => {
         res.status(500).json({ error: "Failed to submit report" });
     }
 });
+
 // Get reports API
 app.get("/reports", async (req, res) => {
     const { venueID, roomNumber, reportType } = req.query;  // Extract query parameters
@@ -216,7 +324,6 @@ app.get("/reports", async (req, res) => {
                 ...doc.data()
             });
         });
-
         res.status(200).json(reports);
     } catch (error) {
         console.error("Error retrieving reports:", error);
