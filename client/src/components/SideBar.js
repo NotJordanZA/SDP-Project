@@ -44,12 +44,16 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
 
   return (
     <nav className={`sidebar ${isOpen ? 'open' : ''}`}>
-      <button className="close-btn" onClick={toggleSidebar}>Close</button>
-      <button className="dashboard-btn" onClick={() => handleNavigation('/home')}>Dashboard</button>
-      <button className="venues-btn" onClick={() => handleNavigation('/venues')}>Venues</button>
-      <button className="reports-btn" onClick={() => handleNavigation('/reports')}>Reports</button>
-      <button className="logout-btn" onClick={handleLogout}>Logout</button> {}
-    </nav>
+      <section className='topSection'>
+        <button className="close-btn" onClick={toggleSidebar}>Close</button>
+      </section>
+      <section className='bottomSection'>
+        <button className="dashboard-btn" onClick={() => handleNavigation('/home')}>Dashboard</button>
+        <button className="venues-btn" onClick={() => handleNavigation('/venues')}>Venues</button>
+        <button className="reports-btn" onClick={() => handleNavigation('/reports')}>Reports</button>
+        <button className="logout-btn" onClick={handleLogout}>Logout</button> {}
+      </section>
+      </nav>
   );
 };
 
