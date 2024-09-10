@@ -26,19 +26,14 @@
 }
 
 .venue-row-content{
-    /* padding: 2px 20px 0 20px; */
     display: block;
     justify-content:center;
     align-items: center;
     flex-direction: column;
-    /* gap: 10px; */
     box-shadow: 0 2px 2px rgba(0,0,0,.1);
     background-color: #ffffff;
     border-radius: 10px;
     margin: 0px 10px 10px 10px;
-    /* width: 98%;
-    border-radius: 4px;
-    background-color: white; */
 }
 
 .venue-row-main{
@@ -48,18 +43,13 @@
     justify-content:space-between;
     align-items: center;
     flex-direction: row;
-    /* gap: 10px; */
-    /* width: 95%; */
 }
 
 .venue-row-text{
-  /* padding-left: 5px; */
   font-size: 1.2rem;
 }
 
 .closed-marker {
-  /* background-color: #a11515;
-  color: white; */
   background-color: #f0f0f0;
   color: grey;
   font-weight: bold;
@@ -94,7 +84,6 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  /* align-content: center; */
   margin-bottom: 10px;
   padding: 0px 20px;
 }
@@ -109,7 +98,6 @@
   border-radius: 10px;
   width: 100%;
   margin: 0px 10px 10px 10px;
-  /* transform: translateY(10px); */
 }
 
 .main-search-row {
@@ -121,10 +109,8 @@
 }
 
 .search-input {
-  /* font-family: Roboto; */
   background-color: #f0f0f0;
   color: black;
-  /* padding: 2px 5px; */
   border-radius: 20px;
   height: 40px;
   border: none;
@@ -192,7 +178,7 @@
 
 .calendar-popup.open {
   opacity: 1;
-  z-index: 999;
+  z-index: 9999;
 }
 
 .calendar-popup.closed {
@@ -215,6 +201,7 @@
   width: fit-content;
   border-radius: 4px;
   align-items: center;
+  cursor: pointer;
 }
   
 .book-button.shown {
@@ -260,6 +247,7 @@
   font-size: 2.4rem;
   border: none;
   background: none;
+  cursor: pointer;
 }
 
 .expand-row-button.shown {
@@ -278,6 +266,7 @@
   font-size: 2.2rem;
   border: none;
   background: none;
+  cursor: pointer;
 }
 
 .filter-dropdown {
@@ -379,9 +368,7 @@
 }
 
 .timeslot-button{
-  /* padding-top: 3px; */
   padding: 2px 5px;
-  /* padding-right: 30px; */
   background-color: #043673;
   color: white;
   font-size: 1.2rem;
@@ -408,12 +395,12 @@
 }
 
 .caret-icon {
-  transition: opacity 0.3s ease; /* Smooth transition for opacity */
+  transition: opacity 0.3s ease; 
   opacity: 1;
 }
 
 .expand-row-button:active .caret-icon {
-  opacity: 0; /* Fades out the icon when clicking */
+  opacity: 0; 
 }
 
 .timeslot-buttons-container{
@@ -425,18 +412,8 @@
 }
 
 @media screen and (max-width: 768px){
-  /* .calendar-popup {
-    transform: translate(-50%, -63%);
-  } */
-
-  /* .venue-row-main{
-    padding: 2px 10px 0 10px;
-  } */
 
   .timeslot-buttons-container{
-    /* justify-content: space-around;
-    width: auto;
-    margin-right: 20px; */
     align-items: center;
   }
 

@@ -1,10 +1,22 @@
 import React, { useState, useEffect } from 'react';
 import '../styles/reports.css';
 import PopupForm from '../components/PopupForm';
+import { useNavigate } from "react-router-dom";
+import { auth } from "../firebase";
 
 const Reports = () => {
     const [isPopupOpen, setIsPopupOpen] = useState(false);
     const [reports, setReports] = useState([]);
+    const user = auth.currentUser;
+
+    const navigate = useNavigate();
+    useEffect(() => {   // Reroutes user to /login if they are not logged in
+    if (user === null) {
+        console.log(user);
+        navigate("/login");
+    }
+    }, [user, navigate]); // Effect will run when the user or reroute changes
+
 
     const togglePopup = () => {
         setIsPopupOpen(!isPopupOpen);

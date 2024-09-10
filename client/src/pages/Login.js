@@ -1,7 +1,6 @@
 import { GoogleAuthProvider, signInWithPopup, getRedirectResult, signOut, deleteUser } from "firebase/auth";
 import { auth } from "../firebase";
 import { addNewUser } from "../utils/addNewUserUtil";
-import TextButton from "../components/styledButtons";
 import { useNavigate } from "react-router-dom";
 import '../styles/Login.css'
 import logo from '../assets/logoBlue.png';
@@ -29,9 +28,9 @@ function Login(){
             const isWitsEmail = USER_REGEX.test(email);
             if(isWitsEmail){
               let displayName = user.displayName;
-              let firstName = displayName.split(" ")[0];
-              let lastName = displayName.slice(displayName.indexOf(firstName) + firstName.length + 1);
-              addNewUser(email, firstName, lastName);
+              let firstName = displayName.split(" ")[0]; // Gets user's first name
+              let lastName = displayName.slice(displayName.indexOf(firstName) + firstName.length + 1); // Gets user's last name
+              addNewUser(email, firstName, lastName); // Calls the API to add new user to the database
               navigate("/home");
             }else{
               signOut(auth).then(() => {

@@ -1,0 +1,32 @@
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: center; /* Center content in the header */
+  background-color: #003366;
+  color:  #f0f0f0;
+  padding: 20px;
+  border-bottom-left-radius: 20px;
+  border-bottom-right-radius: 20px;
+  position: relative;
+}
+
+.hamburger {
+  font-size: 50px;
+  cursor: pointer;
+  position: absolute;
+  left: 20px; /* Position the hamburger on the left */
+}
+
+.header h1 {
+  margin: 0;
+  font-size: 24px;
+  font-weight: bold;
+  text-align: center; /* Center text */
+}
+
+.logo {
+  height: 100px;  /* Keep the logo larger */
+  width: auto;
+  position: absolute;
+  right: 20px; /* Position the logo on the right */
+}
