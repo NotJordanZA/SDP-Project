@@ -6,6 +6,7 @@ import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import Header from './components/Header';
 import HomePage from './pages/homePage';
 import Reports from './pages/reports';
+import SideBar from './components/SideBar'; 
 
 function App() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -13,18 +14,20 @@ function App() {
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
   };
+
   return (
     <Router>
-        <Routes>
-          <Route path= "/" element= {<Header title="Wits Venue Management" toggleSidebar={toggleSidebar} />}>
-            <Route path= "/login" element= {<Login/>}/>
-            <Route index element= {<Login/>}/>
-            <Route path= "*" element= {<Login/>}/>
-            <Route path= "/venues" element= {<Venues/>}/>
-            <Route path="/home" element= {<HomePage/>}/>
-            <Route path="/reports" element= {<Reports/>}/>
-          </Route>
-        </Routes>
+      <SideBar isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} /> {SideBar}
+      <Routes>
+        <Route path="/" element={<Header title="Wits Venue Management" toggleSidebar={toggleSidebar} />}>
+          <Route path="/login" element={<Login />} />
+          <Route index element={<Login />} />
+          <Route path="*" element={<Login />} />
+          <Route path="/venues" element={<Venues />} />
+          <Route path="/home" element={<HomePage />} />
+          <Route path="/reports" element={<Reports />} />
+        </Route>
+      </Routes>
     </Router>
   );
 }
