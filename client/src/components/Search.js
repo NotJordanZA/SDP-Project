@@ -100,7 +100,7 @@ export default function Search({venueList, setVenueList, bookingsList }) {
     ]
 
     const venueTypeOptions = [
-        {value:"lecture hall", label:"Lecture Hall"},
+        {value:"lecture venue", label:"Lecture Venue"},
         {value:"study room", label:"Study Room"},
         {value:"test venue", label:"Test Venue"},
         {value:"theatre", label:"Theatre"},

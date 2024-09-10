@@ -215,6 +215,7 @@
   width: fit-content;
   border-radius: 4px;
   align-items: center;
+  cursor: pointer;
 }
   
 .book-button.shown {

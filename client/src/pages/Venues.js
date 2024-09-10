@@ -22,6 +22,9 @@ function Venues(){
           const data = await response.json();
           if (response.ok) {
             console.log('Venues fetched successfully');
+            let sortedVenues = data.sort((a, b) => a.venueName.localeCompare(b.venueName));
+            setVenueList(sortedVenues);
+            setAllVenues(sortedVenues);
             setVenueList(data);
             setAllVenues(data);
           } else {
