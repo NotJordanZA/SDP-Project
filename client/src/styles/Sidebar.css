@@ -47,7 +47,8 @@ border-radius: 15px;
 .dashboard-btn,
 .venues-btn,
 .reports-btn,
-.logout-btn {
+.logout-btn,
+.admin-btn {
   display: inline-block; /* Makes the button only as wide as its content */
   margin: 10px 0; /* Optional margin to add space around the button */
   padding: 10px 20px; /* Adjust padding for space around text */

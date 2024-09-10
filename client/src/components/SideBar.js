@@ -51,6 +51,7 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
         <button className="dashboard-btn" onClick={() => handleNavigation('/home')}>Dashboard</button>
         <button className="venues-btn" onClick={() => handleNavigation('/venues')}>Venues</button>
         <button className="reports-btn" onClick={() => handleNavigation('/reports')}>Reports</button>
+        <button className="admin-btn" onClick={() => handleNavigation('/HomeAdmin')}>Admin Dashboard</button>
         <button className="logout-btn" onClick={handleLogout}>Logout</button> {}
       </section>
       </nav>
