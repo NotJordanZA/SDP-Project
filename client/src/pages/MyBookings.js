@@ -3,6 +3,7 @@ import { auth } from "../firebase";
 import { useState, useEffect } from "react";
 import '../styles/Bookings.css';
 import { useNavigate } from "react-router-dom";
+import { getCurrentUsersBookings } from "../utils/getCurrentUsersBookings";
 
 function MyBookings() {
     const [bookingsList, setBookingsList] = useState([]);
@@ -11,34 +12,15 @@ function MyBookings() {
     const navigate = useNavigate();
     useEffect(() => { // Reroutes user to /login if they are not logged in
     if (user === null) {
-        console.log(user);
         navigate("/login");
     }
     }, [user, navigate]); // Effect will run when the user or navigate changes
     
-    const currentUserEmail = user.email; // Gets current users email
-
-    const getCurrentUsersBookings = async () =>{ // Gets the bookings of the current user by their email
-        try{
-          const response = await fetch(`/bookings/findByField?venueBooker=${currentUserEmail}`, { // API call which GETs based on user email
-            method: 'GET',
-          });
-  
-          const data = await response.json();
-          if (response.ok) {
-            console.log('Bookings by ' + currentUserEmail +' fetched successfully');
-            setBookingsList(data); // Sets bookingList with API response
-          } else {
-            console.error('Error fetching bookings by ' + currentUserEmail +':', data.error); // Logs API error
-          }
-        } catch (error) {
-          console.log('Error:', error);
-        }
-    }
+    const currentUserEmail = user ? user.email : null; // Gets current user email if not null, otherwise sets it to null
 
     useEffect(() => {
         if(user){
-            getCurrentUsersBookings();// Gets the bookings of the current user by their email
+            getCurrentUsersBookings(currentUserEmail, setBookingsList);// Gets the bookings of the current user by their email
         }
       }, [user]);// Only runs if user is defined
 
@@ -55,9 +37,9 @@ function MyBookings() {
     });
 
     return(
-        <section className="booking-page">
-            <div className="booking-list">
-                <h2>My Bookings</h2>
+        <section className="booking-page" data-testid="booking-page">
+            <div className="booking-list" data-testid="booking-list">
+                <h2 data-testid="booking-heading">My Bookings</h2>
                 <ul>
                     {bookingComponents}
                 </ul>
