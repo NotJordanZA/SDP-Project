@@ -215,6 +215,7 @@
   width: fit-content;
   border-radius: 4px;
   align-items: center;
+  cursor: pointer;
 }
   
 .book-button.shown {
@@ -260,6 +261,7 @@
   font-size: 2.4rem;
   border: none;
   background: none;
+  cursor: pointer;
 }
 
 .expand-row-button.shown {
@@ -278,6 +280,7 @@
   font-size: 2.2rem;
   border: none;
   background: none;
+  cursor: pointer;
 }
 
 .filter-dropdown {

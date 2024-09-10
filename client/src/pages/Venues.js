@@ -25,6 +25,8 @@ function Venues(){
             let sortedVenues = data.sort((a, b) => a.venueName.localeCompare(b.venueName));
             setVenueList(sortedVenues);
             setAllVenues(sortedVenues);
+            setVenueList(data);
+            setAllVenues(data);
           } else {
             console.error('Error fetching venues:', data.error);
           }
@@ -117,7 +119,7 @@ function Venues(){
     return (
         <main>
             <DateHeader displayDate={displayDate} onDateChange={handleDateChange}/>
-            <Search venueList = {allVenues} setVenueList = {setVenueList}/>
+            <Search venueList = {allVenues} setVenueList = {setVenueList} bookingsList = {bookingsList}/>
             {venueComponents}
         </main>
     );
