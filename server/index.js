@@ -876,3 +876,105 @@ app.get("/Reports/types", async (req, res) => {
         res.status(500).json({ error: "Internal Server Error" });
     }
 });
+
+app.get("/Schedules", async (req, res) => {
+    try {
+        
+        const schedules = collection(db, 'Schedules');
+        const snapshot = await getDocs(schedules);
+        
+        const entry = snapshot.docs.map(doc => ({
+            id: doc.id,
+            ...doc.data()
+        }));
+ res.status(200).json({ entry });
+    } catch (error) {
+        console.error("Error retrieving Schedules:", error);
+        res.status(500).json({ error: "Internal Server Error" });
+    }
+});
+
+//POST- schedules , for reoccuring bookings
+app.get("/Schedules", async (req, res) => {
+    try {
+        
+        const schedules = collection(db, 'Schedules');
+        const snapshot = await getDocs(schedules);
+        
+        const entry = snapshot.docs.map(doc => ({
+            id: doc.id,
+            ...doc.data()
+        }));
+ res.status(200).json({ entry });
+    } catch (error) {
+        console.error("Error retrieving Schedules:", error);
+        res.status(500).json({ error: "Internal Server Error" });
+    }
+});
+
+
+
+app.post("/Schedules/create", async (req, res) => {
+    const { venueBooker, bookingDescription ,venueID, bookingDay, bookingStartTime, bookingEndTime} = req.body;
+
+    // make sure no fields are empty 
+    if (!venueBooker || !venueID || !bookingDay || !bookingStartTime || !bookingEndTime || !bookingDescription) {
+        return res.status(400).json({ error: "All fields are required." });
+    }
+
+    try {
+        // adding an entry to the Schedules collection
+        const newentry = doc(db, 'Schedules', `${venueID}-${bookingDay}-${bookingStartTime}`);//the document name/id is the venueID with the date and start time of the bookings
+        const bookingData = {
+            venueBooker,
+            venueID,
+            bookingDay,
+            bookingStartTime,
+            bookingEndTime,
+            bookingDescription,
+           
+        };
+        await setDoc(newentry, bookingData);
+
+        res.status(200).json({ message: "Schedule entry created successfully", sID: newentry.id });
+    } catch (error) {
+        console.error("Error making entry:", error);
+        res.status(500).json({ error: "Internal Server Error" });
+    }
+});
+
+
+
+app.put("/Schedules/:id", async (req, res) => {
+    const scheduleId = req.params.id;
+    const { venueBooker, venueID, bookingDay, bookingStartTime, bookingEndTime, bookingDescription } = req.body;
+
+    if (!venueBooker && !venueID && !bookingDay && !bookingStartTime && !bookingEndTime && !bookingDescription) {
+        return res.status(400).json({ error: "At least one field is required to update." });
+    }
+
+    try {
+    
+        const entrydoc = doc(db, 'Schedules', scheduleId);
+        const sDoc = await getDoc(entrydoc);
+
+        if (!sDoc.exists()) {
+            return res.status(404).json({ error: "Entry not found" });
+        }
+
+        const updates = {};
+        if (venueBooker) updates.venueBooker = venueBooker;
+        if (venueID) updates.venueID = venueID;
+        if (bookingDay) updates.bookingDay = bookingDay;
+        if (bookingStartTime) updates.bookingStartTime = bookingStartTime;
+        if (bookingEndTime) updates.bookingEndTime = bookingEndTime;
+        if (bookingDescription) updates.bookingDescription = bookingDescription;
+
+        //update the doc in Firestore
+        await updateDoc(entrydoc, updates);
+        res.status(200).json({ message: "Entry updated successfully", bookingID: scheduleId });
+    } catch (error) {
+        console.error("Error updating entry:", error.message);
+        res.status(500).json({ error: "Internal Server Error" });
+    }
+});
