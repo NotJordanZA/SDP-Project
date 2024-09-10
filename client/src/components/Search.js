@@ -5,13 +5,14 @@ import { useState } from "react";
 import ReactSlider from 'react-slider';
 import Select from 'react-select';
 
-export default function Search({venueList, setVenueList }) {
+export default function Search({venueList, setVenueList, bookingsList }) {
 
     const [searchInput, setSearchInput] = useState("");
     const [isFilterOpen, setIsFilterOpen] = useState(false);
     const [selectedCampusOption, setSelectedCampusOption] = useState("");
     const [selectedVenueTypeOption, setSelectedVenueTypeOption] = useState("");
     const [selectedClosureOption, setSelectedClosureOption] = useState(false);
+    const [selectedTimeOptions, setSelectedTimeOptions] = useState([]);
     const [selectedCapacity, setSelectedCapacity] = useState(0);
 
     const searchVenue = () => {
@@ -20,9 +21,11 @@ export default function Search({venueList, setVenueList }) {
 
     const filterVenues = () => {
         setVenueList(venueList.filter((venue) => {
+            const matchingBookings = bookingsList.filter(booking => booking.venueID === venue.venueName);
             var matchesCampus = false;
             var matchesVenueType = false;
             var matchesClosureStatus = false;
+            var matchesTime = false;
             var matchesCapacity = false;
 
             if (!selectedCampusOption){
@@ -35,10 +38,29 @@ export default function Search({venueList, setVenueList }) {
             }else{
                 matchesVenueType = venue.venueType.toLowerCase().includes(selectedVenueTypeOption.value);
             }
+            if(!selectedTimeOptions || selectedTimeOptions.length === 0){
+                matchesTime = true;
+            }else{
+                matchesTime = selectedTimeOptions.every(selectedTime => {
+                    const slotStart = new Date(`1970-01-01T${selectedTime.value}:00`); 
+                    const slotEnd = new Date(slotStart.getTime() + 45 * 60000);
+    
+                    // Check if the selected time does not overlap with any existing booking
+                    return !matchingBookings.some(booking => {
+                        const bookingStart = new Date(`1970-01-01T${booking.bookingStartTime}:00`);
+                        const bookingEnd = new Date(`1970-01-01T${booking.bookingEndTime}:00`);
+                        
+                        // Check for overlap
+                        return (slotStart >= bookingStart && slotStart < bookingEnd) || 
+                            (slotEnd > bookingStart && slotEnd <= bookingEnd) ||
+                            (slotStart <= bookingStart && slotEnd >= bookingEnd);
+                    });
+                });
+            }
             if (!selectedClosureOption){
                 matchesClosureStatus = true;
             }else{
-                if(venue.isClosed == selectedClosureOption){
+                if(venue.isClosed === selectedClosureOption.value){
                     matchesClosureStatus = true;
                 }else{
                     matchesClosureStatus = false;
@@ -54,13 +76,19 @@ export default function Search({venueList, setVenueList }) {
                 }
             }
 
-            return matchesCampus && matchesVenueType && matchesClosureStatus && matchesCapacity;
+            return matchesCampus && matchesVenueType && matchesClosureStatus && matchesTime && matchesCapacity;
         }));
     }
 
     const handleInputChange = (event) => {
         setSearchInput(event.target.value);
     };
+
+    const handleCapacityChange = (event) => {
+        const newCapacityValue = event.target.value;
+        setSelectedCapacity(newCapacityValue);
+        console.log(selectedCapacity);
+    }
 
     const toggleFilterDropwdown = () => {
         setIsFilterOpen(!isFilterOpen);
@@ -72,7 +100,7 @@ export default function Search({venueList, setVenueList }) {
     ]
 
     const venueTypeOptions = [
-        {value:"lecture venue", label:"Lecture Venue"},
+        {value:"lecture hall", label:"Lecture Hall"},
         {value:"study room", label:"Study Room"},
         {value:"test venue", label:"Test Venue"},
         {value:"theatre", label:"Theatre"},
@@ -82,6 +110,17 @@ export default function Search({venueList, setVenueList }) {
     const closureOptions = [
         {value:false, label:"Open"},
         {value:true, label:"Closed"}
+    ]
+
+    const timeOptions = [
+        {value:"08:00", label:"08:00"},
+        {value:"09:00", label:"09:00"},
+        {value:"10:15", label:"10:15"},
+        {value:"11:15", label:"11:15"},
+        {value:"12:30", label:"12:30"},
+        {value:"14:15", label:"14:15"},
+        {value:"15:15", label:"15:15"},
+        {value:"16:15", label:"16:15"},
     ]
 
     return (
@@ -138,6 +177,26 @@ export default function Search({venueList, setVenueList }) {
                             onChange={setSelectedClosureOption}
                             options={closureOptions}
                             isClearable={true}
+                            styles={{
+                                control: (provided) => ({
+                                  ...provided,
+                                  marginRight: '20px',
+                                }),
+                                menu: (provided) => ({
+                                  ...provided,
+                                  zIndex: 9999, // Set z-index to a high value to ensure it's on top
+                                }),
+                            }}
+                        />
+                    </div>
+                    <div className="filter-row">
+                        <p className="filter-text">Available Times:</p>
+                        <Select
+                            defaultValue={selectedTimeOptions}
+                            onChange={setSelectedTimeOptions}
+                            options={timeOptions}
+                            isClearable={true}
+                            isMulti={true}
                             styles={{
                                 control: (provided) => ({
                                   ...provided,
