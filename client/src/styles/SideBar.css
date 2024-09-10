@@ -1,0 +1,41 @@
+/* src/Styles/Sidebar.css */
+.sidebar {
+    width: 250px;
+    height: 100%;
+    position: fixed;
+    top: 0;
+    left: -250px; /* Initially hidden */
+    background-color: #f8f9fa;
+    overflow-x: hidden;
+    transition: all 0.3s ease;
+    padding-top: 20px;
+  }
+  
+  .sidebar.open {
+    left: 0; /* Moves sidebar into view */
+  }
+  
+  .close-btn {
+    margin-bottom: 10px;
+    padding: 10px;
+    background-color: #043673;
+    color: white;
+    border: none;
+    cursor: pointer;
+  }
+  
+  .dashboard-btn,
+  .notifications-btn,
+  .search-btn,
+  .logout-btn {
+    display: block;
+    margin: 10px 0;
+    padding: 10px;
+    background-color: #043673;
+    color: white;
+    border: none;
+    cursor: pointer;
+    width: 100%;
+    text-align: left;
+  }
+  
