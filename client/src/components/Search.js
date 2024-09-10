@@ -102,9 +102,11 @@ export default function Search({venueList, setVenueList, bookingsList }) {
     const venueTypeOptions = [
         {value:"lecture venue", label:"Lecture Venue"},
         {value:"study room", label:"Study Room"},
+        {value:"tutorial room", label:"Tutorial Room"},
         {value:"test venue", label:"Test Venue"},
         {value:"theatre", label:"Theatre"},
-        {value:"field", label:"Field"}
+        {value:"field", label:"Field"},
+        {value:"other", label:"Other"}
     ]
 
     const closureOptions = [
@@ -142,7 +144,9 @@ export default function Search({venueList, setVenueList, bookingsList }) {
                             styles={{
                                 control: (provided) => ({
                                   ...provided,
-                                  marginRight: '20px',
+                                  marginRight: '10px',
+                                  width: '200px',
+                                  textAlign: 'left',
                                 }),
                                 menu: (provided) => ({
                                   ...provided,
@@ -161,7 +165,9 @@ export default function Search({venueList, setVenueList, bookingsList }) {
                             styles={{
                                 control: (provided) => ({
                                   ...provided,
-                                  marginRight: '20px',
+                                  marginRight: '10px',
+                                  width: '200px',
+                                  textAlign: 'left',
                                 }),
                                 menu: (provided) => ({
                                   ...provided,
@@ -180,7 +186,9 @@ export default function Search({venueList, setVenueList, bookingsList }) {
                             styles={{
                                 control: (provided) => ({
                                   ...provided,
-                                  marginRight: '20px',
+                                  marginRight: '10px',
+                                  width: '200px',
+                                  textAlign: 'left',
                                 }),
                                 menu: (provided) => ({
                                   ...provided,
@@ -200,7 +208,9 @@ export default function Search({venueList, setVenueList, bookingsList }) {
                             styles={{
                                 control: (provided) => ({
                                   ...provided,
-                                  marginRight: '20px',
+                                  marginRight: '10px',
+                                  width: '200px',
+                                  textAlign: 'left',
                                 }),
                                 menu: (provided) => ({
                                   ...provided,
