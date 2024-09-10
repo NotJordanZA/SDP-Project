@@ -1,25 +1,24 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../styles/SideBar.css';
-import { auth } from '../firebase'; // Import Firebase auth module
-import { onAuthStateChanged, signOut } from 'firebase/auth'; // Import signOut from Firebase
+import { auth } from '../firebase'; 
+import { onAuthStateChanged, signOut } from 'firebase/auth'; 
 
 const Sidebar = ({ isOpen, toggleSidebar }) => {
-  const [user, setUser] = useState(null); // State to track user
+  const [user, setUser] = useState(null); 
+  const [adminDropdownOpen, setAdminDropdownOpen] = useState(false); 
   const navigate = useNavigate();
 
-  // Listen for changes to the authentication state
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       if (currentUser) {
         setUser(currentUser);
       } else {
         setUser(null);
-        navigate('/login'); // Redirect to login if no user
+        navigate('/login'); 
       }
     });
 
-    // Clean up the subscription when the component unmounts
     return () => unsubscribe();
   }, [navigate]);
 
@@ -33,13 +32,17 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
   };
 
   const handleLogout = () => {
-    signOut(auth)//Firebase signOut 
+    signOut(auth)
       .then(() => {
-        navigate('/login'); // Redirect to login after signing out
+        navigate('/login'); 
       })
       .catch((error) => {
         console.error('Error signing out: ', error);
       });
+  };
+
+  const toggleAdminDropdown = () => {
+    setAdminDropdownOpen(!adminDropdownOpen);
   };
 
   return (
@@ -51,10 +54,22 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
         <button className="dashboard-btn" onClick={() => handleNavigation('/home')}>Dashboard</button>
         <button className="venues-btn" onClick={() => handleNavigation('/venues')}>Venues</button>
         <button className="reports-btn" onClick={() => handleNavigation('/reports')}>Reports</button>
-        <button className="admin-btn" onClick={() => handleNavigation('/HomeAdmin')}>Admin Dashboard</button>
-        <button className="logout-btn" onClick={handleLogout}>Logout</button> {}
+        
+        {/* Admin Button with dropdown */}
+        <button className="admin-btn" onClick={toggleAdminDropdown}>Admin</button>
+
+        {/* Instead of conditional rendering, toggle the class to control visibility */}
+        <div className={`admin-subbuttons ${adminDropdownOpen ? 'open' : ''}`}>
+          <button className="sub-btn" onClick={() => handleNavigation('/HomeAdmin')}>Admin Dashboard</button>
+          <button className="sub-btn" onClick={() => handleNavigation('/manage-bookings')}>Manage Bookings</button>
+          <button className="sub-btn" onClick={() => handleNavigation('/manage-reports')}>Manage Reports</button>
+          <button className="sub-btn" onClick={() => handleNavigation('/manage-requests')}>Manage Requests</button>
+          <button className="sub-btn" onClick={() => handleNavigation('/manage-venues')}>Manage Venues</button>
+        </div>
+        
+        <button className="logout-btn" onClick={handleLogout}>Logout</button>
       </section>
-      </nav>
+    </nav>
   );
 };
 
