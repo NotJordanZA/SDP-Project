@@ -7,9 +7,6 @@ import { useNavigate } from "react-router-dom";
 
 const Header = ({ title, toggleSidebar }) => {
   let navigate = useNavigate();
-  const reroute = (path) => {
-    navigate(path);
-  }
 
   return (
     <main className="whole-page">

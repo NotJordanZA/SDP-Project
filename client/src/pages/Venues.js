@@ -1,9 +1,11 @@
 import DateHeader from "../components/DateHeader";
 import "../styles/Venues.css";
 import VenueRow from "../components/VenueRow";
-import CalendarPopup from "../components/CalendarPopup";
+// import CalendarPopup from "../components/CalendarPopup";
 import Search from "../components/Search";
 import { useState, useEffect } from "react";
+import { auth } from "../firebase";
+import { useNavigate } from "react-router-dom";
 
 function Venues(){
     const [allVenues, setAllVenues] = useState([]);
@@ -11,6 +13,16 @@ function Venues(){
     const [bookingsList, setBookingsList] = useState([]);
     const [displayDate, setDisplayDate] = useState(new Date());
     const [formattedDate, setFormattedDate] = useState('');
+    const user = auth.currentUser;
+
+    const navigate = useNavigate();
+    useEffect(() => { // Reroutes user to /login if they are not logged in
+    if (user === null) {
+        console.log(user);
+        navigate("/login");
+    }
+    }, [user, navigate]); // Effect will run when the user or reroute changes
+    
 
     const getAllVenues = async () =>{
         try{
