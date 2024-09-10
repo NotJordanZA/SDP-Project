@@ -12,34 +12,31 @@ jest.mock('react-router-dom', () => ({
     useNavigate: jest.fn(),
   }));
   
-  jest.mock("firebase/auth", () => ({
-    //return {
-        getAuth: jest.fn(),
-        GoogleAuthProvider: jest.fn(),
-        signInWithPopup: jest.fn(),
-        getRedirectResult: jest.fn(),
-        signOut: jest.fn().mockResolvedValueOnce(),
-        deleteUser: jest.fn().mockResolvedValueOnce(),
-    //};
-  }));
+jest.mock("firebase/auth", () => ({
+//return {
+    getAuth: jest.fn(),
+    GoogleAuthProvider: jest.fn(),
+    signInWithPopup: jest.fn(),
+    getRedirectResult: jest.fn(),
+    signOut: jest.fn().mockResolvedValueOnce(),
+    deleteUser: jest.fn().mockResolvedValueOnce(),
+//};
+}));
 
-  jest.mock('../utils/addNewUserUtil', () => ({
-    addNewUser: jest.fn(),
-  }));
-  
-  GoogleAuthProvider.credentialFromResult = jest.fn();
-  
-  const navigate = jest.fn();
-  //const addNewUser = jest.fn();
+jest.mock('../utils/addNewUserUtil', () => ({
+addNewUser: jest.fn(),
+}));
 
-  
-  describe("Login", () => {
+GoogleAuthProvider.credentialFromResult = jest.fn();
 
-    const originalAddNewUser = Login.prototype.addNewUser;
-    //Login.prototype.addNewUser = jest.fn();
+const navigate = jest.fn();
+//const addNewUser = jest.fn();
+
+
+describe("Login", () => {
 
     beforeEach(() => {
-      jest.spyOn(router, 'useNavigate').mockImplementation(() => navigate);
+        jest.spyOn(router, 'useNavigate').mockImplementation(() => navigate);
     })
     // beforeEach(() => {
     //     render(
@@ -48,9 +45,9 @@ jest.mock('react-router-dom', () => ({
     //         </MemoryRouter>
     //         );
     // });
-  
+
     afterEach(() => {
-      jest.clearAllMocks();
+        jest.clearAllMocks();
     });
 
     test('renders Login button', () => {
@@ -94,14 +91,6 @@ jest.mock('react-router-dom', () => ({
                 'User'
             );
         });
-        // await waitFor(() => {
-        //     expect(Login.prototype.addNewUser).toHaveBeenCalledWith(
-        //         'Logintest@wits.ac.za',
-        //         'Test',
-        //         'User'
-        //     );
-        // });
-        //Login.prototype.addNewUser = originalAddNewUser
         
         expect(navigate).toHaveBeenCalledWith("/home");
     });
@@ -156,4 +145,4 @@ jest.mock('react-router-dom', () => ({
             expect(deleteUser).toHaveBeenCalledWith(user)
         );
     });
-  });
+});

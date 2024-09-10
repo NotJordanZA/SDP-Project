@@ -4,6 +4,9 @@ import VenueRow from "../components/VenueRow";
 import CalendarPopup from "../components/CalendarPopup";
 import Search from "../components/Search";
 import { useState, useEffect } from "react";
+import { getAllVenues } from "../utils/getAllVenuesUtil";
+import { getCurrentDatesBookings } from "../utils/getCurrentDatesBookingsUtil";
+import { formatDate } from "../utils/formatDateUtil";
 
 function Venues(){
     const [allVenues, setAllVenues] = useState([]);
@@ -12,64 +15,8 @@ function Venues(){
     const [displayDate, setDisplayDate] = useState(new Date());
     const [formattedDate, setFormattedDate] = useState('');
 
-    const getAllVenues = async () =>{
-        try{
-          const response = await fetch(`/venues`, {
-            method: 'GET',
-            cache: 'no-store',
-          });
-  
-          const data = await response.json();
-          if (response.ok) {
-            console.log('Venues fetched successfully');
-            let sortedVenues = data.sort((a, b) => a.venueName.localeCompare(b.venueName));
-            setVenueList(sortedVenues);
-            setAllVenues(sortedVenues);
-            setVenueList(data);
-            setAllVenues(data);
-          } else {
-            console.error('Error fetching venues:', data.error);
-          }
-        } catch (error) {
-          console.log('Error:', error);
-        }
-    }
-
-    const getCurrentDatesBookings = async (bookingDate) =>{
-      try{
-        const response = await fetch(`/bookings/findByField?bookingDate=${bookingDate}`, {
-          method: 'GET',
-        });
-
-        const data = await response.json();
-        if (response.ok) {
-          console.log('Bookings on ' + bookingDate +' fetched successfully');
-          setBookingsList(data);
-          // console.log(data);
-        } else {
-          console.error('Error fetching bookings on ' + bookingDate +':', data.error);
-        }
-      } catch (error) {
-        console.log('Error:', error);
-      }
-    }
-
-    function formatDate(date) {
-      var d = new Date(date),
-          month = '' + (d.getMonth() + 1),
-          day = '' + (d.getDate()),
-          year = d.getFullYear();
-  
-      if (month.length < 2) 
-          month = '0' + month;
-      if (day.length < 2) 
-          day = '0' + day;
-  
-      return [year, month, day].join('-');
-    }
-
     useEffect(() => {
-      getAllVenues();
+      getAllVenues(setVenueList, setAllVenues);
     }, []);// Only runs on first load
 
     useEffect(() => {
@@ -80,7 +27,7 @@ function Venues(){
     useEffect(() => {
       // Call getCurrentDatesBookings when formattedDate changes
       if (formattedDate) {
-        getCurrentDatesBookings(formattedDate);
+        getCurrentDatesBookings(formattedDate, setBookingsList);
       }
     }, [formattedDate]); // Only runs when formattedDate changes
 
@@ -109,7 +56,6 @@ function Venues(){
           isClosed={venue.isClosed}
           bookings={matchingBookings}
           relevantDate={formattedDate}
-          getCurrentDatesBookings={getCurrentDatesBookings}
         />
       );
     });
@@ -118,9 +64,18 @@ function Venues(){
 
     return (
         <main>
-            <DateHeader displayDate={displayDate} onDateChange={handleDateChange}/>
-            <Search venueList = {allVenues} setVenueList = {setVenueList} bookingsList = {bookingsList}/>
-            {venueComponents}
+            <DateHeader displayDate={displayDate} onDateChange={handleDateChange} data-testid="date-header"/>
+            <Search venueList = {allVenues} setVenueList = {setVenueList} bookingsList = {bookingsList} data-testid="search"/>
+            {
+              venueComponents.length > 0 ? 
+                (
+                  <div data-testid="venue-list">
+                      {venueComponents}
+                  </div>
+                ):(
+                  <p data-testid="no-venues-message">No Venues Available</p>
+                )
+            }
         </main>
     );
 }
