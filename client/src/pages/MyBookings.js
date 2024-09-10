@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 
 function MyBookings() {
     const [bookingsList, setBookingsList] = useState([]);
-    const user = auth.currentUser;
+    const user = auth.currentUser; // Fetches current user
 
     const navigate = useNavigate();
     useEffect(() => { // Reroutes user to /login if they are not logged in
@@ -14,22 +14,22 @@ function MyBookings() {
         console.log(user);
         navigate("/login");
     }
-    }, [user, navigate]); // Effect will run when the user or reroute changes
+    }, [user, navigate]); // Effect will run when the user or navigate changes
     
-    const currentUserEmail = user.email;
+    const currentUserEmail = user.email; // Gets current users email
 
-    const getCurrentUsersBookings = async (bookingDate) =>{
+    const getCurrentUsersBookings = async () =>{ // Gets the bookings of the current user by their email
         try{
-          const response = await fetch(`/bookings/findByField?venueBooker=${currentUserEmail}`, {
+          const response = await fetch(`/bookings/findByField?venueBooker=${currentUserEmail}`, { // API call which GETs based on user email
             method: 'GET',
           });
   
           const data = await response.json();
           if (response.ok) {
             console.log('Bookings by ' + currentUserEmail +' fetched successfully');
-            setBookingsList(data);
+            setBookingsList(data); // Sets bookingList with API response
           } else {
-            console.error('Error fetching bookings by ' + currentUserEmail +':', data.error);
+            console.error('Error fetching bookings by ' + currentUserEmail +':', data.error); // Logs API error
           }
         } catch (error) {
           console.log('Error:', error);
@@ -38,12 +38,12 @@ function MyBookings() {
 
     useEffect(() => {
         if(user){
-            getCurrentUsersBookings();
+            getCurrentUsersBookings();// Gets the bookings of the current user by their email
         }
       }, [user]);// Only runs if user is defined
 
-    const bookingComponents = bookingsList.map((booking) => {
-        return (
+    const bookingComponents = bookingsList.map((booking) => { // Creates a list of the bookings to be displayed
+        return (                                              // Passes in booking information to BookingRow component
           <BookingRow
             key={booking.bookingDate}
             bookingDate={booking.bookingDate}

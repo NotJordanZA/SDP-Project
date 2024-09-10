@@ -1,11 +1,10 @@
 import Calendar from 'react-calendar';
-// import 'react-calendar/dist/Calendar.css';
 import "../styles/Venues.css";
 import "../styles/Calendars.css"
 
 function CalendarPopup({ onChange, value }){
-    const today = new Date();
-    const finalDayofYear = new Date((new Date().getFullYear().toString())+"-12-31");
+    const today = new Date(); // For setting the earliest day for booking to today
+    const finalDayofYear = new Date((new Date().getFullYear().toString())+"-12-31"); // For setting the latest day for booking to the final day of the year
     return (
         <div>
         <Calendar 

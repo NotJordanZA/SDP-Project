@@ -1,7 +1,6 @@
 import DateHeader from "../components/DateHeader";
 import "../styles/Venues.css";
 import VenueRow from "../components/VenueRow";
-// import CalendarPopup from "../components/CalendarPopup";
 import Search from "../components/Search";
 import { useState, useEffect } from "react";
 import { auth } from "../firebase";
@@ -18,55 +17,50 @@ function Venues(){
     const navigate = useNavigate();
     useEffect(() => { // Reroutes user to /login if they are not logged in
     if (user === null) {
-        console.log(user);
         navigate("/login");
     }
-    }, [user, navigate]); // Effect will run when the user or reroute changes
+    }, [user, navigate]); // Effect will run when the user or navigate changes
     
 
     const getAllVenues = async () =>{
         try{
-          const response = await fetch(`/venues`, {
+          const response = await fetch(`/venues`, { // API call to get all Venues from the database
             method: 'GET',
             cache: 'no-store',
           });
   
           const data = await response.json();
           if (response.ok) {
-            console.log('Venues fetched successfully');
-            let sortedVenues = data.sort((a, b) => a.venueName.localeCompare(b.venueName));
-            setVenueList(sortedVenues);
-            setAllVenues(sortedVenues);
-            setVenueList(data);
-            setAllVenues(data);
+            let sortedVenues = data.sort((a, b) => a.venueName.localeCompare(b.venueName)); // Sorts venues alphabetically
+            setVenueList(sortedVenues); // Sets venue list that is displayed and stores filtered/searched venues
+            setAllVenues(sortedVenues); // Sets a venue list that holds all venues so that venues are not lost after filtering
           } else {
-            console.error('Error fetching venues:', data.error);
+            console.error('Error fetching venues:', data.error); // Logs error
           }
         } catch (error) {
-          console.log('Error:', error);
+          console.error('Error:', error);
         }
     }
 
-    const getCurrentDatesBookings = async (bookingDate) =>{
+    const getCurrentDatesBookings = async (bookingDate) =>{ // Fetches bookings on the day selected on the page
       try{
-        const response = await fetch(`/bookings/findByField?bookingDate=${bookingDate}`, {
+        const response = await fetch(`/bookings/findByField?bookingDate=${bookingDate}`, { // Calls the API to get current days bookings
           method: 'GET',
         });
 
         const data = await response.json();
         if (response.ok) {
-          console.log('Bookings on ' + bookingDate +' fetched successfully');
-          setBookingsList(data);
-          // console.log(data);
+          // console.log('Bookings on ' + bookingDate +' fetched successfully');
+          setBookingsList(data); // Sets list with all of the days bookings
         } else {
-          console.error('Error fetching bookings on ' + bookingDate +':', data.error);
+          console.error('Error fetching bookings on ' + bookingDate +':', data.error); // Logs error
         }
       } catch (error) {
-        console.log('Error:', error);
+        console.error('Error:', error);
       }
     }
 
-    function formatDate(date) {
+    function formatDate(date) { // Formats the date to be in the format used in the database
       var d = new Date(date),
           month = '' + (d.getMonth() + 1),
           day = '' + (d.getDate()),
@@ -81,6 +75,7 @@ function Venues(){
     }
 
     useEffect(() => {
+      // Get all venues when page first loads
       getAllVenues();
     }, []);// Only runs on first load
 
@@ -96,15 +91,14 @@ function Venues(){
       }
     }, [formattedDate]); // Only runs when formattedDate changes
 
-    useEffect(() => {
-      console.log("Updated bookings list:", bookingsList);
-  }, [bookingsList]); // Runs whenever bookingsList changes
+  //   useEffect(() => {
+  //     console.log("Updated bookings list:", bookingsList);
+  // }, [bookingsList]); // Runs whenever bookingsList changes
 
-    const handleDateChange = (newDate) => {
+    const handleDateChange = (newDate) => { // Function for changing the selected date
       setDisplayDate(newDate);
     };
 
-    // const venueComponents = [];
     //Map the elements of venueList onto VenueRow components and add them to an array
     const venueComponents = venueList.map((venue) => {
       // Find all bookings for this venue
