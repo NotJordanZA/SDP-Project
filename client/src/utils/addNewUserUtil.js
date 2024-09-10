@@ -1,5 +1,3 @@
-
-
 export const addNewUser = async (userEmail, firstName, lastName) =>{
     let isStudent = true;// New users are Students by default
     let isLecturer = false;
