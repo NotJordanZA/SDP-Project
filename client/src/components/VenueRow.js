@@ -8,7 +8,7 @@ import { faSquareCaretDown, faSquareCaretUp} from '@fortawesome/free-solid-svg-i
 
 function VenueRow({venueName, campus, venueType, venueCapacity, timeSlots, isClosed, bookings, relevantDate}) {
 
-    // const user = auth.currentUser;
+    const user = auth.currentUser;
     
     const [isOpen, setIsOpen] = useState(false);
 
