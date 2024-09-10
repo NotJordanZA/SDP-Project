@@ -1,27 +1,45 @@
-// src/Components/Sidebar.js
-import React, { useEffect } from 'react';
-import { useNavigate } from 'react-router-dom'; // Importing useNavigate
-import '../styles/SideBar.css'; // Importing the sidebar styles
-import { auth } from '../firebase'; // Import the authentication module
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import '../styles/SideBar.css';
+import { auth } from '../firebase'; // Import Firebase auth module
+import { onAuthStateChanged, signOut } from 'firebase/auth'; // Import signOut from Firebase
 
 const Sidebar = ({ isOpen, toggleSidebar }) => {
+  const [user, setUser] = useState(null); // State to track user
   const navigate = useNavigate();
-  const user = auth.currentUser;
 
+  // Listen for changes to the authentication state
   useEffect(() => {
-    if (user === null) {
-      navigate("/login");
-    }
-  }, [user, navigate]);
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      if (currentUser) {
+        setUser(currentUser);
+      } else {
+        setUser(null);
+        navigate('/login'); // Redirect to login if no user
+      }
+    });
+
+    // Clean up the subscription when the component unmounts
+    return () => unsubscribe();
+  }, [navigate]);
 
   if (user === null) {
-    // Optionally, return null or a loading indicator to avoid rendering content before navigation
     return null;
   }
 
   const handleNavigation = (path) => {
-    navigate(path); // Redirect to the specified route
-    toggleSidebar(); // Close the sidebar after navigating
+    navigate(path); 
+    toggleSidebar(); 
+  };
+
+  const handleLogout = () => {
+    signOut(auth)//Firebase signOut 
+      .then(() => {
+        navigate('/login'); // Redirect to login after signing out
+      })
+      .catch((error) => {
+        console.error('Error signing out: ', error);
+      });
   };
 
   return (
@@ -30,7 +48,7 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
       <button className="dashboard-btn" onClick={() => handleNavigation('/home')}>Dashboard</button>
       <button className="venues-btn" onClick={() => handleNavigation('/venues')}>Venues</button>
       <button className="reports-btn" onClick={() => handleNavigation('/reports')}>Reports</button>
-      <button className="logout-btn" onClick={() => handleNavigation('/login')}>Logout</button>
+      <button className="logout-btn" onClick={handleLogout}>Logout</button> {}
     </nav>
   );
 };
