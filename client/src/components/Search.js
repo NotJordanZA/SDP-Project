@@ -5,7 +5,7 @@ import { useState } from "react";
 import ReactSlider from 'react-slider';
 import Select from 'react-select';
 
-export default function Search({venueList, setVenueList, bookingsList, ...props }) {
+export default function Search({venueList, setVenueList, bookingsList, ...props }) { //A function for searching and filtering venues
 
     const [searchInput, setSearchInput] = useState("");
     const [isFilterOpen, setIsFilterOpen] = useState(false);
@@ -15,40 +15,40 @@ export default function Search({venueList, setVenueList, bookingsList, ...props 
     const [selectedTimeOptions, setSelectedTimeOptions] = useState([]);
     const [selectedCapacity, setSelectedCapacity] = useState(0);
 
-    const searchVenue = () => {
+    const searchVenue = () => { // Returns all venues with names that match the user's search, ignoring case
         setVenueList(venueList.filter((venue) => venue.venueName.toLowerCase().includes(searchInput.toLowerCase())));
     }
 
-    const filterVenues = () => {
+    const filterVenues = () => { // Returns all venues with fields that match the filter conditions selected by the user
         setVenueList(venueList.filter((venue) => {
-            const matchingBookings = bookingsList.filter(booking => booking.venueID === venue.venueName);
+            const matchingBookings = bookingsList.filter(booking => booking.venueID === venue.venueName); // Gets bookings for current venue
             var matchesCampus = false;
             var matchesVenueType = false;
             var matchesClosureStatus = false;
             var matchesTime = false;
             var matchesCapacity = false;
 
-            if (!selectedCampusOption){
+            if (!selectedCampusOption){ // If nothing is entered this field is true so that it is not considered in filter
                 matchesCampus = true;
-            }else{
+            }else{ // Checks that the campus matches what the user selected
                 matchesCampus = venue.campus.toLowerCase().includes(selectedCampusOption.value);
             }
-            if (!selectedVenueTypeOption){
+            if (!selectedVenueTypeOption){ // If nothing is entered this field is true so that it is not considered in filter
                 matchesVenueType = true;
-            }else{
+            }else{ // Checks that the Venue Type matches what the user selected
                 matchesVenueType = venue.venueType.toLowerCase().includes(selectedVenueTypeOption.value);
             }
-            if(!selectedTimeOptions || selectedTimeOptions.length === 0){
+            if(!selectedTimeOptions || selectedTimeOptions.length === 0){ // If nothing is entered this field is true so that it is not considered in filter
                 matchesTime = true;
-            }else{
+            }else{ // Checks whether the times selected by the user are available at this venue
                 matchesTime = selectedTimeOptions.every(selectedTime => {
-                    const slotStart = new Date(`1970-01-01T${selectedTime.value}:00`); 
-                    const slotEnd = new Date(slotStart.getTime() + 45 * 60000);
+                    const slotStart = new Date(`1970-01-01T${selectedTime.value}:00`);  // Convert to Date for easier comparisions
+                    const slotEnd = new Date(slotStart.getTime() + 45 * 60000); // Get the ending time of the slot
     
                     // Check if the selected time does not overlap with any existing booking
                     return !matchingBookings.some(booking => {
-                        const bookingStart = new Date(`1970-01-01T${booking.bookingStartTime}:00`);
-                        const bookingEnd = new Date(`1970-01-01T${booking.bookingEndTime}:00`);
+                        const bookingStart = new Date(`1970-01-01T${booking.bookingStartTime}:00`); //Convert to Date for easier comparisions
+                        const bookingEnd = new Date(`1970-01-01T${booking.bookingEndTime}:00`); //Convert to Date for easier comparisions
                         
                         // Check for overlap
                         return (slotStart >= bookingStart && slotStart < bookingEnd) || 
@@ -57,49 +57,39 @@ export default function Search({venueList, setVenueList, bookingsList, ...props 
                     });
                 });
             }
-            if (!selectedClosureOption){
+            if (!selectedClosureOption){ // If nothing is entered this field is true so that it is not considered in filter
                 matchesClosureStatus = true;
             }else{
-                if(venue.isClosed === selectedClosureOption.value){
+                if(venue.isClosed === selectedClosureOption.value){ // Checks that the Closure Status matches what the user selected
                     matchesClosureStatus = true;
-                }else{
-                    matchesClosureStatus = false;
                 }
             }
-            if (!selectedCapacity){
+            if (!selectedCapacity){ // If nothing is entered this field is true so that it is not considered in filter
                 matchesCapacity = true;
             }else{
-                if(selectedCapacity<venue.venueCapacity){
+                if(selectedCapacity<venue.venueCapacity){ // Checks that the capacity of the venue is equal or greater than what the user selected
                     matchesCapacity = true;
-                }else{
-                    matchesCapacity = false;
                 }
             }
 
-            return matchesCampus && matchesVenueType && matchesClosureStatus && matchesTime && matchesCapacity;
+            return matchesCampus && matchesVenueType && matchesClosureStatus && matchesTime && matchesCapacity; // Checks that all fields are satisfied
         }));
     }
 
-    const handleInputChange = (event) => {
+    const handleInputChange = (event) => { // For when the input in the search bar changes
         setSearchInput(event.target.value);
     };
 
-    const handleCapacityChange = (event) => {
-        const newCapacityValue = event.target.value;
-        setSelectedCapacity(newCapacityValue);
-        console.log(selectedCapacity);
-    }
-
-    const toggleFilterDropwdown = () => {
+    const toggleFilterDropwdown = () => { // Sets the state of the filter dropdown
         setIsFilterOpen(!isFilterOpen);
     }
 
-    const campusOptions = [
+    const campusOptions = [ //All options for campus
         {value:"east", label:"East Campus"},
         {value:"west", label:"West Campus"}
     ]
 
-    const venueTypeOptions = [
+    const venueTypeOptions = [ //All options for venue type
         {value:"lecture venue", label:"Lecture Venue"},
         {value:"study room", label:"Study Room"},
         {value:"test venue", label:"Test Venue"},
@@ -107,12 +97,12 @@ export default function Search({venueList, setVenueList, bookingsList, ...props 
         {value:"field", label:"Field"}
     ]
 
-    const closureOptions = [
+    const closureOptions = [ //All options for closure status
         {value:false, label:"Open"},
         {value:true, label:"Closed"}
     ]
 
-    const timeOptions = [
+    const timeOptions = [ //All time slot options
         {value:"08:00", label:"08:00"},
         {value:"09:00", label:"09:00"},
         {value:"10:15", label:"10:15"},
@@ -131,7 +121,7 @@ export default function Search({venueList, setVenueList, bookingsList, ...props 
                     <button className="search-row-button" onClick = {searchVenue}><FontAwesomeIcon icon={faSearch}/></button>
                     <button className="search-row-button" onClick = {toggleFilterDropwdown}><FontAwesomeIcon icon={faSliders}/></button>
                 </div>
-                <div className={`filter-dropdown ${isFilterOpen ? "open" : "closed"}`}>
+                <div className={`filter-dropdown ${isFilterOpen ? "open" : "closed"}`}>{/* Conditional rendering for filter optoins */}
                     <div className="filter-row">
                         <p className="filter-text">Campus:</p>
                         <Select

@@ -1,0 +1,59 @@
+.admin-request-page {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    height: 100vh;
+    padding: 20px;
+    background-color: #f0f4f9;
+}
+
+.admin-request-list {
+    width: 100%;
+    max-width: 1200px;
+    margin-top: 20px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    overflow-y: auto;
+    max-height: 70vh;
+}
+
+.admin-request-list h2 {
+    font-size: 1.6rem;
+    color: #003d7d;
+    padding: 15px 20px;
+    background-color: #e6f0ff;
+    margin: 0;
+    border-bottom: 1px solid #ddd;
+}
+
+.admin-request-list ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+.admin-request-list-entry {
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    border-bottom: 1px solid #ddd;
+    transition: background-color 0.3s ease;
+}
+
+.admin-request-list-entry:hover {
+    background-color: #f1f1f1;
+}
+
+/* Report details styling */
+.admin-request-status {
+    font-size: 1rem;
+    color: #007BFF;
+    margin-bottom: 5px;
+}
+
+.admin-request-description {
+    font-size: 1rem;
+    color: #666;
+}

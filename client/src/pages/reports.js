@@ -1,10 +1,23 @@
 import React, { useState, useEffect } from 'react';
 import '../styles/reports.css';
 import PopupForm from '../components/PopupForm';
+import { useNavigate } from "react-router-dom";
+import { auth } from "../firebase";
 
 const Reports = () => {
     const [isPopupOpen, setIsPopupOpen] = useState(false);
     const [reports, setReports] = useState([]);
+    const user = auth.currentUser;
+    let email = user.email;
+    const navigate = useNavigate();
+
+    useEffect(() => {   
+        // Reroutes user to /login if they are not logged in
+        if (user === null) {
+            console.log(user);
+            navigate("/login");
+        }
+    }, [user, navigate]);
 
     const togglePopup = () => {
         setIsPopupOpen(!isPopupOpen);
@@ -34,14 +47,16 @@ const Reports = () => {
                 <h2>My Reports</h2>
                 <ul>
                     {reports.length > 0 ? (
-                        reports.map(report => (
-                            <li key={report.id}>
-                                <span className="report-title">{report.reportType}</span>
-                                <span className="report-text">{report.reportText}</span>
-                                <span className="report-status">{report.reportStatus}</span>
-                                <span className="report-venue">Venue: {report.venueID || report.venue}</span>
-                            </li>
-                        ))
+                        reports
+                            .filter(report => report.createdBy === email)  // Filter reports by createdBy field
+                            .map(report => (
+                                <li key={report.id}>
+                                    <span className="report-title">{report.reportType}</span>
+                                    <span className="report-text">{report.reportText}</span>
+                                    <span className="report-status">{report.reportStatus}</span>
+                                    <span className="report-venue">Venue: {report.venueID || report.venue}</span>
+                                </li>
+                            ))
                     ) : (
                         <li>No reports available</li>
                     )}
