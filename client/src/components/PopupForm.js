@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { collection, addDoc } from 'firebase/firestore';
 import { db } from '../firebase'; // Ensure correct path to your firebase.js
 import '../styles/PopupForm.css';
@@ -12,10 +12,13 @@ const PopupForm = ({ isOpen, onClose }) => {
     reportText: '',
     photos: null,
   });
+
+  const [venues, setVenues] = useState([]); // State to store all venue data
+  const [filteredRooms, setFilteredRooms] = useState([]); // Initialize as an empty array
+  
   const user = auth.currentUser;
   let email = user.email;
-  const venues = ['CLM', 'FNB', 'Solomon Mahlangu House', 'WSS', 'MSL'];
-  const roomNumbers = ['100', '101', '102', '103', '104', '105'];
+
   const typesTypes = ['Equipment', 'Safety', 'Room Details', 'Other'];
 
   const handleInputChange = (e) => {
@@ -32,6 +35,46 @@ const PopupForm = ({ isOpen, onClose }) => {
       photos: e.target.files[0], // Assuming single file upload for simplicity
     }));
   };
+
+  // Fetch all venues from the API
+  const getAllVenues = async () => {
+    try {
+      const response = await fetch('/venues', { // API call to get all Venues from the database
+        method: 'GET',
+        cache: 'no-store',
+      });
+
+      const data = await response.json();
+      if (response.ok) {
+        setVenues(data);
+        console.log(data);
+         // Store the venue data in state
+      } else {
+        console.error('Error fetching venues:', data.error); // Logs error
+      }
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  };
+
+// Filter room numbers based on selected building name (venue)
+useEffect(() => {
+  if (formData.venue) {
+    // Filter venues that match the selected buildingName
+    const matchingRooms = venues
+      .filter(v => v.buildingName === formData.venue)
+      .map(v => v.venueName); // Get the venueName which represents the room
+
+    setFilteredRooms(matchingRooms); // Set filtered rooms based on the venue selection
+  } else {
+    setFilteredRooms([]); // Reset if no venue is selected
+  }
+}, [formData.venue, venues]);
+
+  useEffect(() => {
+    // Get all venues when page first loads
+    getAllVenues();
+  }, []); // Only runs on first load
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -80,30 +123,34 @@ const PopupForm = ({ isOpen, onClose }) => {
             >
               <option value="" disabled>Select a venue</option>
               {venues.map((venue) => (
-                <option key={venue} value={venue}>
-                  {venue}
+                <option key={venue.buildingName} value={venue.buildingName}>
+                  {venue.buildingName}
                 </option>
               ))}
             </select>
           </div>
 
           <div className="form-group">
-            <label htmlFor="roomNumber">Room Number:</label>
-            <select
-              id="roomNumber"
-              name="roomNumber"
-              value={formData.roomNumber}
-              onChange={handleInputChange}
-              required
-            >
-              <option value="" disabled>Select a room number</option>
-              {roomNumbers.map((room) => (
-                <option key={room} value={room}>
-                  {room}
-                </option>
-              ))}
-            </select>
-          </div>
+  <label htmlFor="roomNumber">Room Number:</label>
+  <select
+    id="roomNumber"
+    name="roomNumber"
+    value={formData.roomNumber}
+    onChange={handleInputChange}
+    required
+  >
+    <option value="" disabled>Select a room number</option>
+    {Array.isArray(filteredRooms) && filteredRooms.length > 0 ? (
+      filteredRooms.map((room) => (
+        <option key={room} value={room}>
+          {room}
+        </option>
+      ))
+    ) : (
+      <option value="" disabled>No rooms available</option>
+    )}
+  </select>
+</div>
 
           <div className="form-group">
             <label htmlFor="concernType">Type of Concern:</label>
