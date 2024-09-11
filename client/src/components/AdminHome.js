@@ -7,7 +7,7 @@ import CalendarAdmin from '../assets/CalendarAdmin.svg';
 import AdminReport from '../assets/AdminReport.svg';
 import question from '../assets/Question.svg';
 import venue from '../assets/Venue.svg';
-function AdminHome() {
+function HomeAdmin() {
   const navigate = useNavigate();
 
   return (
@@ -32,4 +32,4 @@ function AdminHome() {
   );
 }
 
-export default AdminHome;
+export default HomeAdmin;
