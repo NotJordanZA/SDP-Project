@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { collection, addDoc } from 'firebase/firestore';
 import { db } from '../firebase'; // Ensure correct path to your firebase.js
 import '../styles/PopupForm.css';
+import { auth } from "../firebase";
 
 const PopupForm = ({ isOpen, onClose }) => {
   const [formData, setFormData] = useState({
@@ -11,7 +12,8 @@ const PopupForm = ({ isOpen, onClose }) => {
     reportText: '',
     photos: null,
   });
-
+  const user = auth.currentUser;
+  let email = user.email;
   const venues = ['CLM', 'FNB', 'Solomon Mahlangu House', 'WSS', 'MSL'];
   const roomNumbers = ['100', '101', '102', '103', '104', '105'];
   const typesTypes = ['Equipment', 'Safety', 'Room Details', 'Other'];
@@ -44,6 +46,7 @@ const PopupForm = ({ isOpen, onClose }) => {
         reportText: formData.reportText,
         reportStatus: 'pending', // Default value for reportStatus
         resolutionLog: '', // Default value for resolutionLog
+        createdBy: email, // Add the email of the logged-in user
       };
 
       // Add the report to the "Reports" collection in Firestore
