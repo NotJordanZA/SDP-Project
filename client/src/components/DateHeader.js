@@ -35,7 +35,7 @@ function DateHeader( {displayDate, onDateChange, ...props} ){
             <div className="date-content">
                 <button className="arrow-button" onClick={() => handleDateChange(false)}><FontAwesomeIcon icon={faCaretLeft} /></button>
                 <button className="date-button"  onClick = {toggleCalendar}>{displayDate.toDateString()}</button>
-                <button className="arrow-button" onClick={() => handleDateChange(true)}><FontAwesomeIcon icon={faCaretRight} /></button>
+                <button className="arrow-button" data-testid = 'right-arrow-button' onClick={() => handleDateChange(true)}><FontAwesomeIcon icon={faCaretRight} /></button>
             </div>
             <div className={`calendar-popup ${isOpen ? "open" : "closed"}`}>
                 <CalendarPopup

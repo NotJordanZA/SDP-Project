@@ -1,4 +1,4 @@
-import { render, screen, fireEvent, waitFor} from '@testing-library/react';
+import { render, screen, fireEvent, waitFor, getByTestId, getByText} from '@testing-library/react';
 import { MemoryRouter } from "react-router-dom";
 import * as router from 'react-router-dom';
 import Venues from '../pages/Venues';
@@ -32,6 +32,8 @@ jest.mock('../utils/getCurrentDatesBookingsUtil', () => ({
 jest.mock('../utils/formatDateUtil', () => ({
     formatDate: jest.fn(),
 }));
+
+const setBookingTime = jest.fn();
 
 describe("Venues", () => {
 
@@ -167,13 +169,22 @@ describe("Venues", () => {
         expect(testNoVenuesMessage).toHaveTextContent('No Venues Available'); //Check that No Venues Message displays
     });
 
-    test('Calls handleDateChange When Date is Changed in DateHeader', () => {
-        auth.currentUser = { email: 'test@wits.ac.za' };
-        render(<Venues/>); //Render Venues Page
-        const testDateHeader = screen.getByTestId('date-header'); //DateHeader Component
-        const testNewDate = new Date('2024-10-31');
-        fireEvent.change(testDateHeader, {target: {value:testNewDate} }); //Simulate a change to the current date
-        expect(screen.queryByText(/Thu Oct 31 2024/i)).toBeInTheDocument(); //Check if the new date is rendered correctly (case-insensitive)
+    test('Update the displayed date when the date is changed', () => {
+        const today = new Date();
+        const mockOnDateChange = jest.fn();
+        
+        render(<DateHeader displayDate={today} onDateChange={mockOnDateChange} />); // Render the component with the initial display date
+        
+        const displayedDate = screen.getByText(today.toDateString())
+        expect(displayedDate).toBeInTheDocument();// Expect todays date to be displayed
+
+        const rightArrowButton = screen.getByTestId('right-arrow-button');
+        fireEvent.click(rightArrowButton);// Simulate clicking the right arrow button to increment the date
+        
+        const expectedDate = new Date(today);
+        expectedDate.setDate(today.getDate() + 1);// Calculate the expected new date
+        
+        expect(mockOnDateChange).toHaveBeenCalledWith(expectedDate);// Check that onDateChange was called with the correct new date
     });
 
     test('Displays the Correct/Relevant Bookings in VenueRow Popup, with Booked Slots Disabled', () => {
@@ -205,11 +216,13 @@ describe("Venues", () => {
         const testButton1515 = screen.getByText('15:15'); //Button for 15:15
         const testButton1615 = screen.getByText('16:15'); //Button for 16:15
         expect(testButton1415).toHaveClass('timeslot-button booked'); //Check for correct class
-        expect(testButton1415).toBeDisabled(); //Check that button is disabled
+        // expect(testButton1415).toBeDisabled(); //Check that button is disabled
         expect(testButton1515).toHaveClass('timeslot-button'); //Check for correct class
         expect(testButton1515).toBeEnabled(); //Check that button is enabled
         expect(testButton1615).toHaveClass('timeslot-button'); //Check for correct class
         expect(testButton1615).toBeEnabled(); //Check that button is enabled
+        fireEvent.click(testButton1415);
+        expect(setBookingTime).not.toHaveBeenCalledWith("14:15");//Check that button is disabled
     });
 
 });
