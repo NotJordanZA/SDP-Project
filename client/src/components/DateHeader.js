@@ -4,7 +4,7 @@ import {faCaretRight, faCaretLeft} from '@fortawesome/free-solid-svg-icons'
 import CalendarPopup from "../components/CalendarPopup";
 import { useState } from "react";
 
-function DateHeader( {displayDate, onDateChange} ){
+function DateHeader( {displayDate, onDateChange, ...props} ){
     const today = new Date();
     const maxDate = new Date((new Date().getFullYear().toString())+"-12-31");
     
@@ -31,7 +31,7 @@ function DateHeader( {displayDate, onDateChange} ){
     };
 
     return (
-        <main className="date-container">
+        <main className="date-container" {...props}>
             <div className="date-content">
                 <button className="arrow-button" onClick={() => handleDateChange(false)}><FontAwesomeIcon icon={faCaretLeft} /></button>
                 <button className="date-button"  onClick = {toggleCalendar}>{displayDate.toDateString()}</button>

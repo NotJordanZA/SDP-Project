@@ -3,12 +3,22 @@ import { MemoryRouter } from "react-router-dom";
 import * as router from 'react-router-dom';
 import Venues from '../pages/Venues';
 import VenueRow from "../components/VenueRow";
+import DateHeader from "../components/DateHeader";
+import CalendarPopup from "../components/CalendarPopup";
+import Search from "../components/Search";
 import { getAllVenues } from "../utils/getAllVenuesUtil";
 import { getCurrentDatesBookings } from "../utils/getCurrentDatesBookingsUtil";
 import { formatDate } from "../utils/formatDateUtil";
+import { auth } from "../firebase";
 
-jest.mock("firebase/auth", () => ({
-    getAuth: jest.fn(),
+// jest.mock("firebase/auth", () => ({
+//     getAuth: jest.fn(),
+// }));
+
+jest.mock('../firebase', () => ({
+    auth: {
+        currentUser: null //Default mock value
+    }
 }));
 
 jest.mock('../utils/getAllVenuesUtil', () => ({
@@ -24,6 +34,14 @@ jest.mock('../utils/formatDateUtil', () => ({
 }));
 
 describe("Venues", () => {
+
+    beforeAll(() => {
+        global.ResizeObserver = class {
+            observe() {}
+            unobserve() {}
+            disconnect() {}
+        };
+    });
 
     // Before each test, ensure we have the correct mock data
     beforeEach(() => {
@@ -103,18 +121,21 @@ describe("Venues", () => {
     // });
 
     test('Renders DateHeader Component', () => {
+        auth.currentUser = { email: 'test@wits.ac.za' };
         render(<Venues/>); //Render Venues Page
-        const testDateHeader = screen.getByTestId('date-header'); //DateHeader Component
+        const testDateHeader = screen.getByTestId("date-header"); //DateHeader Component
         expect(testDateHeader).toBeInTheDocument(); //Check if DateHeader rendered
     });
 
     test('Renders Search Component', () => {
+        auth.currentUser = { email: 'test@wits.ac.za' };
         render(<Venues/>); //Render Venues Page
         const testSearch = screen.getByTestId('search'); //Search Component
         expect(testSearch).toBeInTheDocument(); //Check if Search rendered
     });
 
     test('Renders VenueRow Component with Correct Data (From VenuesList)', () => {
+        auth.currentUser = { email: 'test@wits.ac.za' };
         render(<Venues/>); //Render Venues Page
         const testVenue1 = screen.getByText('MSL004'); //MSL004
         const testVenue2 = screen.getByText('OLS03'); //OLS03
@@ -123,6 +144,7 @@ describe("Venues", () => {
     });
 
     test('Renders Correct Venue Details in VenueRow', () => {
+        auth.currentUser = { email: 'test@wits.ac.za' };
         render(<Venues/>); //Render Venues Page
         const testVenueRow = screen.getByText('MSL004'); //Get a VenueRow by its displayed Venue Name
         fireEvent.click(testVenueRow); //Click the VenueRow to show its dropdown menu
@@ -135,6 +157,7 @@ describe("Venues", () => {
     });
 
     test('Displays a Message If No Venues are Retrieved', () => {
+        auth.currentUser = { email: 'test@wits.ac.za' };
         getAllVenues.mockImplementationOnce((setVenuesList, setAllVenues) => {
             setAllVenues([]); //Set the AllVenues list to be blank
             setVenuesList([]); //Set the VenuesList to be blank
@@ -145,6 +168,7 @@ describe("Venues", () => {
     });
 
     test('Calls handleDateChange When Date is Changed in DateHeader', () => {
+        auth.currentUser = { email: 'test@wits.ac.za' };
         render(<Venues/>); //Render Venues Page
         const testDateHeader = screen.getByTestId('date-header'); //DateHeader Component
         const testNewDate = new Date('2024-10-31');
@@ -153,6 +177,7 @@ describe("Venues", () => {
     });
 
     test('Displays the Correct/Relevant Bookings in VenueRow Popup, with Booked Slots Disabled', () => {
+        auth.currentUser = { email: 'test@wits.ac.za' };
         render(<VenueRow
             key={'MSL004'}
             venueName={'MSL004'}
