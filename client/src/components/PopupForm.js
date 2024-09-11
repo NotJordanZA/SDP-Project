@@ -47,7 +47,6 @@ const PopupForm = ({ isOpen, onClose }) => {
       const data = await response.json();
       if (response.ok) {
         setVenues(data);
-        console.log(data);
          // Store the venue data in state
       } else {
         console.error('Error fetching venues:', data.error); // Logs error
