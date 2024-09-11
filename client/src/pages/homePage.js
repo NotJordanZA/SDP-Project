@@ -27,7 +27,7 @@ const HomePage = () => {
       </section>
       <section className="home-page">
         <MainIcon iconClass="fa-solid fa-house icon-img" text="BOOK A VENUE" onClickFunction={() => navigate("/venues")}/>
-        <MainIcon iconClass="fa-solid fa-calendar icon-img" text="VIEW CALENDAR" />
+        <MainIcon iconClass="fa-solid fa-user-tie icon-img" text="MAKE A REQUEST" onClickFunction ={() =>navigate("/requests")}/>
         <MainIcon iconClass="fa-solid fa-clipboard-check icon-img" text="MY BOOKINGS" onClickFunction={() => navigate("/bookings")}/>
         <MainIcon iconClass="fa-solid fa-file-alt icon-img" text="FILE A REPORT" onClickFunction={() => navigate("/reports")}/> 
       </section>
