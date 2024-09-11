@@ -653,6 +653,7 @@ app.post("/adminRequests/create", async (req, res) => {
     const { requesterEmail, requestText, requestStatus } = req.body;
     // Validate required fields
     if (!requesterEmail || !requestText || !requestStatus) {
+        // console.log(requesterEmail, requestText, requestStatus);
         return res.status(400).json({ error: "All fields are required." });
     }
 
@@ -672,7 +673,8 @@ app.post("/adminRequests/create", async (req, res) => {
         await setDoc(newBookingRef, bookingData);
 
         // Respond with the ID of the newly created booking
-        res.status(200).json({ message: "Booking created successfully", bookingID: newBookingRef.id });
+        // res.status(200).json({ message: "Booking created successfully", bookingID: newBookingRef.id });
+        res.status(200).json({ message: "Request created successfully"});
     } catch (error) {
         console.error("Error creating booking:", error);
         res.status(500).json({ error: "Internal Server Error" });

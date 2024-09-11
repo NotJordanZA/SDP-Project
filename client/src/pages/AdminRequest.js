@@ -10,6 +10,8 @@ function MyBookings() {
     const [requestsList, setRequestsList] = useState([]);
     const [isPopupOpen, setIsPopupOpen] = useState(false);
     const user = auth.currentUser; // Fetches current user
+    
+    // console.log(user);
 
     const navigate = useNavigate();
     useEffect(() => { // Reroutes user to /login if they are not logged in
@@ -23,6 +25,7 @@ function MyBookings() {
     };
     
     const currentUserEmail = user ? user.email : null; // Gets current user email if not null, otherwise sets it to null
+    // console.log(currentUserEmail);
 
     useEffect(() => {
         if(user){

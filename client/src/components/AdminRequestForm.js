@@ -11,6 +11,8 @@ const PopupForm = ({ isOpen, onClose, userEmail }) => {
 
   const handleSubmit = (e) =>{
     e.preventDefault();
+    // console.log(userEmail);
+    // console.log(requestText);
     CreateAdminRequest(userEmail, requestText);
     alert('Request submitted successfully!');
     onClose();
