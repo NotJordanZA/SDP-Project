@@ -41,7 +41,11 @@ function MyBookings() {
             <div className="booking-list" data-testid="booking-list">
                 <h2 data-testid="booking-heading">My Bookings</h2>
                 <ul>
-                    {bookingComponents}
+                    {bookingComponents.length > 0 ? (
+                        bookingComponents
+                    ): (
+                        <li className="booking-list-entry">No bookings available</li>
+                    )}
                 </ul>
             </div>
         </section>
