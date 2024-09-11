@@ -1,0 +1,157 @@
+.clear-button {
+  width: auto; 
+  background-color: #043673;
+  color: white;
+  font-size: 14px;
+  font-weight: bold;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+
+  align-self: flex-end; 
+  margin-right: 200px; 
+}
+
+.create-booking-container {
+  display: flex;
+  flex-direction: column; /* 3 elements, search, calendar with 2 filters and then the venue details */
+  gap: 20px;
+  align-items: center;
+  margin-bottom: 30px;
+  width: 100%;
+}
+
+.search-container {
+  display: flex;
+  justify-content: center; 
+  width: 300%;
+}
+
+.search-bar {
+ 
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 16px;
+}
+
+.calendarfilter {
+  display: flex;
+ flex-direction: row;/* makes the calendar and filters appear in the same row(side by side) */
+ align-items: start;
+  width: 70%;
+
+
+}
+
+.calendar-container {
+  flex: 0.4; 
+}
+
+.filter-container {
+  flex: 0; 
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  max-width: 50px;
+}
+
+.filter-select {
+ 
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 16px;
+  width: 200px;
+}
+
+
+.venue-list {
+  width: 100%;
+  margin-top: 20px;
+}
+
+/* singular venue item */
+.venue-item {
+  border: 1px solid #ccc;
+  margin-bottom: 10px;
+  border-radius: 5px;
+  padding: 10px;
+}
+
+.venue-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  background-color: #f0f0f0;
+  cursor: pointer;
+}
+
+.venue-header h3 {
+  margin: 0;
+}
+
+.venue-header p {
+  margin: 0;
+ 
+  color: #917248; /* status (clode or open )and capacity value */
+  font-weight: bold;
+  
+}
+
+.venue-details {
+  padding: 15px;
+  background-color: #fafafa;
+}
+
+
+.description-input {
+  width: 100%;
+  padding: 10px;
+  margin-top: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+/* Book button */
+.book-button {
+  margin-top: 10px;
+  padding: 10px 20px;
+  background-color: #043673;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.book-button:hover {
+  background-color: grey;
+}
+
+
+.time-slot-button {
+  padding: 10px;
+  background-color: #043673;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-right: 10px;
+}
+
+
+.time-slot-button.taken {
+  background-color: grey;
+  color: white;
+  cursor: not-allowed; /* Indicate it's unclickable */
+}
+
+
+
+/* Responsive  */
+@media (max-width: 768px) {
+  .filter-container {
+    flex-direction: column;
+  }
+}
