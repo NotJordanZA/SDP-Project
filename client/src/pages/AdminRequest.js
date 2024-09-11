@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 import { getCurrentUsersAdminRequests } from "../utils/getCurrentUsersAdminRequests";
 import PopupForm from "../components/AdminRequestForm";
 
-function MyBookings() {
+function AdminRequest() {
     const [requestsList, setRequestsList] = useState([]);
     const [isPopupOpen, setIsPopupOpen] = useState(false);
     const user = auth.currentUser; // Fetches current user
@@ -67,4 +67,4 @@ function MyBookings() {
     );
 }
 
-export default MyBookings;
+export default AdminRequest;

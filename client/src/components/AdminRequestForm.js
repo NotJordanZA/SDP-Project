@@ -20,8 +20,8 @@ const PopupForm = ({ isOpen, onClose, userEmail }) => {
   if (!isOpen) return null;
 
   return (
-    <div className="popup-overlay">
-      <div className="popup-content">
+    <div className="popup-overlay" data-testid = "popup-overlay">
+      <div className="popup-content" data-testid = "popup-content">
         <button className="close-button" onClick={onClose}>X</button>
         <h2>Submit a Request</h2>
         <form onSubmit={handleSubmit}>
