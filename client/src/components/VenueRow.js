@@ -1,10 +1,11 @@
 import '../styles/Venues.css';
+import { getCurrentDatesBookings } from "../utils/getCurrentDatesBookingsUtil";
 import { useState, useEffect, useRef } from "react";
 import { auth } from "../firebase";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSquareCaretDown, faSquareCaretUp} from '@fortawesome/free-solid-svg-icons';
 
-function VenueRow({venueName, campus, venueType, venueCapacity, timeSlots, isClosed, bookings, relevantDate, getCurrentDatesBookings}) {
+function VenueRow({venueName, campus, venueType, venueCapacity, timeSlots, isClosed, bookings, relevantDate}) {
 
     const user = auth.currentUser;
     
