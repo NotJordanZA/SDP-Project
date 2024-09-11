@@ -651,9 +651,9 @@ app.delete('/venues/:id', async (req, res) => {
 // POST-create Admin Request 
 app.post("/adminRequests/create", async (req, res) => {
     const { requesterEmail, requestText, requestStatus } = req.body;
-
     // Validate required fields
     if (!requesterEmail || !requestText || !requestStatus) {
+        // console.log(requesterEmail, requestText, requestStatus);
         return res.status(400).json({ error: "All fields are required." });
     }
 
@@ -673,7 +673,8 @@ app.post("/adminRequests/create", async (req, res) => {
         await setDoc(newBookingRef, bookingData);
 
         // Respond with the ID of the newly created booking
-        res.status(200).json({ message: "Booking created successfully", bookingID: newBookingRef.id });
+        // res.status(200).json({ message: "Booking created successfully", bookingID: newBookingRef.id });
+        res.status(200).json({ message: "Request created successfully"});
     } catch (error) {
         console.error("Error creating booking:", error);
         res.status(500).json({ error: "Internal Server Error" });
@@ -714,8 +715,46 @@ app.put("/adminRequests/:id", async (req, res) => {
     }
 });
 
+// Get by field
+app.get("/adminRequests/findByField", async (req, res) => {
+    try {
+        const { requestStatus, requesterEmail, requestText} = req.query;
+        const ReqCollectionRef = collection(db, 'AdminRequests');
 
+        let requestsQuery = ReqCollectionRef;
 
+        // Apply filters if query parameters are provided
+        if (requestStatus) {
+            requestsQuery = query(requestsQuery, where("requestStatus", "==", requestStatus));
+        }
+
+        if (requesterEmail) {
+            requestsQuery = query(requestsQuery, where("requesterEmail", "==", requesterEmail));
+        }
+
+        if (requestText) {
+            requestsQuery = query(requestsQuery, where("requestText", "==", requestText));
+        }
+        
+        const requestSnapshot = await getDocs(requestsQuery);
+        
+        const requestsList = [];
+
+        // Iterate over each document and push it to the list
+        requestSnapshot.forEach((doc) => {
+            requestsList.push({
+                id: doc.id,
+                ...doc.data()
+            });
+        });
+
+       
+        res.status(200).json(requestsList);
+    } catch (error) {
+        console.error("Error retrieving requests:", error);
+        res.status(500).json({ error: "Internal Server Error" });
+    }
+});
 
 //Get Requests
 app.get("/adminRequests", async (req, res) => {

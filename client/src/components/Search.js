@@ -5,7 +5,7 @@ import { useState } from "react";
 import ReactSlider from 'react-slider';
 import Select from 'react-select';
 
-export default function Search({venueList, setVenueList, bookingsList }) { //A function for searching and filtering venues
+export default function Search({venueList, setVenueList, bookingsList, ...props }) { //A function for searching and filtering venues
 
     const [searchInput, setSearchInput] = useState("");
     const [isFilterOpen, setIsFilterOpen] = useState(false);
@@ -114,7 +114,7 @@ export default function Search({venueList, setVenueList, bookingsList }) { //A f
     ]
 
     return (
-        <div className="greater-search-container">
+        <main className="greater-search-container" {...props}>
             <div className="search-container">
                 <div className="main-search-row">
                     <input className="search-input" placeholder='Search...' value={searchInput} onChange={handleInputChange}/>
@@ -219,6 +219,6 @@ export default function Search({venueList, setVenueList, bookingsList }) { //A f
                     </div>
                 </div>
             </div>
-        </div>
+        </main>
     )
 }
