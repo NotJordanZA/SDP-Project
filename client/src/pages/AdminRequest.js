@@ -23,6 +23,11 @@ function MyBookings() {
     const togglePopup = () => {
         setIsPopupOpen(!isPopupOpen);
     };
+
+    const onClose = () => {
+        setIsPopupOpen(!isPopupOpen);
+        getCurrentUsersAdminRequests(currentUserEmail, setRequestsList);
+    }
     
     const currentUserEmail = user ? user.email : null; // Gets current user email if not null, otherwise sets it to null
     // console.log(currentUserEmail);
@@ -46,7 +51,7 @@ function MyBookings() {
     return(
         <section className="admin-request-page" data-testid="admin-request-page">
             <button onClick={togglePopup} className="open-popup-button">Submit a Request</button>
-            <PopupForm isOpen={isPopupOpen} onClose={togglePopup} userEmail={currentUserEmail}/>
+            <PopupForm isOpen={isPopupOpen} onClose={onClose} userEmail={currentUserEmail}/>
 
             <div className="admin-request-list" data-testid="admin-request-list">
                 <h2 data-testid="admin-request-heading">My Admin Requests</h2>

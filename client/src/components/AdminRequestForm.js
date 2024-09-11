@@ -11,11 +11,10 @@ const PopupForm = ({ isOpen, onClose, userEmail }) => {
 
   const handleSubmit = (e) =>{
     e.preventDefault();
-    // console.log(userEmail);
-    // console.log(requestText);
     CreateAdminRequest(userEmail, requestText);
     alert('Request submitted successfully!');
     onClose();
+    setRequestText("");
   }
 
   if (!isOpen) return null;
@@ -28,7 +27,8 @@ const PopupForm = ({ isOpen, onClose, userEmail }) => {
         <form onSubmit={handleSubmit}>
           <div className="form-group">
             <label htmlFor="requestText">Request Description:</label>
-            <input
+            <textarea
+              style={{resize: "none"}}
               type="text"
               id="requestText"
               name="requestText"
