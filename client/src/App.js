@@ -2,7 +2,7 @@ import './App.css';
 import React, { useState } from 'react';
 import Login from './pages/Login';
 import Venues from './pages/Venues';
-import HomeAdmin from './pages/Home';
+
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import Header from './components/Header';
 import HomePage from './pages/homePage';
@@ -15,7 +15,7 @@ import ManageRequests from './pages/ManageRequests';
 import ManageVenues from './pages/ManageVenues';
 import BookVenue from './pages/BookVenue'; 
 import AdminRequest from './pages/AdminRequest';
-
+import AdminHome from './components/AdminHome';
 
 function App() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -37,7 +37,7 @@ function App() {
           <Route path="/reports" element={<Reports />} />
           <Route path="/bookings" element= {<MyBookings/>}/>
           <Route path="/requests" element= {<AdminRequest/>} />
-          <Route path="/HomeAdmin" element={<HomeAdmin />} />
+          <Route path="/home-admin" element={<AdminHome />} />
           <Route path="/manage-bookings" element={<ManageBookings />} />
           <Route path="/manage-reports" element={<ManageReports />} />
           <Route path="/manage-requests" element={<ManageRequests />} />
