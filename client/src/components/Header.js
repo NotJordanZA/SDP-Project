@@ -7,36 +7,40 @@ import { auth } from "../firebase";
 import { onAuthStateChanged } from 'firebase/auth';
 
 const Header = ({ title, toggleSidebar }) => {
-  const [user, setUser] = useState(null); // State to track user
+  const [user, setUser] = useState(null);
   const navigate = useNavigate();
 
-  // Listen for changes to the authentication state
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       if (currentUser) {
-        setUser(currentUser); // If user is logged in, set the user
+        setUser(currentUser);
       } else {
-        setUser(null); // If no user is logged in, set user to null
+        setUser(null);
       }
     });
-
 
     return () => unsubscribe();
   }, []);
 
-  const reroute = (path) => {
-    navigate(path);
-  }
-
   return (
     <main className="whole-page">
       <header className="app-header">
-        {}
+        {/* Sidebar toggle icon */}
         {user && (
           <i onClick={toggleSidebar} className="fa-solid fa-bars icon-img"></i>
         )}
         <h1>{title}</h1>
-        <img src={logo} alt="Logo" className="logo" onClick={() => navigate("/home")}/>
+        <div className="header-icons">
+          {/* Bell icon for notifications */}
+          {user && (
+            <i 
+              className="fa-solid fa-bell bell-icon" 
+              onClick={() => navigate("/notifications")}
+            />
+          )}
+          {/* Logo */}
+          <img src={logo} alt="Logo" className="logo" onClick={() => navigate("/home")} />
+        </div>
       </header>
       <Outlet/>
     </main>

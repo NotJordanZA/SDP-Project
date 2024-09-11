@@ -1,4 +1,4 @@
-/* Container:booking tabs */
+Container:booking tabs
 .booking-tabs-container {
   max-width: 1200px;
   margin: 0 auto;
@@ -169,6 +169,38 @@ button[type="submit"]:hover {
   outline: none;
   border-color: #043673;
   box-shadow: 0 0 5px #043673;
+}
+.timeslot-btn {
+  background-color: #004080;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  margin: 5px;
+  cursor: pointer;
+  border-radius: 3px;
+}
+
+.timeslot-btn.selected {
+  background-color: #8b5e3c; /* Change color for the selected slot */
+  color: white;
+}
+
+.form-group {
+  margin-top: 15px;
+}
+
+.book-btn {
+  background-color: #004080;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-top: 10px;
+}
+
+.book-btn:hover {
+  background-color: #003366;
 }
 
 
