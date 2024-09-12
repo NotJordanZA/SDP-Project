@@ -1290,9 +1290,9 @@
 
 
 import React, { useState } from 'react';
-import AllBookings from '../components/AdminAllBookings.js'; // Your component for all bookings
-import CreateBooking from '../components/AdminCreateBookings.js'; // Your component for creating bookings
-import RecurringBooking from '../components/AdminRecurringBookings.js'; // Your component for recurring bookings
+import AllBookings from '../components/AdminAllBookings.js'; 
+import CreateBooking from '../components/AdminCreateBookings.js'; 
+import RecurringBooking from '../components/AdminRecurringBookings.js'; 
 import '../styles/ManageBookings.css';
 
 const ManageBookings = () => {

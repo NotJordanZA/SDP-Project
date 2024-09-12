@@ -6,7 +6,7 @@ import Search from './Search'; // Adjust the path based on your folder structure
 
 const API_URL = 'http://localhost:3001';
 
-// API call to fetch venues
+//api call to fetch venues
 const fetchVenues = async () => {
   try {
     const response = await fetch(`${API_URL}/venues`);
@@ -17,7 +17,7 @@ const fetchVenues = async () => {
   }
 };
 
-// API call to fetch bookings by date
+//api  call to fetch bookings by date
 const fetchBookingsByDate = async (selectedDate) => {
   try {
     const formattedDate = selectedDate.toISOString().split('T')[0]; // Format date as YYYY-MM-DD
@@ -55,30 +55,32 @@ const createBooking = async (bookingData) => {
 };
 
 const AdmincreateBooking = () => {
-  const [venues, setVenues] = useState([]);
+  const [venues, setVenues] = useState([]);// stores the list of available venues that will be displayed to the Admin,(setVenues) is the function used to update the venues state
   const [bookings, setBookings] = useState([]);
-  const [schedules, setSchedules] = useState([]); // Add schedules state
-  const [originalVenues, setOriginalVenues] = useState([]); // Store the original list of venues
+  const [schedules, setSchedules] = useState([]); 
+  const [originalVenues, setOriginalVenues] = useState([]);
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [expandedVenueId, setExpandedVenueId] = useState(null);
   const [selectedCapacity, setSelectedCapacity] = useState('');
   const [selectedType, setSelectedType] = useState('');
   const [venueTypes, setVenueTypes] = useState([]);
 
-  const [email, setEmail] = useState(''); // To store the email input
-  const [bookingDescription, setBookingDescription] = useState(''); // To store booking description
-  const [selectedTimeSlot, setSelectedTimeSlot] = useState(null); // Tracks selected time slot
-  
+  const [email, setEmail] = useState(''); 
+  const [bookingDescription, setBookingDescription] = useState(''); 
+  const [selectedTimeSlot, setSelectedTimeSlot] = useState(null); 
+  const [errorMessage, setErrorMessage] = useState('');
+
+
   useEffect(() => {
     fetchVenues().then(data => {
       setVenues(data);
-      setOriginalVenues(data); // Save the original list of venues
-      const types = [...new Set(data.map(venue => venue.venueType))]; // Extract unique venue types
+      setOriginalVenues(data); // original list of venues
+      const types = [...new Set(data.map(venue => venue.venueType))]; //for displaying each venue once in the dropdown
       setVenueTypes(types);
     });
   }, []);
 
-  // Fetch bookings whenever the selected date changes
+  //fetch bookings whenever the selected date changes
   useEffect(() => {
     if (selectedDate) {
       fetchBookingsByDate(selectedDate).then(data => setBookings(data.bookings));
@@ -86,11 +88,11 @@ const AdmincreateBooking = () => {
     }
   }, [selectedDate]);
 
-  // Handle capacity and type filter changes
+  //capacity and type filter changes(dropdowns)
   const handleCapacityChange = (e) => setSelectedCapacity(e.target.value);
   const handleTypeChange = (e) => setSelectedType(e.target.value);
 
-  // Toggle expanded venue view
+
   const toggleVenue = (id) => {
     if (expandedVenueId === id) {
       setExpandedVenueId(null);
@@ -99,18 +101,17 @@ const AdmincreateBooking = () => {
     }
   };
 
-  // Convert the selected date to a day of the week (e.g., Monday, Tuesday, etc.)
+  //convert the selected date to a day of the week (Monday), this is so that we can see all ocupied slots on the selcetd date from schedules
   const getDayOfWeek = (date) => {
     return date.toLocaleDateString('en-US', { weekday: 'long' });
   };
 
-  // Check if the time slot is already booked or scheduled
+  //check if the time slot is already booked or scheduled
   const isTimeSlotTaken = (venueName, venueID, time) => {
-    // Get the day of the week from the selected date
+    // the day of the week from the selected date
     const bookingDayOfWeek = getDayOfWeek(selectedDate);
-    console.log("Day of week ", bookingDayOfWeek);
+  
 
-    // Check for bookings
     const isBooked = bookings.some(
       (booking) =>
         booking.venueID === venueName &&
@@ -118,80 +119,99 @@ const AdmincreateBooking = () => {
         booking.bookingDate === selectedDate.toLocaleDateString('en-CA')
     );
 
-    // Check for schedules
+    // Check for schedule overlaps 
     const isScheduled = schedules.some(
       (schedule) =>
         schedule.venueID === venueName &&
         schedule.bookingStartTime === time &&
-        schedule.bookingDay === bookingDayOfWeek // Compare the day of the week
+        schedule.bookingDay === bookingDayOfWeek //compares the day of the week
     );
 
-    // Return true if either booked or scheduled
+    //true if the time slot is  either booked or scheduled
     return isBooked || isScheduled;
   };
 
-  const handleTimeSlotSelect = (venueID, venueName, time) => {
+  const SelectingtimeSlot = (venueID, venueName, time) => {
     setSelectedTimeSlot({ venueID, venueName, time });
-    console.log(`Selected Date: ${selectedDate.toDateString()}, Selected Venue: ${venueName} (ID: ${venueID}), Selected Time Slot: ${time}`);
+
   };
 
-  // Handle booking creation
-  const handleCreateBooking = () => {
+ 
+  const hCreateBooking = async () => {
     if (!email || !bookingDescription) {
-      alert('Please enter your email and enter booking description.');
+      setErrorMessage('Please enter your email and booking description');
+   
       return;
     }
 
-    // Calculate booking end time (+45 mins)
+    setErrorMessage('');
+   
+
     const [hours, minutes] = selectedTimeSlot.time.split(':');
-    const startTime = new Date();
-    startTime.setHours(hours);
-    startTime.setMinutes(minutes);
-    const endTime = new Date(startTime.getTime() + 45 * 60000); // Add 45 mins
+    const startTime = new Date(selectedDate);
+    startTime.setHours(hours, minutes);
+    const endTime = new Date(startTime.getTime() + 45 * 60000);
 
     const bookingData = {
       venueID: selectedTimeSlot.venueName,
       bookingStartTime: selectedTimeSlot.time,
-      bookingEndTime: endTime.toTimeString().substring(0, 5), // Format as HH:MM
+      bookingEndTime: endTime.toTimeString().substring(0, 5),
       bookingDate: selectedDate.toLocaleDateString('en-CA'),
       venueBooker: email,
       bookingDescription: bookingDescription,
     };
 
-    createBooking(bookingData).then((response) => {
-      if (response.success) {
-        alert('Booking created successfully!');
+    try {
+      console.log('Sending booking data:', bookingData);
+      const response = await fetch(`${API_URL}/bookings/create`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(bookingData),
+      });
+      const result = await response.json();
+    
+      console.log('API response:', result);
+      
+      if (result.message==="Booking created successfully") {
+        
+        setEmail('');
+        setBookingDescription('');
+     
       } else {
-        alert('Error creating booking.');
+        setErrorMessage('Error creating booking');
       }
-    });
+    } catch (error) {
+      console.error('Error creating booking:', error);
+      setErrorMessage('An error occurred. Please try again.');
+    }
   };
 
+
   const filteredVenues = venues.filter(venue => {
-    // Filter by type if a type is selected
+    //filter by venuetype if a type is selected
     const matchesType = selectedType ? venue.venueType === selectedType : true;
     
-    // Filter by capacity if a capacity is selected
+    //filter by capacity if a capacity is selected
     const matchesCapacity = selectedCapacity ? venue.venueCapacity >= parseInt(selectedCapacity, 10) : true;
 
-    // Return true if both filters match
+    // true if both filters match
     return matchesType && matchesCapacity;
   });
 //clear everything
 const clearSearch = () => {
-  setSelectedCapacity(''); // Reset capacity filter
-  setSelectedType(''); // Reset type filter
-  setVenues(originalVenues); // Reset venue list to the original full list
+  setSelectedCapacity(''); //clear capacity selected
+  setSelectedType(''); // clear venue type selected
+  setVenues(originalVenues); //Reset venue list to the original full list
 };
 
   return (
     <div className="create-booking-container">
-  
-{/* Clear Search Button */}
+    {/* containins search bar, clear button, calendar, and filters */}
+    <div className="top-section">
 
-<Search venueList={venues} setVenueList={setVenues} bookingsList={bookings} />  
-<button className="clear-button" onClick={clearSearch}>Clear Search</button>
-      {/* Calendar Popup , put calendar and filters in 1 div so u can put them in the same row*/}
+   
       
       < div className="calendarfilter">
       <div className="calendar-container">
@@ -204,8 +224,12 @@ const clearSearch = () => {
           maxDate={new Date(new Date().getFullYear(), 11, 31)} // End of the current year
         />
       </div>
-
-      {/* Capacity and Type Filters */}
+{/*clear Search Button */}
+<div className="search-container">
+<Search venueList={venues} setVenueList={setVenues} bookingsList={bookings} />  
+<button className="clear-button" onClick={clearSearch}>Clear Search</button>
+</div>
+      {/*capacity and  venue type filters */}
       < div className="filter-container">
         <label htmlFor="capacity">Venue Capacity:</label>
         <select
@@ -236,8 +260,8 @@ const clearSearch = () => {
         </select>
       </div>
       </div>
-
-      {/* Venue List */}
+</div>
+      {/*venue list */}
       <div className="venue-list">
         {filteredVenues.map(venue => (
           <div key={venue.id} className="venue-item">
@@ -247,31 +271,37 @@ const clearSearch = () => {
               <button>{expandedVenueId === venue.id ? '▲' : '▼'}</button>
             </div>
 
-            {/* Venue Details */}
+            {/*venue details displayed */}
             {expandedVenueId === venue.id && (
               <div className="venue-details">
                 <p>Campus: {venue.campus}</p>
                 <p>Venue Type: {venue.venueType}</p>
                 <p>Capacity: {venue.venueCapacity}</p>
 
+          
                 <div className="time-slots">
-                  {venue.timeSlots && venue.timeSlots.length > 0 ? (
-                    venue.timeSlots.map((time, index) => (
-                      <button
-                        key={index}
-                        className={`time-slot-button ${isTimeSlotTaken(venue.venueName, venue.id, time) ? 'taken' : ''}`}
-                        disabled={isTimeSlotTaken(venue.venueName, venue.id, time)} // Disable if the slot is taken
-                        onClick={() => handleTimeSlotSelect(venue.id, venue.venueName, time)}
-                      >
-                        {time}
-                      </button>
-                    ))
-                  ) : (
-                    <p>No available timeslots</p>
-                  )}
-                </div>
+            {venue.timeSlots && venue.timeSlots.length > 0 ? (
+              venue.timeSlots.map((time, index) => {
+                const isTaken = isTimeSlotTaken(venue.venueName, venue.id, time); //that time slot already appears in Schedules or Bookings so its taken
+                const isSelected = selectedTimeSlot && selectedTimeSlot.time === time && selectedTimeSlot.venueID === venue.id; //User-selected time slot
 
-                {/* Show email and description inputs if a time slot is selected */}
+                return (
+                  <button
+                    key={index}
+                    className={`time-slot-button ${isTaken ? 'taken' : ''} ${isSelected ? 'selected' : ''}`}
+                    disabled={isTaken} //disable a slot if taken( so user cant select it)
+                    onClick={() => SelectingtimeSlot(venue.id, venue.venueName, time)}
+                  >
+                    {time}
+                  </button>
+                );
+              })
+            ) : (
+              <p>No available timeslots</p>
+            )}
+          </div>
+
+                {/* email and description inputs if a time slot is selected */}
                 {selectedTimeSlot && selectedTimeSlot.venueID === venue.id && (
                   <>
                     <input
@@ -288,7 +318,12 @@ const clearSearch = () => {
                       onChange={(e) => setBookingDescription(e.target.value)}
                       className="description-input"
                     />
-                    <button className="book-button" onClick={handleCreateBooking}>
+                 {errorMessage && <p className="error-message-bookingadmin">{errorMessage}</p>}
+                    <button className="book-button" onClick={hCreateBooking}>
+                      Book
+                    </button>
+                   
+                    <button className="book-button" onClick={hCreateBooking}>
                       Book
                     </button>
                   </>
