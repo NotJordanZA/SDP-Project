@@ -7,17 +7,19 @@ import { auth } from "../firebase";
 const Reports = () => {
     const [isPopupOpen, setIsPopupOpen] = useState(false);
     const [reports, setReports] = useState([]);
-    const user = auth.currentUser;
-    let email = user.email;
+    const [user, setUser] = useState(auth.currentUser); // Local state to track current user
     const navigate = useNavigate();
 
     useEffect(() => {   
         // Reroutes user to /login if they are not logged in
-        if (user === null) {
-            console.log(user);
+        if (!user) {
             navigate("/login");
         }
     }, [user, navigate]);
+
+    useEffect(() => {
+        setUser(auth.currentUser);  // Ensure that the current user is synced with state
+    }, []);
 
     const togglePopup = () => {
         setIsPopupOpen(!isPopupOpen);
@@ -29,14 +31,23 @@ const Reports = () => {
             try {
                 const response = await fetch('/reports');  // Adjust the endpoint if necessary
                 const data = await response.json();
+                console.log(data)
                 setReports(data); // Update the state with the fetched reports
             } catch (error) {
                 console.error('Error fetching reports:', error);
             }
         };
 
-        fetchReports();
-    }, []);  // Empty dependency array to run only on mount
+        if (user) {
+            fetchReports();
+        }
+    }, [user]);  // Only fetch reports if the user is logged in
+
+    if (!user) {
+        return null;  // Prevents rendering if no user is logged in, redirect happens in the useEffect
+    }
+
+    let email = user.email;
 
     return (
         <section className="report-page">
