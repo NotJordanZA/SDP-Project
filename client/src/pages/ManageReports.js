@@ -1,254 +1,15 @@
-// import React, { useState, useEffect } from 'react';
-// import '../styles/ManageReports.css'; 
-// const API_URL = process.env.NODE_ENV === 'production' ? 'https://your-production-site.com' : 'http://localhost:3002'; 
-
-
-// export const getAllReports = async () => {
-//   const response = await fetch(`${API_URL}/Reports`);
-//   return await response.json();
-// };
-// export const updateRep= async (id, RepData) => {
-//   const response = await fetch(`${API_URL}/Reports/${id}`, {
-//     method: "PUT",
-//     headers: {
-//       "Content-Type": "application/json",
-//     },
-//     body: JSON.stringify(RepData),
-//   });
-
-
-//  if (!response.ok) {
-//     throw new Error('Failed to update report');
-//   }
-//   return response.json();
-
-// };
-
-// export const getReportByType = async (reportType) => {
-//   const response = await fetch(`${API_URL}/Reports/type/${reportType}`);
-//   return await response.json();
-// };
-
-
-// function Reports() {
-//   const [reports, setReports] = useState([]);
-//   const [allReports, setAllReports] = useState([]); 
-//   const [activeTab, setActiveTab] = useState('Pending');
-//   const [selectedReportType, setSelectedReportType] = useState(''); 
-//   const [editingLogId, setEditingLogId] = useState(null); 
-//   const [newResolutionLog, setNewResolutionLog] = useState(''); 
-
-//   useEffect(() => {
-//     const fetchAllReports = async () => {
-//       try {
-//         const response = await getAllReports();
-//         console.log("API Response:", response); 
-//         const reportData = Array.isArray(response.rep) ? response.rep : [];
-//         setReports(reportData);
-//         setAllReports(reportData); 
-//       } catch (error) {
-//         console.error("Error fetching all reports:", error);
-//         setReports([]); 
-//       }
-//     };
-
-//     fetchAllReports();
-//   }, []);
-
-//   useEffect(() => {
-//     const fetchReportsByType = async () => {
-//       if (selectedReportType === "") {
-//         setReports(allReports); 
-//       } else {
-//         try {
-//           const response = await getReportByType(selectedReportType);
-//           console.log("API Response:", response); 
-//           setReports(Array.isArray(response.filteredReports) ? response.filteredReports : []); 
-//         } catch (error) {
-//           console.error("Error fetching reports by type:", error);
-//           setReports([]); 
-//         }
-//       }
-//     };
-
-//     fetchReportsByType();
-//   }, [selectedReportType, allReports]); //re-fetch data every time the report changes
-
-  
-//   const handleResolveClick = async (reportId) => {
-  
-//     const updatedReports = reports.map(report =>
-//       report.id === reportId ? { ...report, reportStatus: "Resolved" } : report
-//     );
-//     setReports(updatedReports);
-
-    
-//     try {
-//       await updateRep(reportId, { reportStatus: "Resolved" });
-//       console.log(`Report ${reportId} marked as Resolved`);
-//     } catch (error) {
-//       console.error("Error updating report status:", error);
-//     }
-//   };
-
-  
-//   const handleInProgressClick = async (reportId) => {
-  
-//     const updatedReports = reports.map(report =>
-//       report.id === reportId ? { ...report, reportStatus: "In Progress" } : report
-//     );
-//     setReports(updatedReports);
-
-    
-//     try {
-//       await updateRep(reportId, { reportStatus: "In Progress" });
-//       console.log(`Report ${reportId} marked as In Progress`);
-//     } catch (error) {
-//       console.error("Error updating report status:", error);
-//     }
-//   };
-
-//   //edit resolution log
-//   const handleEditLogClick = (reportId, currentLog) => {
-//     setEditingLogId(reportId);
-//     setNewResolutionLog(currentLog || ''); 
-//   };
-
-//   //save the changedd resolution log
-//   const handleSaveLogClick = async (reportId) => {
-//     const updatedReports = reports.map(report =>
-//       report.id === reportId ? { ...report, resolutionLog: newResolutionLog } : report
-//     );
-//     setReports(updatedReports);
-//     setEditingLogId(null); 
-
-   
-//     try {
-//       await updateRep(reportId, { resolutionLog: newResolutionLog });
-//       console.log(`Resolution log updated for report ${reportId}`);
-//     } catch (error) {
-//       console.error("Error updating resolution log:", error);
-//     }
-//   };
-
-//   return (
-//     <div className="reports-container">
-//       <h1>Admin Reports Management</h1>
-
-//       {/* Tabs */}
-//       <div className="tabs">
-//         <button
-//           className={activeTab === 'Pending' ? 'active' : ''}
-//           onClick={() => setActiveTab('Pending')}
-//         >
-//           Pending Reports
-//         </button>
-//         <button
-//           className={activeTab === 'In Progress' ? 'active' : ''}
-//           onClick={() => setActiveTab('In Progress')}
-//         >
-//           In Progress Reports
-//         </button>
-//         <button
-//           className={activeTab === 'Resolved' ? 'active' : ''}
-//           onClick={() => setActiveTab('Resolved')}
-//         >
-//           Resolved Reports
-//         </button>
-//       </div>
-
-//       {/* dropdown showing types of reports*/}
-//       <div className="report-type-container">
-//         <label>Select Report Type:</label>
-//         <select
-//           value={selectedReportType}
-//           onChange={(e) => setSelectedReportType(e.target.value)} 
-//           className="report-type-dropdown"
-//         >
-//           <option value="">-- Select Report Type --</option>
-//           <option value="Maintenance Issue">Maintenance Issue</option>
-//           <option value="Equipment Issue">Equipment Issue</option>
-//           <option value="Health Issue">Health Issue</option>
-//           <option value="Incorrect Venue Details">Incorrect Venue Details</option>
-//           <option value="Other">Other</option>
-//         </select>
-//       </div>
-
-//       {/* Report List */}
-//       {reports.length > 0 ? (
-//         <div className="reports-list">
-//           {reports
-//             .filter(report => report.reportStatus.toLowerCase() === activeTab.toLowerCase()) 
-//             .map(report => (
-//               <div key={report.id} className={`report-card ${report.reportStatus}`}>
-//                 <h3>{report.reportText}</h3>
-//                 <p><strong>Venue:</strong> {report.venueID}</p>
-//                 <p><strong>Type:</strong> {report.reportType}</p>
-//                 <p><strong>Status:</strong> {report.reportStatus}</p>
-
-//                 {/* Resolution Log Editing */}
-//                 {editingLogId === report.id ? (
-//                   <>
-//                     <textarea
-//                       value={newResolutionLog}
-//                       onChange={(e) => setNewResolutionLog(e.target.value)}
-//                     />
-//                     <button onClick={() => handleSaveLogClick(report.id)}>
-//                       Save
-//                     </button>
-//                     <button onClick={() => setEditingLogId(null)}>
-//                       Cancel
-//                     </button>
-//                   </>
-//                 ) : (
-//                   <>
-//                     <p><strong>Resolution Log:</strong> {report.resolutionLog || 'No resolution log available'}</p>
-//                     <button onClick={() => handleEditLogClick(report.id, report.resolutionLog)}>
-//                       Edit Resolution Log
-//                     </button>
-//                   </>
-//                 )}
-
-//                 {/* Show buttons depending on report status */}
-//                 {report.reportStatus === "Pending" && (
-//                   <>
-//                     <button className="progress-btn" onClick={() => handleInProgressClick(report.id)}>
-//                       Mark as In Progress
-//                     </button>
-//                     <button className="resolve-btn" onClick={() => handleResolveClick(report.id)}>
-//                       Mark as Resolved
-//                     </button>
-//                   </>
-//                 )}
-
-//                 {report.reportStatus === "In Progress" && (
-//                   <button className="resolve-btn" onClick={() => handleResolveClick(report.id)}>
-//                     Mark as Resolved
-//                   </button>
-//                 )}
-//               </div>
-//             ))}
-//         </div>
-//       ) : (
-//         <p>No {activeTab} reports available for "{selectedReportType || "All"}"</p>
-//       )}
-//     </div>
-//   );
-// }
-
-// export default Reports;
 import React, { useState, useEffect } from 'react';
 import '../styles/ManageReports.css'; 
 
-const API_URL = process.env.NODE_ENV === 'production' ? 'https://your-production-site.com' : 'http://localhost:3002'; 
+const API_URL = process.env.NODE_ENV === 'production' ? 'https://your-production-site.com' : 'http://localhost:3001'; 
 
-//fetch all the reports
+// Fetch all the reports
 export const getAllReports = async () => {
   const response = await fetch(`${API_URL}/Reports`);
   return await response.json();
 };
 
-//update a report
+// Update a report
 export const updateRep = async (id, RepData) => {
   const response = await fetch(`${API_URL}/Reports/${id}`, {
     method: "PUT",
@@ -264,90 +25,32 @@ export const updateRep = async (id, RepData) => {
   return response.json();
 };
 
-//fetch reports by type
-export const getReportByType = async (reportType) => {
-  const response = await fetch(`${API_URL}/Reports/type/${reportType}`);
-  return await response.json();
-};
-
-
-export const getReportTypes = async () => {
-  try {
-    const response = await fetch(`${API_URL}/Reports/types`); 
-    const data = await response.json();
-    console.log('API Response:', data); 
-    if (!response.ok) {
-      throw new Error('Failed to fetch report types');
-    }
-    return data;
-  } catch (error) {
-    console.error("Error fetching report types:", error);
-    throw error;
-  }
-};
-
 function Reports() {
-  const [reports, setReports] = useState([]);
-  const [allReports, setAllReports] = useState([]); 
+  const [reports, setReports] = useState([]); 
   const [activeTab, setActiveTab] = useState('Pending');
-  const [selectedReportType, setSelectedReportType] = useState(''); 
   const [editingLogId, setEditingLogId] = useState(null); 
   const [newResolutionLog, setNewResolutionLog] = useState(''); 
-  const [reportTypes, setReportTypes] = useState([]); 
-  const [errorMessage, setErrorMessage] = useState(''); //error message
+  const [selectedType, setSelectedType] = useState(''); // For filtering by report type
+  const [searchText, setSearchText] = useState(''); // For searching by email or venue
+  const [errorMessage, setErrorMessage] = useState(''); // Error message
 
-  //fetch all reports on component mount
+  // Fetch all reports on component mount
   useEffect(() => {
     const fetchAllReports = async () => {
       try {
         const response = await getAllReports();
-        const reportData = Array.isArray(response.rep) ? response.rep : [];
-        setReports(reportData);
-        setAllReports(reportData); 
+        console.log('Fetched Reports:', response);  // Log all fetched reports
+        setReports(response); // Directly set the reports from API
       } catch (error) {
         console.error("Error fetching all reports:", error);
         setReports([]); 
+        setErrorMessage("Failed to fetch reports");
       }
     };
-
+  
     fetchAllReports();
   }, []);
 
-
-  useEffect(() => {
-    const fetchReportTypes = async () => {
-      try {
-        const types = await getReportTypes(); //fetch the report types
-        setReportTypes(types); 
-      } catch (error) {
-        setErrorMessage('Failed to fetch report types');
-        console.error('Error fetching report types:', error);
-      }
-    };
-
-    fetchReportTypes(); 
-  }, []);
-
-
-  useEffect(() => {
-    const fetchReportsByType = async () => {
-      if (selectedReportType === "") {
-        setReports(allReports); 
-      } else {
-        try {
-          const response = await getReportByType(selectedReportType);
-          setReports(Array.isArray(response.filteredReports) ? response.filteredReports : []); 
-        } catch (error) {
-          console.error("Error fetching reports by type:", error);
-          setReports([]); 
-        }
-      }
-    };
-
-    fetchReportsByType();
-  }, [selectedReportType, allReports]); 
-
- 
   const handleResolveClick = async (reportId) => {
     const updatedReports = reports.map(report =>
       report.id === reportId ? { ...report, reportStatus: "Resolved" } : report
@@ -361,7 +64,6 @@ function Reports() {
     }
   };
 
- 
   const handleInProgressClick = async (reportId) => {
     const updatedReports = reports.map(report =>
       report.id === reportId ? { ...report, reportStatus: "In Progress" } : report
@@ -375,13 +77,13 @@ function Reports() {
     }
   };
 
-  //edit resolution log
+  // Edit resolution log
   const handleEditLogClick = (reportId, currentLog) => {
     setEditingLogId(reportId);
     setNewResolutionLog(currentLog || ''); 
   };
 
-  //  updated resolution log
+  // Save updated resolution log
   const handleSaveLogClick = async (reportId) => {
     const updatedReports = reports.map(report =>
       report.id === reportId ? { ...report, resolutionLog: newResolutionLog } : report
@@ -396,113 +98,134 @@ function Reports() {
     }
   };
 
+  // Handle tab change and reset filters and search
+  const handleTabChange = (tab) => {
+    setActiveTab(tab);
+    setSelectedType('');  // Reset report type filter
+    setSearchText('');    // Reset search text
+  };
+
+  // Filter the reports by the selected report type, search term, and the active tab
+  const filteredReports = reports.filter(report => 
+    report.reportStatus.toLowerCase() === activeTab.toLowerCase() && 
+    (selectedType === '' || report.reportType === selectedType) &&
+    (report.createdBy.toLowerCase().includes(searchText.toLowerCase()) || 
+     report.venueID.toLowerCase().includes(searchText.toLowerCase()))
+  );
+
   return (
     <div className="reports-container">
-      <h1>Admin Reports Management</h1>
+      <h1>Reports Management</h1>
 
-      {/*  error messages */}
+      {/* Error messages */}
       {errorMessage && <div className="error-message">{errorMessage}</div>}
 
       {/* Tabs */}
       <div className="tabs">
         <button
-          className={activeTab === 'Pending' ? 'active' : ''}
-          onClick={() => setActiveTab('Pending')}
+          className={activeTab.toLowerCase() === 'pending' ? 'active' : ''}
+          onClick={() => handleTabChange('Pending')}
         >
           Pending Reports
         </button>
         <button
-          className={activeTab === 'In Progress' ? 'active' : ''}
-          onClick={() => setActiveTab('In Progress')}
+          className={activeTab.toLowerCase() === 'in progress' ? 'active' : ''}
+          onClick={() => handleTabChange('In Progress')}
         >
           In Progress Reports
         </button>
         <button
-          className={activeTab === 'Resolved' ? 'active' : ''}
-          onClick={() => setActiveTab('Resolved')}
+          className={activeTab.toLowerCase() === 'resolved' ? 'active' : ''}
+          onClick={() => handleTabChange('Resolved')}
         >
           Resolved Reports
         </button>
       </div>
 
-      {/* dropdown by report type*/}
+      {/* Dropdown filter for report type */}
       <div className="report-type-container">
-        <label>Select Report Type:</label>
+        <label htmlFor="reportType">Filter by Report Type:</label>
         <select
-          value={selectedReportType}
-          onChange={(e) => setSelectedReportType(e.target.value)}
+          id="reportType"
+          value={selectedType}
+          onChange={(e) => setSelectedType(e.target.value)} 
           className="report-type-dropdown"
         >
-          <option value="">-- Select Report Type --</option>
-          {reportTypes && reportTypes.length > 0 ? (
-            reportTypes.map((type, index) => (
-              <option key={index} value={type}>
-                {type}
-              </option>
-            ))
-          ) : (
-            <option value="">No Report Types Available</option>
-          )}
+          <option value="">All Types</option>
+          <option value="Equipment">Equipment</option>
+          <option value="Safety">Safety</option>
+          <option value="Incorrect Venue Details">Incorrect Venue Details</option>
+          <option value="Other">Other</option>
         </select>
       </div>
 
-      {/* report List */}
-      {reports.length > 0 ? (
+      {/* Search by email or venue */}
+      <div className="searchReport-container">
+        <label htmlFor="searchInput">Search by Email or Venue:</label>
+        <input
+          type="text"
+          id="searchInput"
+          placeholder="Search by email or venue"
+          value={searchText}
+          onChange={(e) => setSearchText(e.target.value)} 
+        />
+      </div>
+
+      {/* Report List */}
+      {filteredReports.length > 0 ? (
         <div className="reports-list">
-          {reports
-            .filter(report => report.reportStatus.toLowerCase() === activeTab.toLowerCase()) 
-            .map(report => (
-              <div key={report.id} className={`report-card ${report.reportStatus}`}>
-                <h3>{report.reportText}</h3>
-                <p><strong>Venue:</strong> {report.venueID}</p>
-                <p><strong>Type:</strong> {report.reportType}</p>
-                <p><strong>Status:</strong> {report.reportStatus}</p>
+          {filteredReports.map(report => (
+            <div key={report.id} className={`report-card ${report.reportStatus}`}>
+              <h3>{report.reportText}</h3>
+              <p><strong>Venue:</strong> {report.venueID}</p>
+              <p><strong>Type:</strong> {report.reportType}</p>
+              <p><strong>Status:</strong> {report.reportStatus}</p>
+              <p><strong>Email:</strong> {report.createdBy}</p>
 
-                {/*edit resolution log */}
-                {editingLogId === report.id ? (
-                  <>
-                    <textarea
-                      value={newResolutionLog}
-                      onChange={(e) => setNewResolutionLog(e.target.value)}
-                    />
-                    <button onClick={() => handleSaveLogClick(report.id)}>
-                      Save
-                    </button>
-                    <button onClick={() => setEditingLogId(null)}>
-                      Cancel
-                    </button>
-                  </>
-                ) : (
-                  <>
-                    <p><strong>Resolution Log:</strong> {report.resolutionLog || 'No resolution log available'}</p>
-                    <button onClick={() => handleEditLogClick(report.id, report.resolutionLog)}>
-                      Edit Resolution Log
-                    </button>
-                  </>
-                )}
-
-                {/* buttons*/}
-                {report.reportStatus === "Pending" && (
-                  <>
-                    <button className="progress-btn" onClick={() => handleInProgressClick(report.id)}>
-                      Mark as In Progress
-                    </button>
-                    <button className="resolve-btn" onClick={() => handleResolveClick(report.id)}>
-                      Mark as Resolved
-                    </button>
-                  </>
-                )}
-
-                {report.reportStatus === "In Progress" && (
-                  <button className="resolve-btn" onClick={() => handleResolveClick(report.id)}>
-                    Mark as Resolved
+              {/* Edit resolution log */}
+              {editingLogId === report.id ? (
+                <>
+                  <textarea
+                    value={newResolutionLog}
+                    onChange={(e) => setNewResolutionLog(e.target.value)}
+                  />
+                  <button onClick={() => handleSaveLogClick(report.id)}>
+                    Save
                   </button>
-                )}
-              </div>
-            ))}
+                  <button onClick={() => setEditingLogId(null)}>
+                    Cancel
+                  </button>
+                </>
+              ) : (
+                <>
+                  <p><strong>Resolution Log:</strong> {report.resolutionLog || "_____"}</p>
+                  {report.reportStatus !== "Resolved" && (
+                    <>
+                      <button className="edit-log-btn" onClick={() => handleEditLogClick(report.id, report.resolutionLog)}>
+                        Edit Resolution Log
+                      </button>
+
+                      {/* Conditionally render buttons based on report status */}
+                      {report.reportStatus === "pending" && (
+                        <button className="progress-btn" onClick={() => handleInProgressClick(report.id)}>
+                         In Progress
+                        </button>
+                      )}
+
+                      {report.reportStatus === "In Progress" && (
+                        <button className="resolve-btn" onClick={() => handleResolveClick(report.id)}>
+                          Resolved
+                        </button>
+                      )}
+                    </>
+                  )}
+                </>
+              )}
+            </div>
+          ))}
         </div>
       ) : (
-        <p>No {activeTab} reports available for "{selectedReportType || "All"}"</p>
+        <p>No {activeTab} reports available for this type</p>
       )}
     </div>
   );

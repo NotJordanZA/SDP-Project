@@ -1,105 +1,117 @@
-/* Container styling */
+
+
+.reports-container h1 {
+  text-align: center;
+  margin-bottom: 15px;
+  font-size: 2.5em;
+  color: #043673;
+  font-weight: bold;
+}
+
 .reports-container {
-    padding: 40px 20px;
-    max-width: 900px;
-    margin: 0 auto;
-    background-color: #ffffff;
-    border-radius: 8px;
-    box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.1);
-  }
-  
-  /* Title styling */
-  .reports-container h1 {
-    text-align: center;
-    margin-bottom: 30px;
-    font-size: 2.5em;
-    color: #333;
-    font-weight: bold;
-  }
-  
-  /* Tabs styling */
+  padding: 20px 20px;
+  max-width: 950px;
+  margin: 0 auto;
+  background-color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.1);
+}
+
+
+   
   .tabs {
     display: flex;
     justify-content: center;
     margin-bottom: 30px;
     border-bottom: 2px solid #ccc;
   }
-  
+
   .tabs button {
-    padding: 10px 30px;
+    padding: 10px 10px;
     margin: 0 10px;
-    border: none;
-    background-color: transparent;
-    color: #917248;
-    font-size: 1.2em;
-    cursor: pointer;
-    transition: color 0.3s, border-bottom 0.3s;
-    border-bottom: 3px solid transparent;
-  }
-  
-  .tabs button.active {
-    color: #043673;
-    font-weight: bold;
-    border-bottom: 3px solid #043673;
-  }
-  
-  .tabs button:hover:not(.active) {
-    color: #043673;
-  }
-  
-  .reports-list {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-  }
-  
+  border: none;
+  background-color: transparent;
+  color: #917248;
+  font-size: 1.2em;
+  cursor: pointer;
+  transition: color 0.3s, border-bottom 0.3s;
+  border-bottom: 3px solid transparent;
+}
+
+.tabs button.active {
+  font-weight: bold;
+  border-bottom: 3px;
+}
+
+.reports-list {
+  display: flex;
+   flex-direction: column;
+  gap: 20px;
+}
+
+/* style cards*/
+.report-card {
+  padding: 20px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background-color: #fdfdfd;
+  transition: box-shadow 0.3s;
+}
+
+.report-card h3 {
+  margin: 0;
+  font-size: 1.8em;
+  color: #043673;
+}
+
+.report-card p {
+  margin: 8px 0;
+  font-size: 1.1em;
+}
+
+.report-card button {
+  padding: 10px 20px;
+  background-color: #043673;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 1em;
+  margin-top: 15px;
+  transition: background-color 0.3s;
+}
+
+.report-card button:hover {
+  background-color: #043673;
+}
+
+/* "Edit Resolution Log" button */
+.report-card .edit-log-btn {
+  background-color: #917248; 
+}
+
+.report-card .edit-log-btn:hover {
+  background-color: #b39772; 
+
+}
+
+/* Hover effect for report card */
+.report-card:hover {
+  box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.15);
+}
+.searchReport-container {
+  margin: 2px 0;
+  text-align: center; /* This will center the input within the container */
+  width: 100%;
+}
+
+.searchReport-container input {
+  width: 1px; /* Set a more compact width */
  
-  .report-card {
-    padding: 20px;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    background-color: #fdfdfd;
-    transition: box-shadow 0.3s;
-  }
-  
-  .report-card h3 {
-    margin: 0;
-    font-size: 1.8em;
-    color: #333;
-  }
-  
-  .report-card p {
-    margin: 8px 0;
-    font-size: 1.1em;
-  }
-  
-  .report-card button {
-    padding: 10px 20px;
-    background-color: #917248;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 1em;
-    margin-top: 15px;
-    transition: background-color 0.3s;
-  }
-  
-  .report-card button:hover {
-    background-color: #043673;
-  }
-
-  .report-card.approved {
-    background-color: #d4edda;
-    border-color: #c3e6cb;
-  }
-  
-  .report-card.approved h3, 
-  .report-card.approved p {
-    color: #155724;
-  }
-  
-
-  .report-card:hover {
-    box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.15);
-  }
+  font-size: 1em;
+  border: 9px solid #f0f0f0;
+  border-radius: 4px;
+  display: inline-block; /* Ensures the input doesn't expand fully */
+  box-sizing: border-box; /* Ensures padding is included in width calculation */
+  max-width: 200%; /* Prevents the input from becoming too large */
+}
