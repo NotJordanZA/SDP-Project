@@ -160,7 +160,7 @@ function Reports() {
       </div>
 
       {/* Search by email or venue */}
-      <div className="search-container">
+      <div className="searchReport-container">
         <label htmlFor="searchInput">Search by Email or Venue:</label>
         <input
           type="text"
