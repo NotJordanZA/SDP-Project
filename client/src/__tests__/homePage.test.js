@@ -80,4 +80,16 @@ describe('HomePage Component', () => {
     // Expect navigate to have been called with the correct route
     expect(mockNavigate).toHaveBeenCalledWith('/reports');
   });
+
+  test("Displays user's name correctly when logged in", () => {
+    // Mock a user being logged in
+    auth.currentUser = { displayName: 'Test User'};
+
+    // Render the HomePage
+    render(<HomePage />, { wrapper: MemoryRouter });
+
+    // Check if the user's email is displayed in the welcome message
+    const welcomeMessage = screen.getByText(/Welcome Test User/i);
+    expect(welcomeMessage).toBeInTheDocument();
+  });
 });
