@@ -25,24 +25,25 @@ const Reports = () => {
         setIsPopupOpen(!isPopupOpen);
     };
 
-    // Fetch reports from the API
-    useEffect(() => {
-        const fetchReports = async () => {
-            try {
-                const response = await fetch('/reports');  // Adjust the endpoint if necessary
-                const data = await response.json();
-                console.log(data)
-                setReports(data); // Update the state with the fetched reports
-            } catch (error) {
-                console.error('Error fetching reports:', error);
-            }
-        };
-
-        if (user) {
-            fetchReports();
+// Fetch reports from the API
+useEffect(() => {
+    const fetchReports = async () => {
+        try {
+            const queryParams = new URLSearchParams({
+                createdBy: user.email // Pass the user's email to filter reports by the creator
+            });
+            const response = await fetch(`/reports?${queryParams.toString()}`);  // Adjust the endpoint if necessary
+            const data = await response.json();
+            setReports(data); // Update the state with the fetched reports
+        } catch (error) {
+            console.error('Error fetching reports:', error);
         }
-    }, [user]);  // Only fetch reports if the user is logged in
+    };
 
+    if (user) {
+        fetchReports();
+    }
+}, [user]);  // Only fetch reports if the user is logged in
     if (!user) {
         return null;  // Prevents rendering if no user is logged in, redirect happens in the useEffect
     }
