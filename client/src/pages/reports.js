@@ -62,10 +62,10 @@ const Reports = () => {
                             .filter(report => report.createdBy === email)  // Filter reports by createdBy field
                             .map(report => (
                                 <li key={report.id}>
-                                    <span className="report-title">{report.reportType}</span>
-                                    <span className="report-text">{report.reportText}</span>
-                                    <span className="report-status">{report.reportStatus}</span>
-                                    <span className="report-venue">Venue: {report.venueID || report.venue}</span>
+                                    <p className="report-title">{report.reportType}</p>
+                                    <p className="report-text">{report.reportText}</p>
+                                    <p className="report-status">{report.reportStatus}</p>
+                                    <p className="report-venue">Venue: {report.venueID || report.venue}</p>
                                 </li>
                             ))
                     ) : (

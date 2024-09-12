@@ -44,7 +44,7 @@ describe('Reports Page', () => {
     const mockNavigate = jest.fn();
 
     beforeEach(() => {
-        fetch.mockClear();  //start clean
+        fetch.mockClear(); //clear existing mocks
         jest.clearAllMocks();
         useNavigate.mockReturnValue(mockNavigate); 
     });
