@@ -1017,3 +1017,57 @@ app.put("/Schedules/:id", async (req, res) => {
         res.status(500).json({ error: "Internal Server Error" });
     }
 });
+
+// POST - create Notification
+app.post("/notifications", async (req, res) => {
+    const { dateCreated, notificationMessage, notificationType, read, recipientEmail } = req.body;
+
+    // make sure all the fields are entered 
+    if (!dateCreated || !notificationMessage || !notificationType || read === undefined || !recipientEmail) {
+        return res.status(400).json({ error: "All fields are required." });
+    }
+
+    try {
+        // adding a document to the Notifications collection
+        const newNotificationRef = doc(collection(db, 'Notifications'));
+        const notificationData = {
+            dateCreated,
+            notificationMessage,
+            notificationType,
+            read,
+            recipientEmail
+        };
+
+        // Save the notification data 
+        await setDoc(newNotificationRef, notificationData);
+
+        // Returns the ID of the newly created notification
+        res.status(200).json({ message: "Notification created successfully", notificationID: newNotificationRef.id });
+    } catch (error) {
+        console.error("Error creating notification:", error);
+        res.status(500).json({ error: "Internal Server Error" });
+    }
+});
+
+// GET - retrieve all notifications for a specific recipient
+app.get("/notifications/:recipientEmail", async (req, res) => {
+    const recipientEmail = req.params.recipientEmail;
+
+    try {
+        const notificationsQuery = query(collection(db, 'Notifications'), where('recipientEmail', '==', recipientEmail));
+        const notificationsSnapshot = await getDocs(notificationsQuery);
+        const notificationsList = [];
+
+        notificationsSnapshot.forEach(doc => {
+            notificationsList.push({
+                id: doc.id,
+                ...doc.data()
+            });
+        });
+
+        res.status(200).json(notificationsList);
+    } catch (error) {
+        console.error("Error getting notifications:", error);
+        res.status(500).json({ error: "Internal Server Error" });
+    }
+});
