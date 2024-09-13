@@ -1,3 +1,4 @@
+// Header.js
 import React, { useState, useEffect } from 'react';
 import '../styles/Header.css'; 
 import logo from '../assets/logoWhite.png';
@@ -27,7 +28,11 @@ const Header = ({ title, toggleSidebar }) => {
       <header className="app-header">
         {/* Sidebar toggle icon */}
         {user && (
-          <i onClick={toggleSidebar} className="fa-solid fa-bars icon-img"></i>
+          <i 
+            onClick={toggleSidebar} 
+            className="fa-solid fa-bars icon-img" 
+            data-testid="sidebar-toggle"
+          ></i>
         )}
         <h1>{title}</h1>
         <div className="header-icons">
@@ -35,11 +40,18 @@ const Header = ({ title, toggleSidebar }) => {
           {user && (
             <i 
               className="fa-solid fa-bell bell-icon" 
-              onClick={() => navigate("/notifications")}
+              data-testid="bell-icon"
+              //onClick={() => navigate("/notifications")}
             />
           )}
           {/* Logo */}
-          <img src={logo} alt="Logo" className="logo" onClick={() => navigate("/home")} />
+          <img 
+            src={logo} 
+            alt="Logo" 
+            className="logo" 
+            data-testid="logo"
+            onClick={() => navigate("/home")} 
+          />
         </div>
       </header>
       <Outlet/>
