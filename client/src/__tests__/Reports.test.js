@@ -73,7 +73,23 @@ describe('Reports Page', () => {
         expect(submitButton).toBeInTheDocument();
         expect(reportListHeading).toBeInTheDocument();
     });
-
+    test('Toggles the popup form when "Submit a Report" button is clicked', async () => {
+        render(<Reports />, { wrapper: MemoryRouter });
+    
+        // Ensure that the PopupForm is initially not rendered
+        expect(screen.queryByText(/Submit a Report/i)).toBeInTheDocument();
+        expect(screen.queryByText(/Your form fields here/i)).not.toBeInTheDocument(); // Replace with any text in your PopupForm
+    
+        // Click the "Submit a Report" button to open the popup
+        const submitButton = screen.getByRole('button', { name: /Submit a Report/i });
+        submitButton.click();
+    
+        // Check if the popup is now rendered
+        await waitFor(() => {
+            expect(screen.queryByText(/Your form fields here/i)).toBeInTheDocument(); // Replace with any text in your PopupForm
+        });
+    });
+    
     test('Displays "No reports available" when there are no reports for the user', async () => {
         // Mock fetch to return no reports
         fetch.mockImplementationOnce(() =>
