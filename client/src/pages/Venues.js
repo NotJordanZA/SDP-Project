@@ -3,6 +3,7 @@ import "../styles/Venues.css";
 import VenueRow from "../components/VenueRow";
 import Search from "../components/Search";
 import { useState, useEffect } from "react";
+import { getCurrentUser } from '../utils/getCurrentUser';
 import { getAllVenues } from "../utils/getAllVenuesUtil";
 import { getCurrentDatesBookings } from "../utils/getCurrentDatesBookingsUtil";
 import { formatDate } from "../utils/formatDateUtil";
@@ -15,7 +16,29 @@ function Venues(){
     const [bookingsList, setBookingsList] = useState([]);
     const [displayDate, setDisplayDate] = useState(new Date());
     const [formattedDate, setFormattedDate] = useState('');
+    const [userInfo, setUserInfo] = useState({});
     const user = auth.currentUser;
+    const studentVenueTypes = ["Tutorial Room", "Study Room"];
+    const lecturerVenueTypes = ["Tutorial Room", "Study Room", "Lecture Venue", "Lab"];
+
+    function wait(milliseconds) {
+      return new Promise((resolve) => {
+        setTimeout(() => {
+          resolve();
+        }, milliseconds); // Convert seconds to milliseconds
+      });
+    }
+
+    wait(100)
+      .then(() => {
+        if (user === null) {
+          navigate("/login");
+        }
+        setUserInfo(getCurrentUser(user.email));
+      })
+      .catch((error) => {
+        console.error(error);
+      });
 
     const navigate = useNavigate();
     useEffect(() => { // Reroutes user to /login if they are not logged in
@@ -53,19 +76,50 @@ function Venues(){
       // Find all bookings for this venue
       const matchingBookings = bookingsList.filter(booking => booking.venueID === venue.venueName);
       
-      return (
-        <VenueRow
-          key={venue.venueName}
-          venueName={venue.venueName}
-          campus={venue.campus}
-          venueType={venue.venueType}
-          venueCapacity={venue.venueCapacity}
-          timeSlots={venue.timeSlots}
-          isClosed={venue.isClosed}
-          bookings={matchingBookings}
-          relevantDate={formattedDate}
-        />
-      );
+      // console.log(userInfo.isAdmin);
+
+      // if (userInfo.isAdmin === true){
+        return (
+          <VenueRow
+            key={venue.venueName}
+            venueName={venue.venueName}
+            campus={venue.campus}
+            venueType={venue.venueType}
+            venueCapacity={venue.venueCapacity}
+            timeSlots={venue.timeSlots}
+            isClosed={venue.isClosed}
+            bookings={matchingBookings}
+            relevantDate={formattedDate}
+          />
+        );
+      // }
+      // else if ((userInfo.isLecturer === true) && (lecturerVenueTypes.indexOf(venue.venueType) !== -1)){
+      //   <VenueRow
+      //       key={venue.venueName}
+      //       venueName={venue.venueName}
+      //       campus={venue.campus}
+      //       venueType={venue.venueType}
+      //       venueCapacity={venue.venueCapacity}
+      //       timeSlots={venue.timeSlots}
+      //       isClosed={venue.isClosed}
+      //       bookings={matchingBookings}
+      //       relevantDate={formattedDate}
+      //     />
+      // }
+      // else if ((userInfo.isStudent === true) && (studentVenueTypes.indexOf(venue.venueType) !== -1)){
+      //   <VenueRow
+      //       key={venue.venueName}
+      //       venueName={venue.venueName}
+      //       campus={venue.campus}
+      //       venueType={venue.venueType}
+      //       venueCapacity={venue.venueCapacity}
+      //       timeSlots={venue.timeSlots}
+      //       isClosed={venue.isClosed}
+      //       bookings={matchingBookings}
+      //       relevantDate={formattedDate}
+      //     />
+      // }
+      
     });
 
     
