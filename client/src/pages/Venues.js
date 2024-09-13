@@ -16,36 +16,57 @@ function Venues(){
     const [bookingsList, setBookingsList] = useState([]);
     const [displayDate, setDisplayDate] = useState(new Date());
     const [formattedDate, setFormattedDate] = useState('');
-    const [userInfo, setUserInfo] = useState({});
+    const [userInfo, setUserInfo] = useState();
     const user = auth.currentUser;
     const studentVenueTypes = ["Tutorial Room", "Study Room"];
     const lecturerVenueTypes = ["Tutorial Room", "Study Room", "Lecture Venue", "Lab"];
 
-    function wait(milliseconds) {
-      return new Promise((resolve) => {
-        setTimeout(() => {
-          resolve();
-        }, milliseconds); // Convert seconds to milliseconds
-      });
-    }
+    // function wait(milliseconds) {
+    //   return new Promise((resolve) => {
+    //     setTimeout(() => {
+    //       resolve();
+    //     }, milliseconds); // Convert seconds to milliseconds
+    //   });
+    // }
 
-    wait(100)
-      .then(() => {
-        if (user === null) {
-          navigate("/login");
-        }
-        setUserInfo(getCurrentUser(user.email));
-      })
-      .catch((error) => {
-        console.error(error);
-      });
-
+    // useEffect(() => {
+    //   wait(100)
+    //   .then(() => {
+    //     if (user === null) {
+    //       navigate("/login");
+    //     }
+    //     setUserInfo(getCurrentUser(user.email));
+    //   })
+    //   .catch((error) => {
+    //     console.error(error);
+    //   });
+    // }, []);
     const navigate = useNavigate();
-    useEffect(() => { // Reroutes user to /login if they are not logged in
-    if (user === null) {
-        navigate("/login");
-    }
-    }, [user, navigate]); // Effect will run when the user or navigate changes
+    // useEffect(() => { // Reroutes user to /login if they are not logged in
+    //   if (user === null) {
+    //       navigate("/login");
+    //   }
+    // }, [user, navigate]); // Effect will run when the user or navigate changes
+
+    useEffect(() => {
+      const fetchUserInfo = async () => {
+          try {
+              if (user === null) {
+                  navigate("/login");
+              } else {
+                  const userData = await getCurrentUser(user.email);
+                  setUserInfo(userData);
+              }
+          } catch (error) {
+              console.error('Failed to fetch user info:', error);
+          }
+      };
+      fetchUserInfo();
+  }, [user, navigate]);
+
+    useEffect(() => {
+      console.log(userInfo);
+    }, [userInfo])
     
     useEffect(() => {
       getAllVenues(setVenueList, setAllVenues);
@@ -78,7 +99,7 @@ function Venues(){
       
       // console.log(userInfo.isAdmin);
 
-      // if (userInfo.isAdmin === true){
+      if (userInfo.isAdmin === true){
         return (
           <VenueRow
             key={venue.venueName}
@@ -92,37 +113,35 @@ function Venues(){
             relevantDate={formattedDate}
           />
         );
-      // }
-      // else if ((userInfo.isLecturer === true) && (lecturerVenueTypes.indexOf(venue.venueType) !== -1)){
-      //   <VenueRow
-      //       key={venue.venueName}
-      //       venueName={venue.venueName}
-      //       campus={venue.campus}
-      //       venueType={venue.venueType}
-      //       venueCapacity={venue.venueCapacity}
-      //       timeSlots={venue.timeSlots}
-      //       isClosed={venue.isClosed}
-      //       bookings={matchingBookings}
-      //       relevantDate={formattedDate}
-      //     />
-      // }
-      // else if ((userInfo.isStudent === true) && (studentVenueTypes.indexOf(venue.venueType) !== -1)){
-      //   <VenueRow
-      //       key={venue.venueName}
-      //       venueName={venue.venueName}
-      //       campus={venue.campus}
-      //       venueType={venue.venueType}
-      //       venueCapacity={venue.venueCapacity}
-      //       timeSlots={venue.timeSlots}
-      //       isClosed={venue.isClosed}
-      //       bookings={matchingBookings}
-      //       relevantDate={formattedDate}
-      //     />
-      // }
+      }
+      else if ((userInfo.isLecturer === true) && (lecturerVenueTypes.indexOf(venue.venueType) !== -1)){
+        <VenueRow
+            key={venue.venueName}
+            venueName={venue.venueName}
+            campus={venue.campus}
+            venueType={venue.venueType}
+            venueCapacity={venue.venueCapacity}
+            timeSlots={venue.timeSlots}
+            isClosed={venue.isClosed}
+            bookings={matchingBookings}
+            relevantDate={formattedDate}
+          />
+      }
+      else if ((userInfo.isStudent === true) && (studentVenueTypes.indexOf(venue.venueType) !== -1)){
+        <VenueRow
+            key={venue.venueName}
+            venueName={venue.venueName}
+            campus={venue.campus}
+            venueType={venue.venueType}
+            venueCapacity={venue.venueCapacity}
+            timeSlots={venue.timeSlots}
+            isClosed={venue.isClosed}
+            bookings={matchingBookings}
+            relevantDate={formattedDate}
+          />
+      }
       
     });
-
-    
 
     return (
         <main>
