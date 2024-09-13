@@ -110,4 +110,39 @@ describe('ManageVenues Component', () => {
       expect(newVenue).toBeInTheDocument();
     });
   });
+
+  test('admin can delete a venue', async () => {
+    // Mock fetch responses
+    global.fetch = jest.fn()
+      .mockResolvedValueOnce({
+        ok: true,
+        json: async () => [
+          { id: 1, venueName: 'Venue to Delete', buildingName: 'Building A', venueCapacity: 100, venueType: 'Lecture Venue', isClosed: false },
+          { id: 2, venueName: 'Another Venue', buildingName: 'Building B', venueCapacity: 200, venueType: 'Tutorial/Study Room', isClosed: false }
+        ]
+      })
+      .mockResolvedValueOnce({
+        ok: true,
+        json: async () => [
+          { id: 2, venueName: 'Another Venue', buildingName: 'Building B', venueCapacity: 200, venueType: 'Tutorial/Study Room', isClosed: false }
+        ]
+      });
+  
+    // Render the ManageVenues component
+    render(<Venues />);
+  
+    // Wait for the venues to be fetched and displayed
+    await waitFor(() => {
+      expect(screen.getByText('Venue to Delete')).toBeInTheDocument();
+    });
+  
+    // Find the delete button for the specific venue
+    const deleteButton = screen.getAllByText('Delete')[0]; // Assuming the first delete button corresponds to 'Venue to Delete'
+    fireEvent.click(deleteButton);
+  
+    // Wait for the venue to be removed from the list
+    await waitFor(() => {
+      expect(screen.queryByText('Venue to Delete')).not.toBeInTheDocument();
+    });
+  });
 });
