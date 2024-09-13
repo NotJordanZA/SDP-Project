@@ -7,36 +7,48 @@ import { auth } from "../firebase";
 const Reports = () => {
     const [isPopupOpen, setIsPopupOpen] = useState(false);
     const [reports, setReports] = useState([]);
-    const user = auth.currentUser;
-    let email = user.email;
+    const [user, setUser] = useState(auth.currentUser); // Local state to track current user
     const navigate = useNavigate();
 
     useEffect(() => {   
         // Reroutes user to /login if they are not logged in
-        if (user === null) {
-            console.log(user);
+        if (!user) {
             navigate("/login");
         }
     }, [user, navigate]);
+
+    useEffect(() => {
+        setUser(auth.currentUser);  // Ensure that the current user is synced with state
+    }, []);
 
     const togglePopup = () => {
         setIsPopupOpen(!isPopupOpen);
     };
 
-    // Fetch reports from the API
-    useEffect(() => {
-        const fetchReports = async () => {
-            try {
-                const response = await fetch('/reports');  // Adjust the endpoint if necessary
-                const data = await response.json();
-                setReports(data); // Update the state with the fetched reports
-            } catch (error) {
-                console.error('Error fetching reports:', error);
-            }
-        };
+// Fetch reports from the API
+useEffect(() => {
+    const fetchReports = async () => {
+        try {
+            const queryParams = new URLSearchParams({
+                createdBy: user.email // Pass the user's email to filter reports by the creator
+            });
+            const response = await fetch(`/reports?${queryParams.toString()}`);  // Adjust the endpoint if necessary
+            const data = await response.json();
+            setReports(data); // Update the state with the fetched reports
+        } catch (error) {
+            console.error('Error fetching reports:', error);
+        }
+    };
 
+    if (user) {
         fetchReports();
-    }, []);  // Empty dependency array to run only on mount
+    }
+}, [user]);  // Only fetch reports if the user is logged in
+    if (!user) {
+        return null;  // Prevents rendering if no user is logged in, redirect happens in the useEffect
+    }
+
+    let email = user.email;
 
     return (
         <section className="report-page">
@@ -51,10 +63,10 @@ const Reports = () => {
                             .filter(report => report.createdBy === email)  // Filter reports by createdBy field
                             .map(report => (
                                 <li key={report.id}>
-                                    <span className="report-title">{report.reportType}</span>
-                                    <span className="report-text">{report.reportText}</span>
-                                    <span className="report-status">{report.reportStatus}</span>
-                                    <span className="report-venue">Venue: {report.venueID || report.venue}</span>
+                                    <p className="report-title">{report.reportType}</p>
+                                    <p className="report-text">{report.reportText}</p>
+                                    <p className="report-status">{report.reportStatus}</p>
+                                    <p className="report-venue">Venue: {report.venueID || report.venue}</p>
                                 </li>
                             ))
                     ) : (

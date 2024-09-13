@@ -297,15 +297,14 @@ app.post("/reports", async (req, res) => {
     }
 });
 
-// Get reports API
 app.get("/reports", async (req, res) => {
-    const { venueID, roomNumber, reportType } = req.query;  // Extract query parameters
+    const { venueID, roomNumber, reportType, createdBy } = req.query;  // Include 'createdBy' as a filter
 
     try {
         const reportsQuery = collection(db, "Reports");
         let queryRef = reportsQuery;
 
-        // Optional filters based on query parameters
+        // Apply filters based on query parameters
         if (venueID) {
             queryRef = query(queryRef, where("venueID", "==", venueID));
         }
@@ -314,6 +313,9 @@ app.get("/reports", async (req, res) => {
         }
         if (reportType) {
             queryRef = query(queryRef, where("reportType", "==", reportType));
+        }
+        if (createdBy) {
+            queryRef = query(queryRef, where("createdBy", "==", createdBy));  // Ensure reports are filtered by creator
         }
 
         // Execute the query
@@ -326,13 +328,13 @@ app.get("/reports", async (req, res) => {
                 ...doc.data()
             });
         });
+
         res.status(200).json(reports);
     } catch (error) {
         console.error("Error retrieving reports:", error);
         res.status(500).json({ error: "Failed to retrieve reports" });
     }
 });
-
 
 //Prints to console the port of the server
 app.listen(PORT, () => {
