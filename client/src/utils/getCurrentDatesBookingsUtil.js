@@ -2,6 +2,9 @@ export const getCurrentDatesBookings = async (bookingDate, setBookingsList) =>{
     try{
       const response = await fetch(`/bookings/findByField?bookingDate=${bookingDate}`, {
         method: 'GET',
+        headers: {
+          'x-api-key': process.env.REACT_APP_API_KEY,
+        },
       });
 
       const data = await response.json();

@@ -2,10 +2,15 @@ import React, { useState, useEffect } from 'react';
 import '../styles/ManageBookings.css';
 import EditBooking from '../pages/ManageBookingsEdit.js';
 
-const API_URL = process.env.NODE_ENV === 'production' ? 'https://your-production-site.com' : 'http://localhost:3002';
+const API_URL = process.env.NODE_ENV === 'production' ? 'https://your-production-site.com' : 'http://localhost:3001';
 
 const getAllBookings = async () => {
-  const response = await fetch(`${API_URL}/bookings`);
+  const response = await fetch(`${API_URL}/bookings`, {
+    method: 'GET',
+    headers: {
+      'x-api-key': process.env.REACT_APP_API_KEY,
+    },
+  });
   return await response.json();
 };
 

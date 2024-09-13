@@ -2,6 +2,9 @@ export const getCurrentUsersAdminRequests = async (currentUserEmail, setRequests
     try{
       const response = await fetch(`/adminRequests/findByField?requesterEmail=${currentUserEmail}`, { // API call which GETs based on user email
         method: 'GET',
+        headers: {
+          'x-api-key': process.env.REACT_APP_API_KEY,
+        },
       });
 
       const data = await response.json();
