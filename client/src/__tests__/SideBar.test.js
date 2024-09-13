@@ -103,4 +103,57 @@ describe('Sidebar Component', () => {
             expect(mockNavigate).toHaveBeenCalledWith('/login');
         });
     });
+    test('Logs an error when sign out fails', async () => {
+        const mockError = new Error('Failed to sign out'); // Create a mock error
+        signOut.mockRejectedValue(mockError); // Simulate a failed sign out
+    
+        // Spy on console.error to capture the error output
+        const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+    
+        render(<Sidebar isOpen={true} toggleSidebar={jest.fn()} />, { wrapper: MemoryRouter });
+    
+        const logoutButton = screen.getByRole('button', { name: /Logout/i });
+        fireEvent.click(logoutButton);
+    
+        await waitFor(() => {
+            expect(signOut).toHaveBeenCalledWith(auth);
+            expect(consoleErrorSpy).toHaveBeenCalledWith('Error signing out: ', mockError);
+        });
+    
+        // Restore the original console.error after the test
+        consoleErrorSpy.mockRestore();
+    });
+    
+    
+    test('Navigates to correct pages when sub-admin buttons are clicked', () => {
+        render(<Sidebar isOpen={true} toggleSidebar={jest.fn()} />, { wrapper: MemoryRouter });
+    
+        // Open the Admin dropdown
+        const adminButton = screen.getByRole('button', { name: /^Admin$/i });
+        fireEvent.click(adminButton);
+    
+        // Click each sub-admin button and verify navigation
+        const adminDashboardButton = screen.getByRole('button', { name: /Admin Dashboard/i });
+        fireEvent.click(adminDashboardButton);
+        expect(mockNavigate).toHaveBeenCalledWith('/HomeAdmin');
+    
+        const manageBookingsButton = screen.getByRole('button', { name: /Manage Bookings/i });
+        fireEvent.click(manageBookingsButton);
+        expect(mockNavigate).toHaveBeenCalledWith('/manage-bookings');
+    
+        const manageReportsButton = screen.getByRole('button', { name: /Manage Reports/i });
+        fireEvent.click(manageReportsButton);
+        expect(mockNavigate).toHaveBeenCalledWith('/manage-reports');
+    
+        const manageRequestsButton = screen.getByRole('button', { name: /Manage Requests/i });
+        fireEvent.click(manageRequestsButton);
+        expect(mockNavigate).toHaveBeenCalledWith('/manage-requests');
+    
+        const manageVenuesButton = screen.getByRole('button', { name: /Manage Venues/i });
+        fireEvent.click(manageVenuesButton);
+        expect(mockNavigate).toHaveBeenCalledWith('/manage-venues');
+    });
+        
+
+
 });
