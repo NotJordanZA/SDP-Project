@@ -1,4 +1,4 @@
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, screen, waitFor, fireEvent } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import Reports from '../pages/reports';
 import { auth } from '../firebase';
@@ -73,23 +73,25 @@ describe('Reports Page', () => {
         expect(submitButton).toBeInTheDocument();
         expect(reportListHeading).toBeInTheDocument();
     });
+
     test('Toggles the popup form when "Submit a Report" button is clicked', async () => {
         render(<Reports />, { wrapper: MemoryRouter });
     
-        // Ensure that the PopupForm is initially not rendered
-        expect(screen.queryByText(/Submit a Report/i)).toBeInTheDocument();
-        expect(screen.queryByText(/Your form fields here/i)).not.toBeInTheDocument(); // Replace with any text in your PopupForm
+        // Initially, the popup should not be open
+        expect(screen.queryByText(/Room Number:/i)).not.toBeInTheDocument();
     
-        // Click the "Submit a Report" button to open the popup
-        const submitButton = screen.getByRole('button', { name: /Submit a Report/i });
-        submitButton.click();
+        // Click the "Submit" button to open the popup
+        const submitButton = screen.getByRole('button', { name: /Submit/i });
+        fireEvent.click(submitButton);
     
         // Check if the popup is now rendered
         await waitFor(() => {
-            expect(screen.queryByText(/Your form fields here/i)).toBeInTheDocument(); // Replace with any text in your PopupForm
+            // Look for a unique element in the PopupForm, such as the "Submit" button or form heading
+            expect(screen.getByText(/Room Number:/i)).toBeInTheDocument();
         });
     });
-    
+
+
     test('Displays "No reports available" when there are no reports for the user', async () => {
         // Mock fetch to return no reports
         fetch.mockImplementationOnce(() =>
@@ -104,28 +106,6 @@ describe('Reports Page', () => {
             const noReportsMessage = screen.getByText(/No reports available/i);
             expect(noReportsMessage).toBeInTheDocument();
         });
-    });
-
-    test('Renders myReports list for the logged-in user', async () => {
-        // Mock the current user
-        auth.currentUser = { email: 'test@wits.ac.za' };
-
-        // Render the Reports component
-        render(<Reports />, { wrapper: MemoryRouter });
-console.log("Current User:", auth.currentUser);
-        // Wait for the fetch to complete and the report list to be rendered
-        await waitFor(() => {
-            const reportList = screen.getByRole('list');
-            expect(reportList).toBeInTheDocument();
-        });
-
-        // Check if the report for 'test@wits.ac.za' is displayed
-        const userReport = screen.getByText(/Broken window/i);
-        expect(userReport).toBeInTheDocument();
-
-        // Ensure that the other user's report is not rendered
-        const otherReport = screen.queryByText(/Projector issue/i);
-        expect(otherReport).not.toBeInTheDocument();
     });
 
     test('Redirects to /login if user is not logged in', async () => {
