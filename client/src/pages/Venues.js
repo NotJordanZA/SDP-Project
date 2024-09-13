@@ -16,10 +16,10 @@ function Venues(){
     const [bookingsList, setBookingsList] = useState([]);
     const [displayDate, setDisplayDate] = useState(new Date());
     const [formattedDate, setFormattedDate] = useState('');
-    const [userInfo, setUserInfo] = useState();
+    const [userInfo, setUserInfo] = useState({});
     const user = auth.currentUser;
     const studentVenueTypes = ["Tutorial Room", "Study Room"];
-    const lecturerVenueTypes = ["Tutorial Room", "Study Room", "Lecture Venue", "Lab"];
+    const lecturerVenueTypes = ["Tutorial Room", "Study Room", "Lecture Venue", "Lab", "Test Venue"];
 
     // function wait(milliseconds) {
     //   return new Promise((resolve) => {
@@ -48,21 +48,38 @@ function Venues(){
     //   }
     // }, [user, navigate]); // Effect will run when the user or navigate changes
 
-    useEffect(() => {
-      const fetchUserInfo = async () => {
+    // MAKES IT SO THE CURRENT USER IS NULL. MAYBE ASK THE GOAT?
+    auth.onAuthStateChanged((user) => {
+      if (user) {
+        const fetchUserInfo = async () => {
           try {
-              if (user === null) {
-                  navigate("/login");
-              } else {
-                  const userData = await getCurrentUser(user.email);
-                  setUserInfo(userData);
-              }
+            const userData = await getCurrentUser(user.email);
+            setUserInfo(userData);
           } catch (error) {
               console.error('Failed to fetch user info:', error);
           }
-      };
-      fetchUserInfo();
-  }, [user, navigate]);
+          fetchUserInfo();
+        };
+      } else {
+        navigate("/login");
+      }
+    });
+
+  //   useEffect(() => {
+  //     const fetchUserInfo = async () => {
+  //         try {
+  //             if (user === null) {
+  //                 navigate("/login");
+  //             } else {
+  //                 const userData = await getCurrentUser(user.email);
+  //                 setUserInfo(userData);
+  //             }
+  //         } catch (error) {
+  //             console.error('Failed to fetch user info:', error);
+  //         }
+  //     };
+  //     fetchUserInfo();
+  // }, [user, navigate]);
 
     useEffect(() => {
       console.log(userInfo);
@@ -115,7 +132,8 @@ function Venues(){
         );
       }
       else if ((userInfo.isLecturer === true) && (lecturerVenueTypes.indexOf(venue.venueType) !== -1)){
-        <VenueRow
+        return (
+          <VenueRow
             key={venue.venueName}
             venueName={venue.venueName}
             campus={venue.campus}
@@ -126,9 +144,11 @@ function Venues(){
             bookings={matchingBookings}
             relevantDate={formattedDate}
           />
+        )
       }
       else if ((userInfo.isStudent === true) && (studentVenueTypes.indexOf(venue.venueType) !== -1)){
-        <VenueRow
+        return (
+          <VenueRow
             key={venue.venueName}
             venueName={venue.venueName}
             campus={venue.campus}
@@ -139,6 +159,7 @@ function Venues(){
             bookings={matchingBookings}
             relevantDate={formattedDate}
           />
+        )
       }
       
     });
