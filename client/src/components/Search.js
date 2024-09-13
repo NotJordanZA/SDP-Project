@@ -115,7 +115,7 @@ export default function Search({venueList, setVenueList, bookingsList, ...props 
 
     return (
         <main className="greater-search-container" {...props}>
-            <div className="search-container">
+            <div className="inner-search-container">
                 <div className="main-search-row">
                     <input className="search-input" placeholder='Search...' value={searchInput} onChange={handleInputChange}/>
                     <button className="search-row-button" onClick = {searchVenue}><FontAwesomeIcon icon={faSearch}/></button>
