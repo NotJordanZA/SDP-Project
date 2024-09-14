@@ -8,13 +8,6 @@
   padding: 20px;
 }
 
-.nav-pages {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 20px;
-  padding: 20px;
-}
 
 .welcome-section {
   display: flex;
@@ -37,11 +30,6 @@
 
 
 @media (max-width: 768px) {
-  .nav-pages {
-    flex-direction: row;
-    justify-content: space-between;
-  }
-
   .main-icon {
     width: 120px;
   }
@@ -56,10 +44,6 @@
 }
 
 @media (max-width: 480px) {
-  .nav-pages {
-    flex-direction: column;
-    align-items: center;
-  }
 
   .main-icon {
     width: 100%;
