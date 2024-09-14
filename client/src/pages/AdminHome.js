@@ -2,13 +2,13 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../styles/AdminHome.css';
-import MainIcon from '../components/mainIcon'; // Ensure the correct import path
+import MainIcon from '../components/MainIcon'; // Ensure the correct import path
 
 function HomeAdmin() {
   const navigate = useNavigate();
 
   return (
-    <div className="home-admin">
+    <article className="home-admin">
       <MainIcon 
         iconClass="fa-solid fa-calendar" 
         text="Manage Bookings" 
@@ -29,7 +29,7 @@ function HomeAdmin() {
         text="Manage Venues" 
         onClickFunction={() => navigate('/manage-venues')}
       />
-    </div>
+    </article>
   );
 }
 

@@ -1,4 +1,4 @@
-/* AdminHome.css */
+/* homePage.css */
 
 .home-admin {
   display: flex;
@@ -6,60 +6,15 @@
   justify-content: center;
   gap: 20px;
   padding: 20px;
-  background-color: #f4f4f4; /* Light background color for contrast */
-  border-radius: 15px;
-  margin: 20px auto;
-  max-width: 1200px; /* Limit the maximum width */
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
 }
 
-.main-icon {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  background-color: #917248; /* Matching color */
-  color: white;
-  border-radius: 10px;
-  padding: 15px;
-  width: 150px;
-  height: 150px;
-  transition: transform 0.3s ease, background-color 0.3s ease;
-  cursor: pointer;
-}
-
-.main-icon:hover {
-  transform: scale(1.05);
-  background-color: #7a6235; /* Slightly darker shade on hover */
-}
-
-.icon-img {
-  font-size: 3rem; /* Larger icon size */
-}
-
-.main-icon p {
-  font-size: 1rem;
-  font-weight: bold;
-  margin-top: 10px;
-  text-align: center; /* Center the text */
-}
-
-/* Media queries for responsiveness */
 @media (max-width: 768px) {
-  .home-admin {
-    flex-direction: row;
-    justify-content: center;
-  }
-
   .main-icon {
-    width: 130px;
-    height: 130px;
-    padding: 10px;
-    margin: 10px; /* Add margin for spacing */
+    width: 120px;
   }
 
   .icon-img {
-    font-size: 2.5rem; /* Adjust icon size for smaller screens */
+    font-size: 2rem;
   }
 
   .main-icon p {
@@ -68,22 +23,14 @@
 }
 
 @media (max-width: 480px) {
-  .home-admin {
-    flex-direction: column; /* Stack icons vertically on small screens */
-    align-items: center;
-    padding: 10px;
-  }
 
   .main-icon {
     width: 100%;
-    max-width: 250px; /* Ensure icons don't stretch too much */
-    height: auto;
-    padding: 20px;
-    margin-bottom: 15px; /* Space between icons */
+    max-width: 250px;
   }
 
   .icon-img {
-    font-size: 2.2rem; /* Adjust icon size for smaller screens */
+    font-size: 1.8rem;
   }
 
   .main-icon p {
