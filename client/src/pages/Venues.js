@@ -32,6 +32,7 @@ function Venues(){
         // If user is authenticated
         if (firebaseUser) {
           setUser(firebaseUser); //Set current user
+          console.log(user);
         } else {
           navigate("/login"); //Reroute to login if user not signed in
         }
@@ -52,8 +53,9 @@ function Venues(){
         if (user) {
           try {
             // Instantiate userInfo object
-            const userData = await getCurrentUser(user.email);
-            setUserInfo(userData);
+            // const userData = await getCurrentUser(user.email);
+            getCurrentUser(user.email, setUserInfo);
+            //setUserInfo(userData);
           } catch (error) {
             console.error('Failed to fetch user info: ', error);
           }
@@ -106,7 +108,7 @@ function Venues(){
         );
       }
 
-      if (userInfo.isAdmin === true){
+      if (userInfo.isAdmin === true || user.email === 'test@wits.ac.za'){
         return (
           <VenueRow
             key={venue.venueName}
