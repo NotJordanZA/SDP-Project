@@ -9,6 +9,7 @@ import { getCurrentDatesBookings } from "../utils/getCurrentDatesBookingsUtil";
 import { formatDate } from "../utils/formatDateUtil";
 import { auth } from "../firebase";
 import { useNavigate } from "react-router-dom";
+import { onAuthStateChanged } from "firebase/auth";
 
 function Venues(){
     const [allVenues, setAllVenues] = useState([]);
@@ -17,73 +18,44 @@ function Venues(){
     const [displayDate, setDisplayDate] = useState(new Date());
     const [formattedDate, setFormattedDate] = useState('');
     const [userInfo, setUserInfo] = useState({});
-    const user = auth.currentUser;
+    const [isLoading, setIsLoading] = useState(true);
+    const [user, setUser] = useState(null);
+    // const user = auth.currentUser;
     const studentVenueTypes = ["Tutorial Room", "Study Room"];
     const lecturerVenueTypes = ["Tutorial Room", "Study Room", "Lecture Venue", "Lab", "Test Venue"];
-
-    // function wait(milliseconds) {
-    //   return new Promise((resolve) => {
-    //     setTimeout(() => {
-    //       resolve();
-    //     }, milliseconds); // Convert seconds to milliseconds
-    //   });
-    // }
-
-    // useEffect(() => {
-    //   wait(100)
-    //   .then(() => {
-    //     if (user === null) {
-    //       navigate("/login");
-    //     }
-    //     setUserInfo(getCurrentUser(user.email));
-    //   })
-    //   .catch((error) => {
-    //     console.error(error);
-    //   });
-    // }, []);
     const navigate = useNavigate();
-    // useEffect(() => { // Reroutes user to /login if they are not logged in
-    //   if (user === null) {
-    //       navigate("/login");
-    //   }
-    // }, [user, navigate]); // Effect will run when the user or navigate changes
+    
+    useEffect(() => {
+      const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
+        if (firebaseUser) {
+          setUser(firebaseUser);
+        } else {
+          navigate("/login");
+        }
+        setIsLoading(false);
+      });
+      return () => unsubscribe();
+    }, [auth, navigate]);
 
-    // MAKES IT SO THE CURRENT USER IS NULL. MAYBE ASK THE GOAT?
-    auth.onAuthStateChanged((user) => {
-      if (user) {
-        const fetchUserInfo = async () => {
+    useEffect(() => {
+      const fetchUserInfo = async () => {
+        if (user) {
           try {
             const userData = await getCurrentUser(user.email);
             setUserInfo(userData);
           } catch (error) {
-              console.error('Failed to fetch user info:', error);
+            console.error('Failed to fetch user info: ', error);
           }
-          fetchUserInfo();
-        };
-      } else {
-        navigate("/login");
+        }
+      };
+      if (!isLoading){
+        fetchUserInfo();
       }
-    });
-
-  //   useEffect(() => {
-  //     const fetchUserInfo = async () => {
-  //         try {
-  //             if (user === null) {
-  //                 navigate("/login");
-  //             } else {
-  //                 const userData = await getCurrentUser(user.email);
-  //                 setUserInfo(userData);
-  //             }
-  //         } catch (error) {
-  //             console.error('Failed to fetch user info:', error);
-  //         }
-  //     };
-  //     fetchUserInfo();
-  // }, [user, navigate]);
+    }, [user, isLoading]);
 
     useEffect(() => {
       console.log(userInfo);
-    }, [userInfo])
+    }, [userInfo]);
     
     useEffect(() => {
       getAllVenues(setVenueList, setAllVenues);
@@ -115,6 +87,12 @@ function Venues(){
       const matchingBookings = bookingsList.filter(booking => booking.venueID === venue.venueName);
       
       // console.log(userInfo.isAdmin);
+
+      if (isLoading) {
+        return (
+          <p>Loading...</p>
+        );
+      }
 
       if (userInfo.isAdmin === true){
         return (
