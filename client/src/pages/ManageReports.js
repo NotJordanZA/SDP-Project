@@ -1,4 +1,7 @@
 import React, { useState, useEffect } from 'react';
+import { auth } from "../firebase";
+import { useNavigate } from "react-router-dom";
+import { onAuthStateChanged } from "firebase/auth";
 import '../styles/ManageReports.css'; 
 
 const API_URL = process.env.NODE_ENV === 'production' ? 'https://your-production-site.com' : 'http://localhost:3001'; 
@@ -33,7 +36,25 @@ function Reports() {
   const [selectedType, setSelectedType] = useState(''); // For filtering by report type
   const [searchText, setSearchText] = useState(''); // For searching by email or venue
   const [errorMessage, setErrorMessage] = useState(''); // Error message
+  const [isLoading, setIsLoading] = useState(true);
+  const [user, setUser] = useState(null);
+  const navigate = useNavigate();
 
+  // Ensure User is logged in
+  useEffect(() => {
+    // Listen for a change in the auth state
+    const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
+      // If user is authenticated
+      if (firebaseUser) {
+        setUser(firebaseUser); //Set current user
+      } else {
+        navigate("/login"); //Reroute to login if user not signed in
+      }
+      setIsLoading(false); //Declare firebase as no longer loading
+    });
+    return () => unsubscribe(); //Return the listener
+  }, [auth, navigate]);
+  
   // Fetch all reports on component mount
   useEffect(() => {
     const fetchAllReports = async () => {

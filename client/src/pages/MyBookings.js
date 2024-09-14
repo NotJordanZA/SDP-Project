@@ -3,24 +3,35 @@ import { auth } from "../firebase";
 import { useState, useEffect } from "react";
 import '../styles/Bookings.css';
 import { useNavigate } from "react-router-dom";
+import { onAuthStateChanged } from "firebase/auth";
 import { getCurrentUsersBookings } from "../utils/getCurrentUsersBookings";
 
 function MyBookings() {
     const [bookingsList, setBookingsList] = useState([]);
-    const user = auth.currentUser; // Fetches current user
+    const [isLoading, setIsLoading] = useState(true);
+    const [user, setUser] = useState(null);
 
     const navigate = useNavigate();
-    useEffect(() => { // Reroutes user to /login if they are not logged in
-    if (user === null) {
-        navigate("/login");
-    }
-    }, [user, navigate]); // Effect will run when the user or navigate changes
+    // Ensure User is logged in
+    useEffect(() => {
+        // Listen for a change in the auth state
+        const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
+          // If user is authenticated
+          if (firebaseUser) {
+            setUser(firebaseUser); //Set current user
+          } else {
+            navigate("/login"); //Reroute to login if user not signed in
+          }
+          setIsLoading(false); //Declare firebase as no longer loading
+        });
+        return () => unsubscribe(); //Return the listener
+      }, [auth, navigate]);
     
-    const currentUserEmail = user ? user.email : null; // Gets current user email if not null, otherwise sets it to null
+    // const currentUserEmail = user ? user.email : null; // Gets current user email if not null, otherwise sets it to null
 
     useEffect(() => {
         if(user){
-            getCurrentUsersBookings(currentUserEmail, setBookingsList);// Gets the bookings of the current user by their email
+            getCurrentUsersBookings(user.email, setBookingsList);// Gets the bookings of the current user by their email
         }
       }, [user]);// Only runs if user is defined
 

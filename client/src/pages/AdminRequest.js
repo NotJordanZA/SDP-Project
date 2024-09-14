@@ -1,5 +1,6 @@
 import AdminRequestRow from "../components/AdminRequestRow";
 import { auth } from "../firebase";
+import { onAuthStateChanged } from "firebase/auth";
 import { useState, useEffect } from "react";
 import '../styles/AdminRequests.css';
 import { useNavigate } from "react-router-dom";
@@ -9,16 +10,26 @@ import PopupForm from "../components/AdminRequestForm";
 function AdminRequest() {
     const [requestsList, setRequestsList] = useState([]);
     const [isPopupOpen, setIsPopupOpen] = useState(false);
-    const user = auth.currentUser; // Fetches current user
+    const [isLoading, setIsLoading] = useState(true);
+    const [user, setUser] = useState(null);
     
     // console.log(user);
 
     const navigate = useNavigate();
-    useEffect(() => { // Reroutes user to /login if they are not logged in
-    if (user === null) {
-        navigate("/login");
-    }
-    }, [user, navigate]); // Effect will run when the user or navigate changes
+    // Ensure User is logged in
+    useEffect(() => {
+        // Listen for a change in the auth state
+        const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
+            // If user is authenticated
+            if (firebaseUser) {
+            setUser(firebaseUser); //Set current user
+            } else {
+            navigate("/login"); //Reroute to login if user not signed in
+            }
+            setIsLoading(false); //Declare firebase as no longer loading
+        });
+        return () => unsubscribe(); //Return the listener
+      }, [auth, navigate]);
 
     const togglePopup = () => {
         setIsPopupOpen(!isPopupOpen);

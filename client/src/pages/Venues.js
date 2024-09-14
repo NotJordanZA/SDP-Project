@@ -25,22 +25,29 @@ function Venues(){
     const lecturerVenueTypes = ["Tutorial Room", "Study Room", "Lecture Venue", "Lab", "Test Venue"];
     const navigate = useNavigate();
     
+    // Ensure User is logged in
     useEffect(() => {
+      // Listen for a change in the auth state
       const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
+        // If user is authenticated
         if (firebaseUser) {
-          setUser(firebaseUser);
+          setUser(firebaseUser); //Set current user
         } else {
-          navigate("/login");
+          navigate("/login"); //Reroute to login if user not signed in
         }
-        setIsLoading(false);
+        setIsLoading(false); //Declare firebase as no longer loading
       });
-      return () => unsubscribe();
+      return () => unsubscribe(); //Return the listener
     }, [auth, navigate]);
 
+    // Get info about the current user from the database once firebase is loaded
     useEffect(() => {
+      // Fetch current user's info
       const fetchUserInfo = async () => {
+        // If user is signed in
         if (user) {
           try {
+            // Instantiate userInfo object
             const userData = await getCurrentUser(user.email);
             setUserInfo(userData);
           } catch (error) {
@@ -48,8 +55,9 @@ function Venues(){
           }
         }
       };
+      // Check if firebase is done loading
       if (!isLoading){
-        fetchUserInfo();
+        fetchUserInfo(); //Get user info
       }
     }, [user, isLoading]);
 
