@@ -15,7 +15,7 @@ import ManageRequests from './pages/ManageRequests';
 import ManageVenues from './pages/ManageVenues';
 import BookVenue from './pages/BookVenue'; 
 import AdminRequest from './pages/AdminRequest';
-import HomeAdmin from './components/AdminHome';
+import HomeAdmin from './pages/AdminHome';
 
 function App() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);

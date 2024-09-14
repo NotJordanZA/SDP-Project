@@ -1,69 +1,92 @@
-.home-admin {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr); /* 2 columns of cards */
-  gap: 30px; 
-  justify-items: center; 
-  padding: 40px;
-}
+/* AdminHome.css */
 
-
-@media (max-width: 768px) {
 .home-admin {
-  grid-template-columns: repeat(2, 1fr); 
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 20px;
   padding: 20px;
-  gap: 15px;
+  background-color: #f4f4f4; /* Light background color for contrast */
+  border-radius: 15px;
+  margin: 20px auto;
+  max-width: 1200px; /* Limit the maximum width */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
 }
 
-.card {
-  width: 100%; 
-  height: auto; 
-}
-}
-
-/* Responsive */
-@media (max-width: 480px) {
-.home-admin {
-  grid-template-columns: 1fr; /* 1 column instead of 2  */
-  gap: 15px;
-  padding: 20px;
-}
-
-.card {
-  width: 100%; 
-  height: auto; 
-}
-}
-
-.card {
-  background-color: #003366;
-  color: #ffffff; 
-  padding: 30px;
-  width: 350px; 
-  height: 270px; 
-  text-align: center;
-  border-radius: 15px; 
-  cursor: pointer;
-  box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.15);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+.main-icon {
   display: flex;
   flex-direction: column;
-  justify-content: center;
   align-items: center;
-}
-
-.card-logo {
-  width: 150px;  
+  justify-content: center;
+  background-color: #917248; /* Matching color */
+  color: white;
+  border-radius: 10px;
+  padding: 15px;
+  width: 150px;
   height: 150px;
-  margin-bottom: 10px;
+  transition: transform 0.3s ease, background-color 0.3s ease;
+  cursor: pointer;
 }
 
-.card h2 {
-  font-size: 18px; 
+.main-icon:hover {
+  transform: scale(1.05);
+  background-color: #7a6235; /* Slightly darker shade on hover */
+}
+
+.icon-img {
+  font-size: 3rem; /* Larger icon size */
+}
+
+.main-icon p {
+  font-size: 1rem;
+  font-weight: bold;
   margin-top: 10px;
-  color: #ffffff; 
+  text-align: center; /* Center the text */
 }
 
-.card:hover {
-  transform: translateY(-10px); 
-  box-shadow: 0px 15px 30px rgba(0, 0, 0, 0.25); 
+/* Media queries for responsiveness */
+@media (max-width: 768px) {
+  .home-admin {
+    flex-direction: row;
+    justify-content: center;
+  }
+
+  .main-icon {
+    width: 130px;
+    height: 130px;
+    padding: 10px;
+    margin: 10px; /* Add margin for spacing */
+  }
+
+  .icon-img {
+    font-size: 2.5rem; /* Adjust icon size for smaller screens */
+  }
+
+  .main-icon p {
+    font-size: 0.9rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .home-admin {
+    flex-direction: column; /* Stack icons vertically on small screens */
+    align-items: center;
+    padding: 10px;
+  }
+
+  .main-icon {
+    width: 100%;
+    max-width: 250px; /* Ensure icons don't stretch too much */
+    height: auto;
+    padding: 20px;
+    margin-bottom: 15px; /* Space between icons */
+  }
+
+  .icon-img {
+    font-size: 2.2rem; /* Adjust icon size for smaller screens */
+  }
+
+  .main-icon p {
+    font-size: 0.85rem;
+  }
 }
