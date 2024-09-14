@@ -509,16 +509,6 @@ app.get('/bookings/venue/:venueid', async (req, res) => {
     }
 });
 
-
-
-
-
-
-
-
-
-
-
 // // Venues section
 // // Create a new venue
 app.post('/venues', async (req, res) => {
@@ -918,7 +908,7 @@ app.get("/Reports/types", async (req, res) => {
     }
 });
 
-app.get("/Schedules", async (req, res) => {
+app.get("/schedules", async (req, res) => {
     try {
         
         const schedules = collection(db, 'Schedules');
@@ -931,12 +921,67 @@ app.get("/Schedules", async (req, res) => {
  res.status(200).json({ entry });
     } catch (error) {
         console.error("Error retrieving Schedules:", error);
+        res.status(500).json({ error: "Internal Server Error" });
+    }
+});
+
+// Get schedules by field API
+app.get("/schedules/findByField", async (req, res) => {
+    // Extract optional query parameters from the request
+    const { venueID, bookingDay, bookingEndTime, bookingStartTime, venueBooker, bookingDescription} = req.query;
+    const schedulesCollection = collection(db, 'Schedules'); // Reference to the "Schedules" collection in Firestore
+
+    try {
+        // Start building the query
+        let schedulesQuery = schedulesCollection;
+
+        // Apply filters if query parameters are provided
+        if (venueID) {
+            schedulesQuery = query(schedulesQuery, where("venueID", "==", venueID));
+        }
+
+        if (bookingDay) {
+            schedulesQuery = query(schedulesQuery, where("bookingDay", "==", bookingDay));
+        }
+
+        if (bookingEndTime) {
+            schedulesQuery = query(schedulesQuery, where("bookingEndTime", "==", bookingEndTime));
+        }
+
+        if (bookingStartTime) {
+            schedulesQuery = query(schedulesQuery, where("bookingStartTime", "==", bookingStartTime));
+        }
+
+        if (venueBooker) {
+            schedulesQuery = query(schedulesQuery, where("venueBooker", "==", venueBooker));
+        }
+
+        if (bookingDescription) {
+            schedulesQuery = query(schedulesQuery, where("bookingDescription", "==", bookingDescription));
+        }
+
+        // Execute the query
+        const schedulesSnapshot = await getDocs(schedulesQuery);
+        const schedulesList = [];
+
+        // Iterate over each document and push it to the list
+        schedulesSnapshot.forEach((doc) => {
+            schedulesList.push({
+                id: doc.id,
+                ...doc.data()
+            });
+        });
+
+        // Send the filtered schedules as a JSON response
+        res.status(200).json(schedulesList);
+    } catch (error) {
+        console.error("Error getting schedules:", error);
         res.status(500).json({ error: "Internal Server Error" });
     }
 });
 
 //POST- schedules , for reoccuring bookings
-app.get("/Schedules", async (req, res) => {
+app.get("/schedules", async (req, res) => {
     try {
         
         const schedules = collection(db, 'Schedules');
@@ -955,7 +1000,7 @@ app.get("/Schedules", async (req, res) => {
 
 
 
-app.post("/Schedules/create", async (req, res) => {
+app.post("/schedules/create", async (req, res) => {
     const { venueBooker, bookingDescription ,venueID, bookingDay, bookingStartTime, bookingEndTime} = req.body;
 
     // make sure no fields are empty 
@@ -986,7 +1031,7 @@ app.post("/Schedules/create", async (req, res) => {
 
 
 
-app.put("/Schedules/:id", async (req, res) => {
+app.put("/schedules/:id", async (req, res) => {
     const scheduleId = req.params.id;
     const { venueBooker, venueID, bookingDay, bookingStartTime, bookingEndTime, bookingDescription } = req.body;
 
