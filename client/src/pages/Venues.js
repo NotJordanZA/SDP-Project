@@ -37,7 +37,11 @@ function Venues(){
         }
         setIsLoading(false); //Declare firebase as no longer loading
       });
-      return () => unsubscribe(); //Return the listener
+      return () => {
+        if (unsubscribe) {
+          unsubscribe();
+        }
+      }; //Return the listener
     }, [auth, navigate]);
 
     // Get info about the current user from the database once firebase is loaded

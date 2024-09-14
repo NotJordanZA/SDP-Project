@@ -1,4 +1,5 @@
 import { render, screen, fireEvent, waitFor, getByTestId, getByText} from '@testing-library/react';
+// import React from 'react';
 import { MemoryRouter } from "react-router-dom";
 import * as router from 'react-router-dom';
 import Venues from '../pages/Venues';
@@ -8,17 +9,47 @@ import CalendarPopup from "../components/CalendarPopup";
 import Search from "../components/Search";
 import { getAllVenues } from "../utils/getAllVenuesUtil";
 import { getCurrentDatesBookings } from "../utils/getCurrentDatesBookingsUtil";
+import { getCurrentUser } from '../utils/getCurrentUser';
 import { formatDate } from "../utils/formatDateUtil";
 import { auth } from "../firebase";
+import { onAuthStateChanged } from "firebase/auth";
 
 // jest.mock("firebase/auth", () => ({
 //     getAuth: jest.fn(),
 // }));
 
+const mockUserInfo = {
+    email: 'test@wits.ac.za',
+    isAdmin: true,
+    name: 'Test User',
+};
+
+jest.mock('react-router-dom', () => ({
+    ...jest.requireActual('react-router-dom'),
+    useLocation: jest.fn(),
+    useNavigate: jest.fn(),
+}));
+
 jest.mock('../firebase', () => ({
     auth: {
         currentUser: null //Default mock value
     }
+}));
+
+jest.mock("firebase/auth", () => ({
+        getAuth: jest.fn(() => ({currentUser: { email: 'test@wits.ac.za' }})),
+        onAuthStateChanged: jest.fn((auth, callback) => {
+            // Simulate that a user is logged in, and return a mock unsubscribe function
+            callback({ email: 'test@wits.ac.za' });
+            console.log("Unsubscribe returned!");
+            return jest.fn(); // This is the mock unsubscribe function
+        }),
+}));
+
+jest.mock('firebase/firestore', () => ({
+    getDoc: jest.fn(() => Promise.resolve({
+      data: () => ({ isAdmin: true })  // Mock Firestore document with isAdmin
+    })),
 }));
 
 jest.mock('../utils/getAllVenuesUtil', () => ({
@@ -31,6 +62,10 @@ jest.mock('../utils/getCurrentDatesBookingsUtil', () => ({
 
 jest.mock('../utils/formatDateUtil', () => ({
     formatDate: jest.fn(),
+}));
+
+jest.mock('../utils/getCurrentUser', () => ({
+    getCurrentUser: jest.fn(),
 }));
 
 const setBookingTime = jest.fn();
@@ -47,12 +82,20 @@ describe("Venues", () => {
 
     // Before each test, ensure we have the correct mock data
     beforeEach(() => {
+        jest.clearAllMocks();
         // Mock the venues list
+        // let userInfo = null; // Define the userInfo variable to track the state
+        // const setUserInfo = jest.fn((newUserInfo) => {
+        //     userInfo = newUserInfo; // Set userInfo in the mock
+        // });
+        // jest.spyOn(React, 'useState').mockImplementationOnce(() => [userInfo, setUserInfo]);
+        // setUserInfo(mockUserInfo);
         getAllVenues.mockImplementation((setVenuesList, setAllVenues) => {
             setAllVenues([
                 {
                     venueName:'MSL004', 
-                    campus:'West', venueType:'Lab', 
+                    campus:'West', 
+                    venueType:'Tutorial Room', 
                     venueCapacity:100, 
                     timeSlots:['14:15','15:15','16:15'], 
                     isClosed:false
@@ -68,7 +111,7 @@ describe("Venues", () => {
                 {
                     venueName:'OLS03', 
                     campus:'East', 
-                    venueType:'Lecture Venue', 
+                    venueType:'Study Room', 
                     venueCapacity:150, 
                     timeSlots:['08:00','09:00','10:15','11:15','12:30','14:15','15:15','16:15'], 
                     isClosed:false
@@ -78,7 +121,7 @@ describe("Venues", () => {
                 {
                     venueName:'MSL004', 
                     campus:'West', 
-                    venueType:'Lab', 
+                    venueType:'Tutorial Room', 
                     venueCapacity:100, 
                     timeSlots:['14:15','15:15','16:15'], 
                     isClosed:false
@@ -86,7 +129,7 @@ describe("Venues", () => {
                 {
                     venueName:'OLS03', 
                     campus:'East', 
-                    venueType:'Lecture Venue', 
+                    venueType:'Study Room', 
                     venueCapacity:150, 
                     timeSlots:['08:00','09:00','10:15','11:15','12:30','14:15','15:15','16:15'], 
                     isClosed:false
@@ -138,6 +181,7 @@ describe("Venues", () => {
 
     test('Renders VenueRow Component with Correct Data (From VenuesList)', () => {
         auth.currentUser = { email: 'test@wits.ac.za' };
+        // userInfo = mockUserInfo;
         render(<Venues/>); //Render Venues Page
         const testVenue1 = screen.getByText('MSL004'); //MSL004
         const testVenue2 = screen.getByText('OLS03'); //OLS03
