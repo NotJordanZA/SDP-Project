@@ -5,6 +5,7 @@ import Search from "../components/Search";
 import { useState, useEffect } from "react";
 import { getAllVenues } from "../utils/getAllVenuesUtil";
 import { getCurrentDatesBookings } from "../utils/getCurrentDatesBookingsUtil";
+import { getCurrentDaySchedules } from "../utils/getCurrentDaysSchedules";
 import { formatDate } from "../utils/formatDateUtil";
 import { auth } from "../firebase";
 import { useNavigate } from "react-router-dom";
@@ -15,6 +16,7 @@ function Venues(){
     const [bookingsList, setBookingsList] = useState([]);
     const [displayDate, setDisplayDate] = useState(new Date());
     const [formattedDate, setFormattedDate] = useState('');
+    const weekday = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
     const user = auth.currentUser;
 
     const navigate = useNavigate();
@@ -37,6 +39,7 @@ function Venues(){
       // Call getCurrentDatesBookings when formattedDate changes
       if (formattedDate) {
         getCurrentDatesBookings(formattedDate, setBookingsList);
+        getCurrentDaySchedules(weekday[displayDate.getDay()], bookingsList, setBookingsList);
       }
     }, [formattedDate]); // Only runs when formattedDate changes
 

@@ -17,7 +17,7 @@ const fetchVenues = async () => {
 //fetch schedules
 const fetchSchedules = async () => {
   try {
-    const response = await fetch(`${API_URL}/Schedules`);
+    const response = await fetch(`${API_URL}/schedules`);
     return response.json();
   } catch (error) {
     console.error("Error fetching schedules:", error);
@@ -28,7 +28,7 @@ const fetchSchedules = async () => {
 //add a schedule slot
 const addScheduleSlot = async (scheduleData) => {
   try {
-    const response = await fetch(`${API_URL}/Schedules/create`, {
+    const response = await fetch(`${API_URL}/schedules/create`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
