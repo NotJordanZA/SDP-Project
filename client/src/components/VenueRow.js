@@ -61,7 +61,7 @@ function VenueRow({venueName, campus, venueType, venueCapacity, timeSlots, isClo
 
     const makeBooking = async(venueBooker, venueID, bookingDate, bookingStartTime, bookingEndTime, bookingDescription) => { // Makes a new bookings 
         try{
-            const response = await fetch(`/bookings/create`, { //Calls the API to create a new booking
+            const response = await fetch(`/api/bookings/create`, { //Calls the API to create a new booking
                 method: 'POST',
                 headers: {
                   'Content-Type': 'application/json',

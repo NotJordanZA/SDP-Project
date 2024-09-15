@@ -1,6 +1,6 @@
 export const getCurrentUsersBookings = async (currentUserEmail, setBookingsList) =>{ // Gets the bookings of the current user by their email
     try{
-      const response = await fetch(`/bookings/findByField?venueBooker=${currentUserEmail}`, { // API call which GETs based on user email
+      const response = await fetch(`/api/bookings/findByField?venueBooker=${currentUserEmail}`, { // API call which GETs based on user email
         method: 'GET',
       });
 

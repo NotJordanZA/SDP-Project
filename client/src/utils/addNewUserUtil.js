@@ -3,7 +3,7 @@ export const addNewUser = async (userEmail, firstName, lastName) =>{
     let isLecturer = false;
     let isAdmin = false;
     try{
-      const response = await fetch(`/users`, { // Call to the API to try add a new user
+      const response = await fetch(`/api/users`, { // Call to the API to try add a new user
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
