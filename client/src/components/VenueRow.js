@@ -26,37 +26,37 @@ function VenueRow({venueName, campus, venueType, venueCapacity, timeSlots, isClo
     const toggleBookingDetails = () => setIsVenueOpen(!isVenueOpen); //Toggles venue details dropdown
     
     useEffect(() => { // Populates list with the venues time slots
-        setTimeSlotsArray(timeSlots);
+        setTimeSlotsArray(timeSlots);// eslint-disable-next-line
     }, []);
 
     const firstRender = useRef(true);
+
 
     useEffect(() => {
         if (firstRender.current){// Doesn't run on first render in order to give bookingTime and bookingEndTime time to reflect changes
             firstRender.current = false;
             return;
         }
+        const compileBookingData = () => { // Gets all information needed for a booking together and calls the makeBooking function
+        
+            const booker = user.email; // Gets user email
+    
+            if (bookingDescriptionText !== ""){
+                makeBooking(booker, venueName, relevantDate, bookingTime, bookingEndingTime, bookingDescriptionText);
+            }
+            else{
+                makeBooking(booker, venueName, relevantDate, bookingTime, bookingEndingTime, null);
+            }
+            
+        }
         if (bookingTime && bookingEndingTime) { // If updated, compileBookingData
             compileBookingData();
-        }
+        }// eslint-disable-next-line
     }, [bookingEndingTime]); // Runs whenever bookingEndTime changes
 
     const updateBookingEndTime = () => { // Sets bookingEndTime to be 45 minutes after the selected time
         const slotEnd = new Date((new Date(`1970-01-01T${bookingTime}:00`)).getTime() + 45 * 60000); // Convert to Date for easier comparisions
         setBookingEndingTime(((slotEnd.getHours() < 10 ? '0' : '') + slotEnd.getHours())+":"+((slotEnd.getMinutes() < 10 ? '0' : '') + slotEnd.getMinutes()));// Puts time in the correct format, hh:mm
-    }
-
-    const compileBookingData = () => { // Gets all information needed for a booking together and calls the makeBooking function
-        
-        const booker = user.email; // Gets user email
-
-        if (bookingDescriptionText != ""){
-            makeBooking(booker, venueName, relevantDate, bookingTime, bookingEndingTime, bookingDescriptionText);
-        }
-        else{
-            makeBooking(booker, venueName, relevantDate, bookingTime, bookingEndingTime, null);
-        }
-        
     }
 
     const makeBooking = async(venueBooker, venueID, bookingDate, bookingStartTime, bookingEndTime, bookingDescription) => { // Makes a new bookings 

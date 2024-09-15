@@ -8,20 +8,20 @@ const getAllBookings = async () => {
 };
 
 // Update a booking by its ID
-const updateBooking = async (id, bookingData) => {
-  const response = await fetch(`/api/bookings/${id}`, {
-    method: "PUT",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(bookingData),
-  });
+// const updateBooking = async (id, bookingData) => {
+//   const response = await fetch(`/api/bookings/${id}`, {
+//     method: "PUT",
+//     headers: {
+//       "Content-Type": "application/json",
+//     },
+//     body: JSON.stringify(bookingData),
+//   });
 
-  if (!response.ok) {
-    throw new Error('Failed to update booking');
-  }
-  return response.json();
-};
+//   if (!response.ok) {
+//     throw new Error('Failed to update booking');
+//   }
+//   return response.json();
+// };
 
 const EditBookingForm = ({ booking, onSave, onCancel }) => {
   const [venueBooker, setVenueBooker] = useState(booking.venueBooker || '');
