@@ -40,7 +40,7 @@ function Venues(){
       if (formattedDate) {
         getCurrentDatesBookings(formattedDate, setBookingsList);
         getCurrentDaySchedules(weekday[displayDate.getDay()], bookingsList, setBookingsList);
-      }
+      }// eslint-disable-next-line
     }, [formattedDate]); // Only runs when formattedDate changes
 
   //   useEffect(() => {

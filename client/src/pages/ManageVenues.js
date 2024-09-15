@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import '../styles/ManageVenues.css';
 
-const baseURL = process.env.NODE_ENV === 'production' ? 'https://your-production-site.com' : 'http://localhost:3002';
+// const baseURL = process.env.NODE_ENV === 'production' ? 'https://your-production-site.com' : 'http://localhost:3002';
 
 function Venues() {
   const [searchTerm, setSearchTerm] = useState(''); 

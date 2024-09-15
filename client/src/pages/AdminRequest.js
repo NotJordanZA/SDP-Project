@@ -35,7 +35,7 @@ function AdminRequest() {
     useEffect(() => {
         if(user){
             getCurrentUsersAdminRequests(currentUserEmail, setRequestsList);// Gets the bookings of the current user by their email
-        }
+        }// eslint-disable-next-line
       }, [user]);// Only runs if user is defined
 
     const requestComponents = requestsList.map((request) => { // Creates a list of the bookings to be displayed
