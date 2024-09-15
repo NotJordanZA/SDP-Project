@@ -39,7 +39,7 @@ jobs:
           name: Build application for production
           command: npm run build
           working_directory: client
-       - run:
+      - run:
           name: Install firebase-tools to client
           command: npm install firebase-tools
           working_directory: client
