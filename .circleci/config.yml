@@ -24,12 +24,13 @@ jobs:
     steps:
       - checkout
       - run:
-          name: Install local dependencies
+          name: Install client local dependencies
           command: npm install
           working_directory: client
       - run:
-          name: Install firebase-tools globally
-          command: npm install -g firebase-tools
+          name: Install firebase-tools to client
+          command: npm install firebase-tools
+          working_directory: client
       - run:
           name: Testing
           command: npm test -- --coverage
@@ -41,6 +42,14 @@ jobs:
       - run:
           name: Deploy app to Firebase
           command: ./node_modules/.bin/firebase deploy --only hosting --token ${FIREBASE_TOKEN}
+          working_directory: client
+      - run:
+          name: Install server local dependencies
+          command: npm install
+          working_directory: server
+      - run:
+          name: Install firebase-tools to server
+          command: npm install firebase-tools
           working_directory: client
       - run:
           name: Deploy app to Firebase
