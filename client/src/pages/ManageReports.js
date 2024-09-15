@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { auth } from "../firebase";
 import { useNavigate } from "react-router-dom";
 import { onAuthStateChanged } from "firebase/auth";
+import { getCurrentUser } from '../utils/getCurrentUser';
 import '../styles/ManageReports.css'; 
 
 const API_URL = process.env.NODE_ENV === 'production' ? 'https://your-production-site.com' : 'http://localhost:3001'; 
@@ -38,6 +39,7 @@ function Reports() {
   const [errorMessage, setErrorMessage] = useState(''); // Error message
   const [isLoading, setIsLoading] = useState(true);
   const [user, setUser] = useState(null);
+  const [userInfo, setUserInfo] = useState({});
   const navigate = useNavigate();
 
   // Ensure User is logged in
@@ -47,13 +49,38 @@ function Reports() {
       // If user is authenticated
       if (firebaseUser) {
         setUser(firebaseUser); //Set current user
+        console.log(user);
       } else {
         navigate("/login"); //Reroute to login if user not signed in
       }
       setIsLoading(false); //Declare firebase as no longer loading
     });
-    return () => unsubscribe(); //Return the listener
+    return () => {
+      if (unsubscribe) {
+        unsubscribe();
+      }
+    }; //Return the listener
   }, [auth, navigate]);
+
+  // Get info about the current user from the database once firebase is loaded
+  useEffect(() => {
+    // Fetch current user's info
+    const fetchUserInfo = async () => {
+      // If user is signed in
+      if (user) {
+        try {
+          // Instantiate userInfo object
+          getCurrentUser(user.email, setUserInfo);
+        } catch (error) {
+          console.error('Failed to fetch user info: ', error);
+        }
+      }
+    };
+    // Check if firebase is done loading
+    if (!isLoading){
+      fetchUserInfo(); //Get user info
+    }
+  }, [user, isLoading]);
   
   // Fetch all reports on component mount
   useEffect(() => {

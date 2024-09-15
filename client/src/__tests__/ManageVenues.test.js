@@ -3,20 +3,50 @@ import { render, screen, fireEvent, waitFor, act } from '@testing-library/react'
 import { MemoryRouter } from 'react-router-dom';
 import ManageVenues from '../pages/ManageVenues';
 import * as router from 'react-router-dom'; // Import react-router-dom and assign to router
+import { auth } from "../firebase";
+import { onAuthStateChanged } from "firebase/auth";
+import { getCurrentUser } from '../utils/getCurrentUser';
 
 // Mocking necessary modules and functions
 jest.mock('react-router-dom', () => ({
   ...jest.requireActual('react-router-dom'),
+  useLocation: jest.fn(),
   useNavigate: jest.fn(),
 }));
 
 const navigate = jest.fn();
+
+jest.mock('../firebase', () => ({
+  auth: {
+      currentUser: null //Default mock value
+  }
+}));
+
+jest.mock("firebase/auth", () => ({
+      getAuth: jest.fn(() => ({currentUser: { email: 'test@wits.ac.za' }})),
+      onAuthStateChanged: jest.fn(),
+}));
+
+jest.mock('firebase/firestore', () => ({
+  getDoc: jest.fn(() => Promise.resolve({
+    data: () => ({ isAdmin: true })  // Mock Firestore document with isAdmin
+  })),
+}));
+
+jest.mock('../utils/getCurrentUser');
 
 describe('ManageVenues Component', () => {
   beforeEach(() => {
     jest.spyOn(router, 'useNavigate').mockImplementation(() => navigate);
     // Mock window.confirm
     window.confirm = jest.fn(() => true);
+    auth.currentUser = { email: 'test@wits.ac.za' };
+    onAuthStateChanged.mockImplementation((auth, callback) => {
+      // Simulate that a user is logged in, and return a mock unsubscribe function
+      callback({ email: 'test@wits.ac.za' });
+      // console.log("Unsubscribe returned!");
+      return jest.fn(); // This is the mock unsubscribe function
+    });
   });
 
   afterEach(() => {

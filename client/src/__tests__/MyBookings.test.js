@@ -5,6 +5,8 @@ import { getCurrentUsersBookings } from '../utils/getCurrentUsersBookings';
 import MyBookings from '../pages/myBookings';
 import BookingRow from '../components/BookingRow';
 import { auth } from '../firebase';
+import { onAuthStateChanged } from "firebase/auth";
+import { getCurrentUser } from '../utils/getCurrentUser';
 
 jest.mock('react-router-dom', () => ({
     ...jest.requireActual('react-router-dom'),
@@ -16,7 +18,20 @@ jest.mock('../firebase', () => ({
     auth: {
       currentUser: null // Default mock value
     }
-  }));
+}));
+
+  jest.mock("firebase/auth", () => ({
+    getAuth: jest.fn(() => ({currentUser: { email: 'test@wits.ac.za' }})),
+    onAuthStateChanged: jest.fn(),
+}));
+
+jest.mock('firebase/firestore', () => ({
+    getDoc: jest.fn(() => Promise.resolve({
+    data: () => ({ isAdmin: true })  // Mock Firestore document with isAdmin
+    })),
+}));
+
+jest.mock('../utils/getCurrentUser');
 
 jest.mock('../utils/getCurrentUsersBookings', () => ({
     getCurrentUsersBookings: jest.fn(),
@@ -28,7 +43,14 @@ describe("MyBookings", () => {
     beforeEach(() => {
         // Mock useNavigate function
         jest.spyOn(router, 'useNavigate').mockImplementation(() => navigate);
-        
+
+        onAuthStateChanged.mockImplementation((auth, callback) => {
+            // Simulate that a user is logged in, and return a mock unsubscribe function
+            callback({ email: 'test@wits.ac.za' });
+            // console.log("Unsubscribe returned!");
+            return jest.fn(); // This is the mock unsubscribe function
+          });
+
         // Mock the current date's bookings
         getCurrentUsersBookings.mockImplementation((currentUserEmail, setBookingsList) => {
             setBookingsList([
@@ -79,7 +101,12 @@ describe("MyBookings", () => {
     });
 
     test('Check if user that is not logged in is redirected to /login', () => {
-        auth.currentUser = null;
+        onAuthStateChanged.mockImplementation((auth, callback) => {
+            // Simulate that a user is logged in, and return a mock unsubscribe function
+            callback(null);
+            // console.log("Unsubscribe returned!");
+            return jest.fn(); // This is the mock unsubscribe function
+        });
         render(<MyBookings/>); //Render MyBookings Page
         expect(navigate).toHaveBeenCalledWith("/login");// Check that navigation is called
     })

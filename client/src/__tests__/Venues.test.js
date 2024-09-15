@@ -7,10 +7,10 @@ import VenueRow from "../components/VenueRow";
 import DateHeader from "../components/DateHeader";
 import CalendarPopup from "../components/CalendarPopup";
 import Search from "../components/Search";
+import { formatDate } from "../utils/formatDateUtil";
 import { getAllVenues } from "../utils/getAllVenuesUtil";
 import { getCurrentDatesBookings } from "../utils/getCurrentDatesBookingsUtil";
 import { getCurrentUser } from '../utils/getCurrentUser';
-import { formatDate } from "../utils/formatDateUtil";
 import { auth } from "../firebase";
 import { onAuthStateChanged } from "firebase/auth";
 
@@ -40,12 +40,7 @@ jest.mock('../firebase', () => ({
 
 jest.mock("firebase/auth", () => ({
         getAuth: jest.fn(() => ({currentUser: { email: 'test@wits.ac.za' }})),
-        onAuthStateChanged: jest.fn((auth, callback) => {
-            // Simulate that a user is logged in, and return a mock unsubscribe function
-            callback({ email: 'test@wits.ac.za' });
-            console.log("Unsubscribe returned!");
-            return jest.fn(); // This is the mock unsubscribe function
-        }),
+        onAuthStateChanged: jest.fn(),
 }));
 
 jest.mock('firebase/firestore', () => ({
@@ -69,7 +64,9 @@ jest.mock('../utils/formatDateUtil', () => ({
 // jest.mock('../utils/getCurrentUser', () => ({
 //     getCurrentUser: jest.fn(),
 // }));
-jest.mock('../utils/getCurrentUser');
+jest.mock('../utils/getCurrentUser', () => ({
+    getCurrentUser: jest.fn(),
+}));
 
 const setBookingTime = jest.fn();
 
@@ -93,6 +90,14 @@ describe("Venues", () => {
         // });
         // jest.spyOn(React, 'useState').mockImplementationOnce(() => [userInfo, setUserInfo]);
         // setUserInfo(mockUserInfo);
+
+        onAuthStateChanged.mockImplementation((auth, callback) => {
+            // Simulate that a user is logged in, and return a mock unsubscribe function
+            callback({ email: 'test@wits.ac.za' });
+            // console.log("Unsubscribe returned!");
+            return jest.fn(); // This is the mock unsubscribe function
+        });
+
         getCurrentUser.mockImplementation((currentUserEmail, setUserInfo) => {
             setUserInfo({
                 firstName:'Test',
@@ -192,30 +197,30 @@ describe("Venues", () => {
         expect(testSearch).toBeInTheDocument(); //Check if Search rendered
     });
 
-    // test('Renders VenueRow Component with Correct Data (From VenuesList)', async () => {
-    //     auth.currentUser = { email: 'test@wits.ac.za' };
-    //     // getCurrentUser.mockImplementation((currentUserEmail, setUserInfo) => {
-    //     //     setUserInfo({
-    //     //         firstName:'Test',
-    //     //         isAdmin:true,
-    //     //         isLecturer:false,
-    //     //         isStudent:false,
-    //     //         lastName:'User',
-    //     //     });
-    //     // });
-    //     // console.log(userInfo);
-    //     // userInfo = mockUserInfo;
-    //     render(<Venues/>); //Render Venues Page
-    //     // screen.debug();
-    //     await waitFor(() => {
-    //     //     screen.debug();
-    //         const testVenue1 = screen.getByText('MSL004'); //MSL004
-    //         const testVenue2 = screen.getByText('OLS03'); //OLS03
-    //         expect(testVenue1).toBeInTheDocument(); //Check if MSL004 is rendered
-    //         expect(testVenue2).toBeInTheDocument(); //Check if OLS03 is rendered
-    //     });
+    test('Renders VenueRow Component with Correct Data (From VenuesList)', async () => {
+        // auth.currentUser = { email: 'test@wits.ac.za' };
+        // getCurrentUser.mockImplementation((currentUserEmail, setUserInfo) => {
+        //     setUserInfo({
+        //         firstName:'Test',
+        //         isAdmin:true,
+        //         isLecturer:false,
+        //         isStudent:false,
+        //         lastName:'User',
+        //     });
+        // });
+        // console.log(userInfo);
+        // userInfo = mockUserInfo;
+        render(<Venues/>); //Render Venues Page
+        // screen.debug();
+        await waitFor(() => {
+        //     screen.debug();
+            const testVenue1 = screen.getByText('MSL004'); //MSL004
+            const testVenue2 = screen.getByText('OLS03'); //OLS03
+            expect(testVenue1).toBeInTheDocument(); //Check if MSL004 is rendered
+            expect(testVenue2).toBeInTheDocument(); //Check if OLS03 is rendered
+        });
         
-    // });
+    });
 
     test('Renders Correct Venue Details in VenueRow', () => {
         auth.currentUser = { email: 'test@wits.ac.za' };
@@ -230,28 +235,28 @@ describe("Venues", () => {
         //     });
         // });
         // console.log(userInfo);
-        // render(<Venues/>); //Render Venues Page
-        render(<VenueRow
-            key={'MSL004'}
-            venueName={'MSL004'}
-            campus={'West'}
-            venueType={'Lab'}
-            venueCapacity={100}
-            timeSlots={['14:15','15:15','16:15']}
-            isClosed={false}
-            bookings={[
-                {
-                id:'MSL004-2024-10-31-14:00',
-                bookingDate:'2024-10-31',
-                bookingDescription:'CGV Exam',
-                bookingEndTime:'15:00',
-                bookingStartTime:'14:15',
-                venueBooker:'branden.ingram@wits.ac.za',
-                venueID:'MSL004'
-                }
-            ]}
-            relevantDate={2024-10-31}
-        />);
+        render(<Venues/>); //Render Venues Page
+        // render(<VenueRow
+        //     key={'MSL004'}
+        //     venueName={'MSL004'}
+        //     campus={'West'}
+        //     venueType={'Lab'}
+        //     venueCapacity={100}
+        //     timeSlots={['14:15','15:15','16:15']}
+        //     isClosed={false}
+        //     bookings={[
+        //         {
+        //         id:'MSL004-2024-10-31-14:00',
+        //         bookingDate:'2024-10-31',
+        //         bookingDescription:'CGV Exam',
+        //         bookingEndTime:'15:00',
+        //         bookingStartTime:'14:15',
+        //         venueBooker:'branden.ingram@wits.ac.za',
+        //         venueID:'MSL004'
+        //         }
+        //     ]}
+        //     relevantDate={2024-10-31}
+        // />);
         const testVenueRow = screen.getByText('MSL004'); //Get a VenueRow by its displayed Venue Name
         fireEvent.click(testVenueRow); //Click the VenueRow to show its dropdown menu
         const testCampus = screen.getByText('West'); //MSL004 Campus

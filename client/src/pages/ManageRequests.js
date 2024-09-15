@@ -47,12 +47,17 @@ function AdminRequests() {
       // If user is authenticated
       if (firebaseUser) {
         setUser(firebaseUser); //Set current user
+        console.log(user);
       } else {
         navigate("/login"); //Reroute to login if user not signed in
       }
       setIsLoading(false); //Declare firebase as no longer loading
     });
-    return () => unsubscribe(); //Return the listener
+    return () => {
+      if (unsubscribe) {
+        unsubscribe();
+      }
+    }; //Return the listener
   }, [auth, navigate]);
 
   // Get info about the current user from the database once firebase is loaded
@@ -63,8 +68,7 @@ function AdminRequests() {
       if (user) {
         try {
           // Instantiate userInfo object
-          const userData = await getCurrentUser(user.email);
-          setUserInfo(userData);
+          getCurrentUser(user.email, setUserInfo);
         } catch (error) {
           console.error('Failed to fetch user info: ', error);
         }

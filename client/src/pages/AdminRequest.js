@@ -16,19 +16,25 @@ function AdminRequest() {
     // console.log(user);
 
     const navigate = useNavigate();
+
     // Ensure User is logged in
     useEffect(() => {
         // Listen for a change in the auth state
         const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
-            // If user is authenticated
-            if (firebaseUser) {
+          // If user is authenticated
+          if (firebaseUser) {
             setUser(firebaseUser); //Set current user
-            } else {
+            console.log(user);
+          } else {
             navigate("/login"); //Reroute to login if user not signed in
-            }
-            setIsLoading(false); //Declare firebase as no longer loading
+          }
+          setIsLoading(false); //Declare firebase as no longer loading
         });
-        return () => unsubscribe(); //Return the listener
+        return () => {
+          if (unsubscribe) {
+            unsubscribe();
+          }
+        }; //Return the listener
       }, [auth, navigate]);
 
     const togglePopup = () => {
