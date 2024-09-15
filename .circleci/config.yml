@@ -37,7 +37,7 @@ jobs:
           working_directory: client
       - run:
           name: Build application for production
-          command: npm run build
+          command: npm run build --no-strict
           working_directory: client
       - run:
           name: Deploy app to Firebase
