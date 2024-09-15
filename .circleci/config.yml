@@ -45,7 +45,7 @@ jobs:
           working_directory: client
       - run:
           name: Deploy app to Firebase
-          command: ./node_modules/.bin/firebase deploy --only hosting --token ${FIREBASE_TOKEN}
+          command: firebase deploy --only hosting --token ${FIREBASE_TOKEN}
           working_directory: client
       - run:
           name: Install server local dependencies
@@ -57,7 +57,7 @@ jobs:
           working_directory: client
       - run:
           name: Deploy app to Firebase
-          command: ./node_modules/.bin/firebase deploy --only functions:api --token ${FIREBASE_TOKEN}
+          command: firebase deploy --only functions:api --token ${FIREBASE_TOKEN}
           working_directory: server
       - coveralls/upload
 
