@@ -1,20 +1,18 @@
-const API_URL = process.env.NODE_ENV === 'production' ? 'https://your-production-site.com' : 'http://localhost:3002'; 
-
 //  get all bookings
 export const getAllBookings = async () => {
-  const response = await fetch(`${API_URL}/bookings`);
+  const response = await fetch(`/api/bookings`);
   return await response.json();
 };
 
 // get a booking by ID
 export const getBookingById = async (id) => {
-  const response = await fetch(`${API_URL}/bookings/${id}`);
+  const response = await fetch(`/api/bookings/${id}`);
   return await response.json();
 };
 
 //create a new booking
 export const createBooking = async (bookingData) => {
-  const response = await fetch(`${API_URL}/bookings/create`, {
+  const response = await fetch(`/api/bookings/create`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -26,7 +24,7 @@ export const createBooking = async (bookingData) => {
 
 // update a booking
 export const updateBooking = async (id, bookingData) => {
-  const response = await fetch(`${API_URL}/bookings/${id}`, {
+  const response = await fetch(`/api/bookings/${id}`, {
     method: "PUT",
     headers: {
       "Content-Type": "application/json",
@@ -44,7 +42,7 @@ export const updateBooking = async (id, bookingData) => {
 
 //delete a booking
 export const deleteBooking = async (id) => {
-  const response = await fetch(`${API_URL}/bookings/${id}`, {
+  const response = await fetch(`/api/bookings/${id}`, {
     method: "DELETE",
   });
   return await response.json();
@@ -52,7 +50,7 @@ export const deleteBooking = async (id) => {
 
 //For filtering bookings by venue
 export const getVenueNameByBookingVenueID = async (venueID) => {
-    const response = await fetch(`${API_URL}/bookings/venue/${venueID}`);
+    const response = await fetch(`/api/bookings/venue/${venueID}`);
     if (!response.ok) {
       throw new Error('Failed to fetch venue name');
     }
@@ -62,13 +60,13 @@ export const getVenueNameByBookingVenueID = async (venueID) => {
 
   //Requests
   export const getAllRequests = async () => {
-    const response = await fetch(`${API_URL}/adminRequests`);
+    const response = await fetch(`/api/adminRequests`);
     return await response.json();
   };
 
   // update a Request- change status from pending to approved
 export const updateReq= async (id, ReqData) => {
-  const response = await fetch(`${API_URL}/adminRequests/${id}`, {
+  const response = await fetch(`/api/adminRequests/${id}`, {
     method: "PUT",
     headers: {
       "Content-Type": "application/json",
@@ -85,17 +83,17 @@ export const updateReq= async (id, ReqData) => {
 };
 
 export const getReqById = async (id) => {
-  const response = await fetch(`${API_URL}/adminRequests/${id}`);
+  const response = await fetch(`/api/adminRequests/${id}`);
   return await response.json();
 };
 
 //Reports
 export const getAllReports = async () => {
-  const response = await fetch(`${API_URL}/Reports`);
+  const response = await fetch(`/api/Reports`);
   return await response.json();
 };
 export const updateRep= async (id, RepData) => {
-  const response = await fetch(`${API_URL}/Reports/${id}`, {
+  const response = await fetch(`/api/Reports/${id}`, {
     method: "PUT",
     headers: {
       "Content-Type": "application/json",
@@ -111,18 +109,18 @@ export const updateRep= async (id, RepData) => {
 
 };
 export const getRepById = async (id) => {
-  const response = await fetch(`${API_URL}/Reports/${id}`);
+  const response = await fetch(`/api/Reports/${id}`);
   return await response.json();
 };
 export const getReportByType = async (reportType) => {
-  const response = await fetch(`${API_URL}/Reports/type/${reportType}`);
+  const response = await fetch(`/api/Reports/type/${reportType}`);
   return await response.json();
 };
 
 //Venues
 export const getAllVenues = async () => {
   try {
-    const response = await fetch(`${API_URL}/venues`);
+    const response = await fetch(`/api/venues`);
     const data = await response.json();
     return { venues: data }; // Ensure you're returning venues inside an object
   } catch (error) {

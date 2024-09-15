@@ -2,7 +2,7 @@ export const CreateAdminRequest = async (requesterEmail, requestText) =>{
     try{
       let requestStatus = "pending"; // Requests are always pending at first
       // console.log(requesterEmail, requestText, requestStatus);
-      const response = await fetch("/adminRequests/create", { // Call to the API to try add a new admin request
+      const response = await fetch("/api/adminRequests/create", { // Call to the API to try add a new admin request
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

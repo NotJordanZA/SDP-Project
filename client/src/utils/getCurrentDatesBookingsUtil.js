@@ -1,6 +1,6 @@
 export const getCurrentDatesBookings = async (bookingDate, setBookingsList) =>{
     try{
-      const response = await fetch(`/bookings/findByField?bookingDate=${bookingDate}`, {
+      const response = await fetch(`/api/bookings/findByField?bookingDate=${bookingDate}`, {
         method: 'GET',
       });
 

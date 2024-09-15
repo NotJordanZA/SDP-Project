@@ -32,7 +32,7 @@ useEffect(() => {
             const queryParams = new URLSearchParams({
                 createdBy: user.email // Pass the user's email to filter reports by the creator
             });
-            const response = await fetch(`/reports?${queryParams.toString()}`);  // Adjust the endpoint if necessary
+            const response = await fetch(`/api/reports?${queryParams.toString()}`);  // Adjust the endpoint if necessary
             const data = await response.json();
             setReports(data); // Update the state with the fetched reports
         } catch (error) {

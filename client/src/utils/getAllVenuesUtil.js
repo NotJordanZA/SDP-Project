@@ -1,6 +1,6 @@
 export const getAllVenues = async (setVenueList, setAllVenues) =>{
     try{
-      const response = await fetch(`/venues`, {
+      const response = await fetch(`/api/venues`, {
         method: 'GET',
         cache: 'no-store',
       });
