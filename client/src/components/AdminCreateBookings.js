@@ -37,20 +37,20 @@ const fetchSchedules = async () => {
   }
 };
 
-const createBooking = async (bookingData) => {
-  try {
-    const response = await fetch(`/api/bookings/create`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(bookingData),
-    });
-    return response.json();
-  } catch (error) {
-    console.error("Error creating booking:", error);
-  }
-};
+// const createBooking = async (bookingData) => {
+//   try {
+//     const response = await fetch(`/api/bookings/create`, {
+//       method: 'POST',
+//       headers: {
+//         'Content-Type': 'application/json',
+//       },
+//       body: JSON.stringify(bookingData),
+//     });
+//     return response.json();
+//   } catch (error) {
+//     console.error("Error creating booking:", error);
+//   }
+// };
 
 const AdmincreateBooking = () => {
   const [venues, setVenues] = useState([]);// stores the list of available venues that will be displayed to the Admin,(setVenues) is the function used to update the venues state
