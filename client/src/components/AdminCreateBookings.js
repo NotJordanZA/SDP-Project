@@ -207,17 +207,17 @@ const clearSearch = () => {
 };
 
   return (
-    <div className="create-booking-container">
+    <div className="adminbook-create-booking-container">
     {/* containins search bar, clear button, calendar, and filters */}
-    <div className="top-section">
+    <div className="adminbook-top-section">
 
    
       
-      < div className="calendarfilter">
-      <div className="calendar-container">
+      < div className="adminbook-calendarfilter">
+      <div className="adminbook-calendar-container">
         <h3>Select a Date:</h3>
         <Calendar
-          className="react-calendar"
+          className="adminbook-react-calendar"
           onChange={setSelectedDate}
           value={selectedDate}
           minDate={new Date()}
@@ -225,12 +225,12 @@ const clearSearch = () => {
         />
       </div>
 {/*clear Search Button */}
-<div className="search-container">
+<div className="adminbook-search-container">
 <Search venueList={venues} setVenueList={setVenues} bookingsList={bookings} />  
-<button className="clear-button" onClick={clearSearch}>Clear Search</button>
+<button className="adminbook-clear-button" onClick={clearSearch}>Clear Search</button>
 </div>
       {/*capacity and  venue type filters */}
-      < div className="filter-container">
+      < div className="adminbook-filter-container">
         <label htmlFor="capacity">Venue Capacity:</label>
         <select
           id="capacity"
@@ -249,7 +249,7 @@ const clearSearch = () => {
         <label htmlFor="type">Venue Type:</label>
         <select
           id="type"
-          className="filter-select"
+          className="adminbook-filter-select"
           value={selectedType}
           onChange={handleTypeChange}
         >
@@ -262,10 +262,10 @@ const clearSearch = () => {
       </div>
 </div>
       {/*venue list */}
-      <div className="venue-list">
+      <div className="adminbook-venue-list">
         {filteredVenues.map(venue => (
-          <div key={venue.id} className="venue-item">
-            <div className="venue-header" onClick={() => toggleVenue(venue.id)}>
+          <div key={venue.id} className="adminbook-venue-item">
+            <div className="adminbook-venue-header" onClick={() => toggleVenue(venue.id)}>
               <h3>{venue.venueName}</h3>
               <p>{venue.isClosed ? 'Closed' : `Open (Capacity: ${venue.venueCapacity})`}</p>
               <button>{expandedVenueId === venue.id ? '▲' : '▼'}</button>
@@ -273,13 +273,13 @@ const clearSearch = () => {
 
             {/*venue details displayed */}
             {expandedVenueId === venue.id && (
-              <div className="venue-details">
+              <div className="adminbook-venue-details">
                 <p>Campus: {venue.campus}</p>
                 <p>Venue Type: {venue.venueType}</p>
                 <p>Capacity: {venue.venueCapacity}</p>
 
           
-                <div className="time-slots">
+                <div className="adminbook-time-slots">
             {venue.timeSlots && venue.timeSlots.length > 0 ? (
               venue.timeSlots.map((time, index) => {
                 const isTaken = isTimeSlotTaken(venue.venueName, venue.id, time); //that time slot already appears in Schedules or Bookings so its taken
@@ -288,7 +288,7 @@ const clearSearch = () => {
                 return (
                   <button
                     key={index}
-                    className={`time-slot-button ${isTaken ? 'taken' : ''} ${isSelected ? 'selected' : ''}`}
+                    className={`adminbook-time-slot-button ${isTaken ? 'taken' : ''} ${isSelected ? 'selected' : ''}`}
                     disabled={isTaken} //disable a slot if taken( so user cant select it)
                     onClick={() => SelectingtimeSlot(venue.id, venue.venueName, time)}
                   >
@@ -309,23 +309,21 @@ const clearSearch = () => {
                       placeholder="Your email"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
-                      className="description-input"
+                      className="adminbook-description-input"
                     />
                     <input
                       type="text"
                       placeholder="Booking description"
                       value={bookingDescription}
                       onChange={(e) => setBookingDescription(e.target.value)}
-                      className="description-input"
+                      className="adminbook-description-input"
                     />
-                 {errorMessage && <p className="error-message-bookingadmin">{errorMessage}</p>}
-                    <button className="book-button" onClick={hCreateBooking}>
+                 {errorMessage && <p className="adminbook-error-message">{errorMessage}</p>}
+                    <button className="adminbook-book-button" onClick={hCreateBooking}>
                       Book
                     </button>
                    
-                    <button className="book-button" onClick={hCreateBooking}>
-                      Book
-                    </button>
+                   
                   </>
                 )}
               </div>

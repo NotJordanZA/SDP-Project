@@ -54,7 +54,7 @@ const AdminReccuringBookings = () => {
   const [venueBooker, setVenueBooker] = useState(""); 
   const [bookingDescription, setBookingDescription] = useState(""); 
   const [errorMessage, setErrorMessage] = useState(""); 
-  const [successMessage, setSuccessMessage] = useState(""); //confirmation message
+  
   const [selectedCapacity, setSelectedCapacity] = useState(""); 
 
     const daysOfWeek = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"]; //schedule table columns
@@ -93,7 +93,7 @@ const filteredVenues = venues.filter(venue => {
     if (!isTimeSlotTaken(venueName, day, time)) {
       setSelectedSlot({ venueID, venueName, day, time });
       setErrorMessage(""); 
-      setSuccessMessage(""); 
+
     }
   };
 
@@ -126,7 +126,7 @@ const filteredVenues = venues.filter(venue => {
         setSelectedSlot(null);  // clear the selected slot after adding to schedules
         setVenueBooker("");  //clear the form fields
         setBookingDescription("");
-        setSuccessMessage("Booking added successfully!"); //confirmation message
+ 
         
         //re-populate the table with the updated entry
         fetchSchedules().then(data => setSchedules(data.entry || []));
@@ -146,9 +146,9 @@ const filteredVenues = venues.filter(venue => {
   };
 
   return (
-    <div className="create-booking-container">
+    <div className="adminrecurringbookings-container">
       {/* Capacity Filter */}
-      <div className="filter-container">
+      <div className="adminrecurringbookings-filter-container">
         <label htmlFor="capacity">Filter by Capacity:</label>
         <select
           id="capacity"
@@ -165,20 +165,20 @@ const filteredVenues = venues.filter(venue => {
         </select>
       </div>
   
-      <div className="venue-list">
+      <div className="adminrecurringbookings-venue-list">
         {filteredVenues.length > 0 ? (
           filteredVenues.map((venue) => ( 
-            <div key={venue.id} className="venue-schedule">
-              <h2>{venue.venueName}</h2>
+            <div key={venue.id} className="adminrecurringbookings-venue-schedule">
+              <h2 >{venue.venueName}</h2>
               <button onClick={() => toggleVenue(venue.id)}>
                 {expandedVenueId === venue.id ? 'Hide Schedule' : 'Show Schedule'}
               </button>
   
               {expandedVenueId === venue.id && (
                 <>
-                  <div className="venue-schedule-wrapper">
-                    <table>
-                      <thead>
+                  <div className="adminrecurringbookings-venue-schedule-wrapper">
+                    <table className="adminrecurringbookings-table">
+                      <thead className="adminrecurringbookings-tablerowscols">
                         <tr>
                           <th>Time</th>
                           {daysOfWeek.map((day) => (
@@ -212,7 +212,7 @@ const filteredVenues = venues.filter(venue => {
   
                     {/* input fields below the table when a slot is selected */}
                     {selectedSlot && selectedSlot.venueID === venue.id && (
-                      <div className="booking-form">
+                      <div className="adminrecurringbookings-booking-form">
                         <input
                           type="email"
                           placeholder="Enter your email"
@@ -225,15 +225,14 @@ const filteredVenues = venues.filter(venue => {
                           value={bookingDescription}
                           onChange={(e) => setBookingDescription(e.target.value)}
                         />
-                        <button className="book-button" onClick={handleCreateBooking}>
+                        <button className="adminrecurringbookings-button" onClick={handleCreateBooking}>
                           Add schedule
                         </button>
   
                         {/*error message on the card*/}
-                        {errorMessage && <p className="error-message">{errorMessage}</p>}
+                        {errorMessage && <p className="adminrecurringbookings-error-message">{errorMessage}</p>}
   
-                        {/* confirmation message */}
-                        {successMessage && <p className="success-message">{successMessage}</p>}
+                     
                       </div>
                     )}
                   </div>

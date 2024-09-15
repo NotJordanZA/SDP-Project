@@ -5,13 +5,13 @@ const API_URL = process.env.NODE_ENV === 'production' ? 'https://your-production
 
 // Fetch all the reports
 export const getAllReports = async () => {
-  const response = await fetch(`${API_URL}/Reports`);
+  const response = await fetch(`${API_URL}/reports`);
   return await response.json();
 };
 
 // Update a report
 export const updateRep = async (id, RepData) => {
-  const response = await fetch(`${API_URL}/Reports/${id}`, {
+  const response = await fetch(`${API_URL}/reports/${id}`, {
     method: "PUT",
     headers: {
       "Content-Type": "application/json",
