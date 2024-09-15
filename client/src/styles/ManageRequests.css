@@ -1,0 +1,123 @@
+
+.requests-container {
+  padding: 40px 20px;
+  max-width: 900px;
+  margin: 0 auto;
+  background-color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.1);
+  
+}
+
+
+.requests-container h1 {
+  text-align: center;
+
+  margin-bottom: 30px;
+  font-size: 2.5em;
+  color: #043673;
+  font-weight: bold;
+}
+
+/* Tabs section */
+.tabs button {
+  padding: 10px 30px;
+  margin: 0 10px;
+  border: none;
+  background-color: transparent;
+  color: #555;
+  font-size: 1.2em;
+  cursor: pointer;
+  transition: color 0.3s, border-bottom 0.3s;
+  border-bottom: 3px solid transparent;
+}
+
+/* Active tab */
+.tabs button.active {
+  color: #917248;
+  font-weight: bold;
+  border-bottom: 3px solid #917248;
+}
+
+/* Hover state for non-active tabs */
+.tabs button:hover:not(.active) {
+  color: #917248;
+  background-color: transparent !important; /* Ensure transparency */
+  border-bottom: 3px solid transparent; /* Keep the bottom border transparent */
+}
+
+.tabs button:hover:not(.active) {
+  background-color: transparent !important; /* Force transparency */
+}
+
+
+.requests-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* Request card styling */
+.request-card {
+  padding: 20px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background-color: #fdfdfd;
+  transition: box-shadow 0.3s;
+}
+
+.request-card h3 {
+  margin: 0 0 10px 0;
+  font-size: 1.5em;
+  color: #043673;
+}
+
+.request-card p {
+  margin: 5px 0;
+  font-size: 1.1em;
+  color: #043673;
+}
+
+.request-card.pending {
+  border-left: 5px ;
+}
+
+.request-card.approved {
+  border-left: 5px ;
+}
+
+.request-card:hover {
+  box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.15);
+}
+
+/* button styling */
+.approve-btn {
+  margin-top: 15px;
+  padding: 10px 20px;
+  border-radius: 4px;
+  background-color: #043673;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  cursor: pointer;
+  font-size: 1em;
+  transition: background-color 0.3s;
+}
+
+.approve-btn:hover {
+  background-color: #043673;
+}
+.deny-btn {
+  margin-top: 15px;
+  padding: 10px 20px;
+  border-radius: 4px;
+  background-color: #917248;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  cursor: pointer;
+  margin-left: 10px;
+}
+.deny-btn:hover {
+  background-color: #67481d;
+}

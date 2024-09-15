@@ -1,0 +1,12 @@
+{
+  "projects": {
+    "default": "wits-infrastructure-management"
+  },
+  "targets": {},
+  "etags": {
+    "wits-infrastructure-management": {
+      "extensionInstances": {}
+    }
+  },
+  "dataconnectEmulatorConfig": {}
+}

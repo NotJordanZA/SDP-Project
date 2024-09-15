@@ -1,0 +1,179 @@
+.venue-schedule {
+    margin: 1px 0; 
+    padding: 10px;  
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    background-color: #f9f9f9;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    width: 110%; /*  venue schedule container takes full width */
+}
+
+.venue-schedule h2 {
+    font-size: 1.4em;
+    margin-bottom: 5px;
+    color: #043673;
+    text-align: center;
+}
+
+/* container for the schedule table and booking form */
+.venue-schedule-wrapper {
+    display: flex;
+    flex-direction: row; 
+    align-items: center;
+}
+
+.venue-schedule table {
+    width: 9%; 
+    max-width: 10%; /*making surethe table doesnt exceed the card width */
+    border-collapse: collapse;
+    text-align: center;
+    font-family: Arial, sans-serif;
+}
+
+.booking-form {
+    width: 100%; /*full width for the booking form */
+    padding: 10px;
+    background-color: #656363;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(7, 7, 7, 0.1);
+    height: auto; /*height to adjusts */
+    margin-top: 15px;
+}
+
+.venue-schedule th {
+    background-color: #043673;
+    color: white;
+    padding: 10px;
+    font-weight: bold;
+    border: 1px solid #ccc;
+}
+
+.venue-schedule td {
+    padding: 10px;
+    border: 1px solid #f0f0f0;
+    border-radius: 5%;
+    background-color: #043673;
+    color: #f0f0f0;
+}
+
+/*scheduled cells */
+.venue-schedule td.scheduled {
+    background-color: #cc8c8c;
+    font-weight: bold;
+    color: #cc0000;
+}
+
+/*available cells */
+.venue-schedule td.available {
+    background-color: #e1d0b9;
+    color: #043673;
+    font-weight: normal;
+}
+
+.venue-schedule tr:hover {
+    background-color: #f0f0f0;
+}
+
+.booking-form input {
+    width: 100%;
+    margin-bottom: 10px;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 3px;
+}
+
+.booking-form button {
+    width: 100%; /* Full width button */
+    padding: 10px;
+    background-color: #043673;
+    color: white;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+}
+
+.booking-form button:hover {
+    background-color: #043673;
+}
+
+.error-message {
+    color: red;
+    font-size: 14px;
+    margin-top: 10px;
+}
+
+.success-message {
+    color: green;
+    font-size: 14px;
+    margin-top: 10px;
+}
+
+.filter-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.filter-container label {
+    font-size: 16px;
+    font-weight: bold;
+    margin-bottom: 8px;
+    color: #043673;
+}
+
+.filter-container select {
+    width: 150px;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+    background-color: #f9f9f9;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+}
+
+.filter-container select:focus {
+    outline: none;
+    border-color: #043673;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .venue-schedule-wrapper {
+        flex-direction: column;
+        width: 100%; /*full width */
+    }
+
+    .venue-schedule h2 {
+        font-size: 1.2em;
+    }
+
+    .venue-schedule td, .venue-schedule th {
+        padding: 8px;
+    }
+
+    .venue-schedule table {
+        font-size: 12px; /*font size made smaller for  small screens */
+    }
+
+    .booking-form {
+        width: 10%; 
+    }
+}
+
+
+@media (max-width: 500px) {
+    .venue-schedule th, .venue-schedule td {
+        font-size: 10px;
+        padding: 6px; 
+    }
+
+    .venue-schedule table {
+        font-size: 10px;
+    }
+
+    .booking-form button {
+        width: 80%; 
+    }
+}

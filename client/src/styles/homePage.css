@@ -1,0 +1,60 @@
+/* homePage.css */
+
+.home-page {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 20px;
+  padding: 20px;
+}
+
+
+.welcome-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 15px;
+  padding-left: 15px;
+  padding-right: 15px;
+  background-color: #917248;
+  border-radius: 15px;
+  width: fit-content; /* Ensure the section adjusts to the size of its content */
+  margin: 15px auto 0 auto; /* Center the section horizontally */
+}
+
+.welcome-name {
+  font-size: 1rem;
+  font-weight: bolder;
+  color: white;
+}
+
+
+@media (max-width: 768px) {
+  .main-icon {
+    width: 120px;
+  }
+
+  .icon-img {
+    font-size: 2rem;
+  }
+
+  .main-icon p {
+    font-size: 0.9rem;
+  }
+}
+
+@media (max-width: 480px) {
+
+  .main-icon {
+    width: 100%;
+    max-width: 250px;
+  }
+
+  .icon-img {
+    font-size: 1.8rem;
+  }
+
+  .main-icon p {
+    font-size: 0.85rem;
+  }
+}

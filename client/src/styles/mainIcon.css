@@ -1,0 +1,39 @@
+/* src/styles/mainIcon.css */
+.main-icon {
+    background-color: #043673;  /* Background color */
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 30px;              /* Increased padding for better spacing */
+    border-radius: 15px;        /* Smooth rounded corners */
+    width: 180px;               /* Increased width for better visual balance */
+    height: 200px;              /* Increased height to comfortably fit icon and text */
+    margin: 25px;               /* Adequate margin for spacing between icons */
+    box-shadow: 0 6px 14px rgba(0, 0, 0, 0.2); /* Slightly stronger shadow for emphasis */
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    text-decoration: none;      /* Ensure there's no text underline */
+    color: white;               /* Ensure text color remains white */
+}
+
+.main-icon:hover {
+    transform: translateY(-8px);  /* Lift effect on hover */
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);  /* Increased shadow on hover */
+}
+
+/* Icon text styling */
+.icon-text {
+    color: white; /* Ensure text color remains white */
+    font-size: 1.4em;              /* Slightly larger font size for better readability */
+    font-weight: bold;
+    text-align: center;
+    margin-top: 10px;             /* Space between icon and text */
+}
+
+/* Icon styling */
+.icon-img {
+    font-size: 4em;               /* Larger icon size for visual impact */
+    margin-bottom: 0;            /* Space between icon and text */
+    margin-top: 0.5em;
+    color: white;                 /* Ensure icon remains white */
+}
