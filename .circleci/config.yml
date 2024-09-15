@@ -18,7 +18,7 @@ jobs:
           working_directory: client
       - run:
           name: Build application for production
-          command: npm run build --no-warnings
+          command: npm run build
           working_directory: client
       - coveralls/upload
 
@@ -41,7 +41,7 @@ jobs:
           working_directory: client
       - run:
           name: Build application for production
-          command: npm run build --no-warnings
+          command: npm run build
           working_directory: client
       - run:
           name: Deploy app to Firebase
