@@ -32,10 +32,6 @@ jobs:
           command: npm install
           working_directory: client
       - run:
-          name: Install firebase-tools to client
-          command: npm install firebase-tools
-          working_directory: client
-      - run:
           name: Testing
           command: npm test -- --coverage
           working_directory: client
@@ -43,9 +39,13 @@ jobs:
           name: Build application for production
           command: npm run build
           working_directory: client
+       - run:
+          name: Install firebase-tools to client
+          command: npm install firebase-tools
+          working_directory: client
       - run:
           name: Deploy app to Firebase
-          command: firebase deploy --only hosting --token ${FIREBASE_TOKEN}
+          command: ./node_modules/.bin/firebase deploy --only hosting --token ${FIREBASE_TOKEN}
           working_directory: client
       - run:
           name: Install server local dependencies
@@ -54,10 +54,10 @@ jobs:
       - run:
           name: Install firebase-tools to server
           command: npm install firebase-tools
-          working_directory: client
+          working_directory: server
       - run:
           name: Deploy app to Firebase
-          command: firebase deploy --only functions:api --token ${FIREBASE_TOKEN}
+          command: ./node_modules/.bin/firebase deploy --only functions:api --token ${FIREBASE_TOKEN}
           working_directory: server
       - coveralls/upload
 
