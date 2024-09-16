@@ -206,60 +206,63 @@ const clearSearch = () => {
 
   return (
     <div className="adminbook-create-booking-container">
-    {/* containins search bar, clear button, calendar, and filters */}
-    <div className="adminbook-top-section">
+      {/* containins search bar, clear button, calendar, and filters */}
+      <div className="adminbook-top-section">
+        <div className="adminbook-calendarfilter">
+          <div className="adminbook-calendar-container">
+            <h3>Select a Date:</h3>
+            <Calendar
+              className="adminbook-react-calendar"
+              onChange={setSelectedDate}
+              value={selectedDate}
+              minDate={new Date()}
+              maxDate={new Date(new Date().getFullYear(), 11, 31)} // End of the current year
+            />
+          </div>
+        </div>
 
-   
-      
-      < div className="adminbook-calendarfilter">
-      <div className="adminbook-calendar-container">
-        <h3>Select a Date:</h3>
-        <Calendar
-          className="adminbook-react-calendar"
-          onChange={setSelectedDate}
-          value={selectedDate}
-          minDate={new Date()}
-          maxDate={new Date(new Date().getFullYear(), 11, 31)} // End of the current year
-        />
-      </div>
-{/*clear Search Button */}
-<div className="adminbook-search-container">
-<Search venueList={venues} setVenueList={setVenues} bookingsList={bookings} />  
-<button className="adminbook-clear-button" onClick={clearSearch}>Clear Search</button>
-</div>
-      {/*capacity and  venue type filters */}
-      < div className="adminbook-filter-container">
-        <label htmlFor="capacity">Venue Capacity:</label>
-        <select
-          id="capacity"
-          className="filter-select"
-          value={selectedCapacity}
-          onChange={handleCapacityChange}
-        >
-          <option value="">Capacity</option>
-          <option value="100">100+</option>
-          <option value="200">200+</option>
-          <option value="300">300+</option>
-          <option value="400">400+</option>
-          <option value="500">500+</option>
-        </select>
+        {/* clear Search Button */}
+        <div className="adminbook-search-container">
+          <Search venueList={venues} setVenueList={setVenues} bookingsList={bookings} />
+          <button className="adminbook-clear-button" onClick={clearSearch}>Clear Search</button>
+        </div>
 
-        <label htmlFor="type">Venue Type:</label>
-        <select
-          id="type"
-          className="adminbook-filter-select"
-          value={selectedType}
-          onChange={handleTypeChange}
-        >
-          <option value="">All Types</option>
-          {venueTypes.map((type, index) => (
-            <option key={index} value={type}>{type}</option>
-          ))}
-        </select>
+        {/* capacity and venue type filters */}
+        <div className="adminbook-filter-container">
+          <div className="adminbook-select-container">
+            <label htmlFor="capacity">Venue Capacity:</label>
+            <select
+              id="capacity"
+              className="filter-select"
+              value={selectedCapacity}
+              onChange={handleCapacityChange}
+            >
+              <option value="">Capacity</option>
+              <option value="100">100+</option>
+              <option value="200">200+</option>
+              <option value="300">300+</option>
+              <option value="400">400+</option>
+              <option value="500">500+</option>
+            </select>
+          </div>
+          <div className="adminbook-select-container">
+            <label htmlFor="type">Venue Type:</label>
+            <select
+              id="type"
+              className="adminbook-filter-select"
+              value={selectedType}
+              onChange={handleTypeChange}
+            >
+              <option value="">All Types</option>
+              {venueTypes.map((type, index) => (
+                <option key={index} value={type}>{type}</option>
+              ))}
+            </select>
+          </div>
+        </div>
       </div>
-      </div>
-</div>
-      {/*venue list */}
+
+      {/* venue list */}
       <div className="adminbook-venue-list">
         {filteredVenues.map(venue => (
           <div key={venue.id} className="adminbook-venue-item">
@@ -269,35 +272,34 @@ const clearSearch = () => {
               <button>{expandedVenueId === venue.id ? '▲' : '▼'}</button>
             </div>
 
-            {/*venue details displayed */}
+            {/* venue details displayed */}
             {expandedVenueId === venue.id && (
               <div className="adminbook-venue-details">
                 <p>Campus: {venue.campus}</p>
                 <p>Venue Type: {venue.venueType}</p>
                 <p>Capacity: {venue.venueCapacity}</p>
 
-          
                 <div className="adminbook-time-slots">
-            {venue.timeSlots && venue.timeSlots.length > 0 ? (
-              venue.timeSlots.map((time, index) => {
-                const isTaken = isTimeSlotTaken(venue.venueName, venue.id, time); //that time slot already appears in Schedules or Bookings so its taken
-                const isSelected = selectedTimeSlot && selectedTimeSlot.time === time && selectedTimeSlot.venueID === venue.id; //User-selected time slot
+                  {venue.timeSlots && venue.timeSlots.length > 0 ? (
+                    venue.timeSlots.map((time, index) => {
+                      const isTaken = isTimeSlotTaken(venue.venueName, venue.id, time); // that time slot already appears in Schedules or Bookings so it's taken
+                      const isSelected = selectedTimeSlot && selectedTimeSlot.time === time && selectedTimeSlot.venueID === venue.id; // User-selected time slot
 
-                return (
-                  <button
-                    key={index}
-                    className={`adminbook-time-slot-button ${isTaken ? 'taken' : ''} ${isSelected ? 'selected' : ''}`}
-                    disabled={isTaken} //disable a slot if taken( so user cant select it)
-                    onClick={() => SelectingtimeSlot(venue.id, venue.venueName, time)}
-                  >
-                    {time}
-                  </button>
-                );
-              })
-            ) : (
-              <p>No available timeslots</p>
-            )}
-          </div>
+                      return (
+                        <button
+                          key={index}
+                          className={`adminbook-time-slot-button ${isTaken ? 'taken' : ''} ${isSelected ? 'selected' : ''}`}
+                          disabled={isTaken} // disable a slot if taken (so user can't select it)
+                          onClick={() => SelectingtimeSlot(venue.id, venue.venueName, time)}
+                        >
+                          {time}
+                        </button>
+                      );
+                    })
+                  ) : (
+                    <p>No available timeslots</p>
+                  )}
+                </div>
 
                 {/* email and description inputs if a time slot is selected */}
                 {selectedTimeSlot && selectedTimeSlot.venueID === venue.id && (
@@ -316,12 +318,10 @@ const clearSearch = () => {
                       onChange={(e) => setBookingDescription(e.target.value)}
                       className="adminbook-description-input"
                     />
-                 {errorMessage && <p className="adminbook-error-message">{errorMessage}</p>}
+                    {errorMessage && <p className="adminbook-error-message">{errorMessage}</p>}
                     <button className="adminbook-book-button" onClick={hCreateBooking}>
                       Book
                     </button>
-                   
-                   
                   </>
                 )}
               </div>
@@ -330,6 +330,7 @@ const clearSearch = () => {
         ))}
       </div>
     </div>
+
   );
 };
 

@@ -2,8 +2,11 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+  align-content: center;
+  justify-content: center;
   gap: 40px;
   width: 90%;
+  padding-left: 10%;
   margin-bottom: 10px;
 }
 
@@ -11,9 +14,10 @@
 .adminbook-top-section {
   display: flex;
   justify-content: space-between;
-  align-items: flex-start;
+  align-items: center;
+  align-content: center;
+  justify-content: center;
   width: 100%;
- 
   flex-wrap: wrap; /* Allow wrapping of elements for better responsiveness */
 }
 
@@ -21,23 +25,22 @@
 .adminbook-search-container {
   flex: 0.1; /* Make search container smaller for next to calendar */
   display: flex;
-  align-items: center;
-  justify-content: flex-start;
+  flex-direction: column;
+  align-content: space-between;
+  align-items: space-between;
+  justify-content: center;
   margin-bottom: 20px;
-  width: 190%;
+  min-width: 100%;
 }
-
 
 .adminbook-calendarfilter {
   display: flex;
-  align-items: flex-start;
-  gap: 90px; /*space between calendar and search*/
-  justify-content: space-between;
-  
+  /* gap: 90px; space between calendar and search */
+  justify-content: center;
+  margin-bottom: 50px;
 }
 
 .adminbook-calendar-container {
-  
   width: 50%;
 }
 
@@ -49,8 +52,15 @@
 .adminbook-filter-container {
   display: flex;
   flex-direction: row;
+  justify-content: space-between;
   gap: 10px;
   width: 100%; 
+}
+
+.adminbook-select-container {
+  margin-right: 30px;
+  margin-left: 30px;
+  width: 40%;
 }
 
 /* clear  button */
