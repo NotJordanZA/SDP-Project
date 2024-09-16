@@ -1109,8 +1109,8 @@ app.get("/notifications/:recipientEmail", async (req, res) => {
 
 // Left out for deployment
 // Prints to console the port of the server
- app.listen(PORT, () => {
- console.log(`Server listening on ${PORT}`);
- });
+app.listen(PORT, () => {
+console.log(`Server listening on ${PORT}`);
+});
 
 exports.api = onRequest(app);
