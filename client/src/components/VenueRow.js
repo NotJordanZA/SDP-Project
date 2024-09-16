@@ -43,10 +43,10 @@ function VenueRow({venueName, campus, venueType, venueCapacity, timeSlots, isClo
             const booker = user.email; // Gets user email
     
             if (bookingDescriptionText !== ""){
-                makeBooking(booker, venueName, relevantDate, bookingTime, bookingEndingTime, bookingDescriptionText, setIsVenueOpen, toggleIsBooking, getCurrentDatesBookings, relevantDate, setBookingDescriptionText);
+                makeBooking(booker, venueName, relevantDate, bookingTime, bookingEndingTime, bookingDescriptionText, setIsVenueOpen, toggleIsBooking, setBookingDescriptionText);
             }
             else{
-                makeBooking(booker, venueName, relevantDate, bookingTime, bookingEndingTime, null, setIsVenueOpen, toggleIsBooking, getCurrentDatesBookings, relevantDate, setBookingDescriptionText);;
+                makeBooking(booker, venueName, relevantDate, bookingTime, bookingEndingTime, null, setIsVenueOpen, toggleIsBooking, setBookingDescriptionText);;
             }
             
         }

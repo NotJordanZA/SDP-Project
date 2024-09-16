@@ -19,17 +19,22 @@ const Reports = () => {
           // If user is authenticated
           if (firebaseUser) {
             setUser(firebaseUser); //Set current user
+            console.log(user);
           } else {
             navigate("/login"); //Reroute to login if user not signed in
           }
           setIsLoading(false); //Declare firebase as no longer loading
         });
-        return () => unsubscribe(); //Return the listener
+        return () => {
+          if (unsubscribe) {
+            unsubscribe();
+          }
+        }; //Return the listener
       }, [auth, navigate]);
 
-    useEffect(() => {
-        setUser(auth.currentUser);  // Ensure that the current user is synced with state
-    }, []);
+    // useEffect(() => {
+    //     setUser(auth.currentUser);  // Ensure that the current user is synced with state
+    // }, []);
 
     const togglePopup = () => {
         setIsPopupOpen(!isPopupOpen);

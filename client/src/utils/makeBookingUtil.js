@@ -1,4 +1,6 @@
-export const makeBooking = async(venueBooker, venueID, bookingDate, bookingStartTime, bookingEndTime, bookingDescription, setIsVenueOpen, toggleIsBooking, getCurrentDatesBookings, relevantDate, setBookingDescriptionText) => { // Makes a new bookings 
+import { getCurrentDatesBookings } from "../utils/getCurrentDatesBookingsUtil";
+
+export const makeBooking = async(venueBooker, venueID, bookingDate, bookingStartTime, bookingEndTime, bookingDescription, setIsVenueOpen, toggleIsBooking, setBookingDescriptionText) => { // Makes a new bookings 
     try{
         const response = await fetch(`/bookings/create`, { //Calls the API to create a new booking
             method: 'POST',
@@ -20,7 +22,7 @@ export const makeBooking = async(venueBooker, venueID, bookingDate, bookingStart
             // console.log('Booking added successfully:', data);
             setIsVenueOpen(false); // Closes the dropdown on booking
             toggleIsBooking(); // Changes the booking status, closing the popup
-            getCurrentDatesBookings(relevantDate); // Calls this function again so that the new booking is reflected on the page
+            getCurrentDatesBookings(bookingDate); // Calls this function again so that the new booking is reflected on the page
             setBookingDescriptionText(""); // Resets the booking description field
         } else {
             console.error('Error making booking:', data.error); // Logs error

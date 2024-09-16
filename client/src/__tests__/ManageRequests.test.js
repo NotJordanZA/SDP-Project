@@ -2,7 +2,6 @@ import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import '@testing-library/jest-dom/extend-expect';
 import { BrowserRouter as Router, MemoryRouter } from 'react-router-dom';
-import { MemoryRouter } from "react-router-dom";
 import * as router from 'react-router-dom';
 import { auth } from "../firebase";
 import { onAuthStateChanged } from "firebase/auth";
