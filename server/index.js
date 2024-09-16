@@ -758,38 +758,10 @@ app.get("/api/adminRequests", async (req, res) => {
 });
 
 
-//Reports
-app.post("/Reports/create", async (req, res) => {
-    const { reportText, reportType, resolutionLog, venueID } = req.body;
-
-    // Validate required fields
-    if ( !reportText|| !reportType|| !resolutionLog||!venueID ) {
-        return res.status(400).json({ error: "All fields are required." });
-    }
-
-    try {
-     
-        // const newBookingRef = doc(db, 'AdminRequests', `${requesterEmail}-randomDocName`);
-        // Generate a random string for the document name
-        const randomDocName = Math.random().toString(36).substr(2, 9);
-
-        const newBookingRef = doc(db, 'Reports', randomDocName);
-        const bookingData = {
-            reportStatus: "pending" ,reportText, reportType, resolutionLog, venueID 
-        };
-
-        await setDoc(newBookingRef, bookingData);
-
-        res.status(200).json({ message: "Report created successfully", bookingID: newBookingRef.id });
-    } catch (error) {
-        console.error("Error creating report:", error);
-        res.status(500).json({ error: "Internal Server Error" });
-    }
-});
 
 
 
-app.put("/Reports/:id", async (req, res) => {
+app.put("/reports/:id", async (req, res) => {
     const rID = req.params.id;
     const { reportText, reportType, resolutionLog, venueID, reportStatus }= req.body;
 
@@ -826,59 +798,9 @@ app.put("/Reports/:id", async (req, res) => {
 });
 
 
-//Get
-app.get("/Reports", async (req, res) => {
-    try {
-        
-        const RepCollectionRef = collection(db, 'Reports');
-        
-        const snapshot = await getDocs(RepCollectionRef);
-        
-        const rep = snapshot.docs.map(doc => ({
-            id: doc.id,
-            ...doc.data()
-        }));
 
-       
-        res.status(200).json({ rep });
-    } catch (error) {
-        console.error("Error retrieving bookings:", error);
-        res.status(500).json({ error: "Internal Server Error" });
-    }
-});
-// Get reports by report type
-app.get("/Reports/type/:reportType", async (req, res) => {
-    const { reportType } = req.params; // Extract reportType from the request parameters
-
-    try {
-        // Reference to the "Reports" collection
-        const reportsCollectionRef = collection(db, 'Reports');
-        
-        // Get all documents from the "Reports" collection
-        const snapshot = await getDocs(reportsCollectionRef);
-        
-        // Filter documents that match the selected report type
-        const filteredReports = snapshot.docs
-          .map(doc => ({
-              id: doc.id,
-              ...doc.data()
-          }))
-          .filter(report => report.reportType === reportType); // Filter by report type
-        
-        // If no reports found, respond with a message
-        if (filteredReports.length === 0) {
-            return res.status(404).json({ message: `No reports found for type: ${reportType}` });
-        }
-
-        // Respond with the filtered reports
-        res.status(200).json({ filteredReports });
-    } catch (error) {
-        console.error("Error retrieving reports by type:", error);
-        res.status(500).json({ error: "Internal Server Error" });
-    }
-});
 //Getting each report  type for Admin to filter reports by type
-app.get("/Reports/types", async (req, res) => {
+app.get("/reports/types", async (req, res) => {
     try {
       
         const reportsCollectionRef = collection(db, 'Reports');

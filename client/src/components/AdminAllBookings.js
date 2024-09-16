@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import '../styles/ManageBookings.css';
+
 import EditBooking from '../pages/ManageBookingsEdit.js';
 
 const getAllBookings = async () => {
@@ -79,7 +79,7 @@ const AdminAllBookings = () => {
   });
 
   return (
-    <div className="booking-tabs-container">
+    <div className="adminallbookings-tabs-container">
    
       <div className="filters">
         <div className="date-filter">
