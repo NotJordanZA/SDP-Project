@@ -140,7 +140,7 @@ describe("AdminRequests", () => {
 
     test('Check if user that is not logged in is redirected to /login', () => {
         onAuthStateChanged.mockImplementation((auth, callback) => {
-            // Simulate that a user is logged in, and return a mock unsubscribe function
+            // Simulate that a user is not logged in, and return a mock unsubscribe function
             callback(null);
             // console.log("Unsubscribe returned!");
             return jest.fn(); // This is the mock unsubscribe function

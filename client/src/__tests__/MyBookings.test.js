@@ -45,7 +45,7 @@ describe("MyBookings", () => {
         jest.spyOn(router, 'useNavigate').mockImplementation(() => navigate);
 
         onAuthStateChanged.mockImplementation((auth, callback) => {
-            // Simulate that a user is logged in, and return a mock unsubscribe function
+            // Simulate that a user is not logged in, and return a mock unsubscribe function
             callback({ email: 'test@wits.ac.za' });
             // console.log("Unsubscribe returned!");
             return jest.fn(); // This is the mock unsubscribe function
