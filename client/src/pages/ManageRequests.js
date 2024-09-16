@@ -6,17 +6,15 @@ import { useNavigate } from "react-router-dom";
 import { onAuthStateChanged } from "firebase/auth";
 import { getCurrentUser } from '../utils/getCurrentUser';
 import '../styles/ManageRequests.css';
-
-const API_URL = process.env.NODE_ENV === 'production' ? 'https://your-production-site.com' : 'http://localhost:3002'; 
-
+import {fetchRequests} from '../utils/getAllRequests';
+import {handleApproveClick} from '../utils/AdminhandleApprovecClick';
 export const getAllRequests = async () => {
-  const response = await fetch(`${API_URL}/adminRequests`);
+  const response = await fetch(`/api/adminRequests`);
   return await response.json();
 };
-
 // update a Request- change status from pending to approved
 export const updateReq= async (id, ReqData) => {
-const response = await fetch(`${API_URL}/adminRequests/${id}`, {
+const response = await fetch(`/api/adminRequests/${id}`, {
   method: "PUT",
   headers: {
     "Content-Type": "application/json",
@@ -81,32 +79,13 @@ function AdminRequests() {
   }, [user, isLoading]);
 
   useEffect(() => {
-    const fetchRequests = async () => {
-      try {
-        const response = await getAllRequests();
-        console.log("Fetched Requests:", response.AdReq); 
-        setRequests(response.AdReq); //the AdReq array from the response
-      } catch (error) {
-        console.error("Error fetching requests:", error);
-        setRequests([]); //in case of an error
-      }
-    };
+   
 
-    fetchRequests();
+    fetchRequests(setRequests, getAllRequests);
   }, []);
 
   // this function handles approving a request
-  const handleApproveClick = async (requestId) => {
-    try {
-      await updateReq(requestId, { requestStatus: "approved" });
 
-      //refresh the list of requests after the update
-      const requestsFromAPI = await getAllRequests();
-      setRequests(requestsFromAPI.AdReq);
-    } catch (error) {
-      console.error("Error updating request:", error);
-    }
-  };
 
   //this function handles denying a request
   const handleDenyClick = async (requestId) => {
@@ -163,7 +142,8 @@ const determinerole = (email) => {
         <div className="requests-list">
           {filteredRequests.map(request => (
             <div key={request.id} className={`request-card ${request.requestStatus}`}>
-              <h3>Requester email: {request.requesterEmail}</h3>
+              <h3>
+            <strong>  Requester email: </strong>{request.requesterEmail} </h3>
               <p><strong>Role:</strong> {determinerole(request.requesterEmail)}</p>
               <p><strong>Status:</strong> {request.requestStatus}</p>
               <p><strong>Request Text:</strong> {request.requestText || 'No request text provided'}</p> {/*if no requests then display that second part*/}
@@ -171,7 +151,7 @@ const determinerole = (email) => {
               {/* Show "Approve" and "Deny" buttons only for pending requests */}
               {request.requestStatus === 'pending' && (
                 <>
-                  <button className="approve-btn" onClick={() => handleApproveClick(request.id)}>
+                  <button className="approve-btn" onClick={() => handleApproveClick(request.id, setRequests)}>
                     Approve Request
                   </button>
                   <button className="deny-btn" onClick={() => handleDenyClick(request.id)}>

@@ -6,6 +6,7 @@ import { useState, useEffect } from "react";
 import { getCurrentUser } from '../utils/getCurrentUser';
 import { getAllVenues } from "../utils/getAllVenuesUtil";
 import { getCurrentDatesBookings } from "../utils/getCurrentDatesBookingsUtil";
+import { getCurrentDaySchedules } from "../utils/getCurrentDaysSchedules";
 import { formatDate } from "../utils/formatDateUtil";
 import { auth } from "../firebase";
 import { useNavigate } from "react-router-dom";
@@ -23,6 +24,7 @@ function Venues(){
     // const user = auth.currentUser;
     const studentVenueTypes = ["Tutorial Room", "Study Room"];
     const lecturerVenueTypes = ["Tutorial Room", "Study Room", "Lecture Venue", "Lab", "Test Venue"];
+    const weekday = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
     const navigate = useNavigate();
     
     // Ensure User is logged in
@@ -84,7 +86,8 @@ function Venues(){
       // Call getCurrentDatesBookings when formattedDate changes
       if (formattedDate) {
         getCurrentDatesBookings(formattedDate, setBookingsList);
-      }
+        getCurrentDaySchedules(weekday[displayDate.getDay()], bookingsList, setBookingsList);
+      }// eslint-disable-next-line
     }, [formattedDate]); // Only runs when formattedDate changes
 
   //   useEffect(() => {

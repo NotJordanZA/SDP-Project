@@ -5,17 +5,15 @@ import { onAuthStateChanged } from "firebase/auth";
 import { getCurrentUser } from '../utils/getCurrentUser';
 import '../styles/ManageReports.css'; 
 
-const API_URL = process.env.NODE_ENV === 'production' ? 'https://your-production-site.com' : 'http://localhost:3001'; 
-
 // Fetch all the reports
 export const getAllReports = async () => {
-  const response = await fetch(`${API_URL}/Reports`);
+  const response = await fetch(`/api/Reports`);
   return await response.json();
 };
 
 // Update a report
 export const updateRep = async (id, RepData) => {
-  const response = await fetch(`${API_URL}/Reports/${id}`, {
+  const response = await fetch(`/api/Reports/${id}`, {
     method: "PUT",
     headers: {
       "Content-Type": "application/json",

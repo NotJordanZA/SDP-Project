@@ -3,7 +3,9 @@ const { initializeApp } = require('firebase/app');
 const { getFirestore } = require("firebase/firestore");
 const express = require("express");
 const cors = require('cors');
-const PORT = process.env.PORT || 3001;
+const {onRequest} = require("firebase-functions/v2/https");
+const logger = require("firebase-functions/logger");
+const PORT = process.env.PORT || 3001; //Must be commented out for production build
 
 const app = express();
 app.use(express.json());
@@ -22,12 +24,8 @@ const firebaseConfig = {
 initializeApp(firebaseConfig);
 const db = getFirestore();
 
-
-// Need to figure out for building and hosting APIs and app on same domain
-// app.use(express.static(path.resolve(__dirname, '../build')));
-
 // Get user API
-app.get("/users/:userEmail", async (req, res) => {
+app.get("/api/users/:userEmail", async (req, res) => {
     let userEmail = req.params.userEmail;
     
     // Fetches the reference to the user from the users collection
@@ -52,7 +50,7 @@ app.get("/users/:userEmail", async (req, res) => {
 });
 
 // Add user API
-app.post("/users", async (req, res) => {
+app.post("/api/users", async (req, res) => {
     // Fetch all data passed into the API through the request body
     const {userEmail, firstName, lastName, isStudent, isLecturer, isAdmin} = req.body;
 
@@ -91,7 +89,7 @@ app.post("/users", async (req, res) => {
 });
 
 // Update user API
-app.put("/users/:userEmail", async (req, res) => {
+app.put("/api/users/:userEmail", async (req, res) => {
     // Fetch email from the URL parameter
     let userEmail = req.params.userEmail;
     // Fetch all data passed into the API through the request body
@@ -133,7 +131,7 @@ app.put("/users/:userEmail", async (req, res) => {
 });
 
 // Delete user API
-app.delete("/users/:userEmail", async (req, res) => {
+app.delete("/api/users/:userEmail", async (req, res) => {
     // Fetch email from the URL parameter
     let userEmail = req.params.userEmail;
 
@@ -158,7 +156,7 @@ app.delete("/users/:userEmail", async (req, res) => {
 });
 
 // Get all venues
-app.get('/venues', async (req, res) => {
+app.get('/api/venues', async (req, res) => {
     try {
         const venuesSnapshot = await getDocs(collection(db, 'Venues'));
         const venuesList = [];
@@ -178,7 +176,7 @@ app.get('/venues', async (req, res) => {
 });
 
 // POST - create Booking 
-app.post("/bookings/create", async (req, res) => {
+app.post("/api/bookings/create", async (req, res) => {
     const { venueBooker, venueID, bookingDate, bookingStartTime, bookingEndTime, bookingDescription } = req.body;
 
     // make sure all the fields are entered 
@@ -211,7 +209,7 @@ app.post("/bookings/create", async (req, res) => {
 });
 
 // Get bookings by field API
-app.get("/bookings/findByField", async (req, res) => {
+app.get("/api/bookings/findByField", async (req, res) => {
     // Extract optional query parameters from the request
     const { venueID, bookingDate, bookingEndTime, bookingStartTime, venueBooker, bookingDescription} = req.query;
     const bookingsCollection = collection(db, "Bookings"); // Reference to the "Bookings" collection in Firestore
@@ -266,7 +264,7 @@ app.get("/bookings/findByField", async (req, res) => {
 });
 
 // Submit a report API
-app.post("/reports", async (req, res) => {
+app.post("/api/reports", async (req, res) => {
     const { venueID, roomNumber, reportType, reportText, photos } = req.body;
 
     // Check that the necessary fields are provided
@@ -297,15 +295,14 @@ app.post("/reports", async (req, res) => {
     }
 });
 
-// Get reports API
-app.get("/reports", async (req, res) => {
-    const { venueID, roomNumber, reportType } = req.query;  // Extract query parameters
+app.get("/api/reports", async (req, res) => {
+    const { venueID, roomNumber, reportType, createdBy } = req.query;  // Include 'createdBy' as a filter
 
     try {
         const reportsQuery = collection(db, "Reports");
         let queryRef = reportsQuery;
 
-        // Optional filters based on query parameters
+        // Apply filters based on query parameters
         if (venueID) {
             queryRef = query(queryRef, where("venueID", "==", venueID));
         }
@@ -314,6 +311,9 @@ app.get("/reports", async (req, res) => {
         }
         if (reportType) {
             queryRef = query(queryRef, where("reportType", "==", reportType));
+        }
+        if (createdBy) {
+            queryRef = query(queryRef, where("createdBy", "==", createdBy));  // Ensure reports are filtered by creator
         }
 
         // Execute the query
@@ -326,6 +326,7 @@ app.get("/reports", async (req, res) => {
                 ...doc.data()
             });
         });
+
         res.status(200).json(reports);
     } catch (error) {
         console.error("Error retrieving reports:", error);
@@ -333,19 +334,8 @@ app.get("/reports", async (req, res) => {
     }
 });
 
-
-//Prints to console the port of the server
-app.listen(PORT, () => {
-console.log(`Server listening on ${PORT}`);
-});
-
-
-
-
-
-
 // POST - create Booking 
-app.post("/bookings/create", async (req, res) => {
+app.post("/api/bookings/create", async (req, res) => {
     const { venueBooker, venueID, bookingDate, bookingStartTime, bookingEndTime, bookingDescription } = req.body;
 
     // make sure all the fields are entered 
@@ -377,7 +367,7 @@ app.post("/bookings/create", async (req, res) => {
     }
 });
 //GET  all bookings
-app.get("/bookings", async (req, res) => {
+app.get("/api/bookings", async (req, res) => {
     try {
         // Reference to the "Bookings" collection
         const bookingsCollectionRef = collection(db, 'Bookings');
@@ -403,7 +393,7 @@ app.get("/bookings", async (req, res) => {
 
 
 //Get booking by  ID
-app.get("/bookings/:id", async (req, res) => {
+app.get("/api/bookings/:id", async (req, res) => {
     const bookingId = req.params.id;
 
     try {
@@ -426,7 +416,7 @@ app.get("/bookings/:id", async (req, res) => {
 
 // PUT -update a booking by ID
 
-app.put("/bookings/:id", async (req, res) => {
+app.put("/api/bookings/:id", async (req, res) => {
     const bookingId = req.params.id;
     const { venueBooker, venueID, bookingDate, bookingStartTime, bookingEndTime, bookingDescription } = req.body;
 
@@ -461,7 +451,7 @@ app.put("/bookings/:id", async (req, res) => {
     }
 });
 //Delete a booking by ID
-app.delete("/bookings/:id", async (req, res) => {
+app.delete("/api/bookings/:id", async (req, res) => {
     const bookingId = req.params.id;
 
     try {
@@ -485,7 +475,7 @@ app.delete("/bookings/:id", async (req, res) => {
 
 // //GET- returns venue name from the Venues collection where the document name =venueID in the Bookings collection
 // //important for filtering bookings by venue
-app.get('/bookings/venue/:venueid', async (req, res) => {
+app.get('/api/bookings/venue/:venueid', async (req, res) => {
     try {
         const venueid = req.params.venueid;
         
@@ -507,19 +497,9 @@ app.get('/bookings/venue/:venueid', async (req, res) => {
     }
 });
 
-
-
-
-
-
-
-
-
-
-
 // // Venues section
 // // Create a new venue
-app.post('/venues', async (req, res) => {
+app.post('/api/venues', async (req, res) => {
     const { buildingName, campus, isClosed, venueCapacity, venueName, venueType } = req.body;
 
     // Validate the required fields
@@ -554,7 +534,7 @@ app.post('/venues', async (req, res) => {
 });
 
 // // Get all venues
-app.get('/venues', async (req, res) => {
+app.get('/api/venues', async (req, res) => {
     try {
         const venuesSnapshot = await getDocs(collection(db, 'Venues'));
         const venuesList = [];
@@ -574,7 +554,7 @@ app.get('/venues', async (req, res) => {
 });
 
 // // Get a single venue by ID
-app.get('/venues/:id', async (req, res) => {
+app.get('/api/venues/:id', async (req, res) => {
     const id = req.params.id;
 
     try {
@@ -591,7 +571,7 @@ app.get('/venues/:id', async (req, res) => {
 });
 
 // Update a venue by ID
-app.put('/venues/:id', async (req, res) => {
+app.put('/api/venues/:id', async (req, res) => {
     const id = req.params.id;
     const { buildingName, campus, isClosed, venueCapacity, venueName, venueType } = req.body;
 
@@ -626,7 +606,7 @@ app.put('/venues/:id', async (req, res) => {
 });
 
 // Delete a venue by ID
-app.delete('/venues/:id', async (req, res) => {
+app.delete('/api/venues/:id', async (req, res) => {
     const id = req.params.id;
 
     try {
@@ -649,7 +629,7 @@ app.delete('/venues/:id', async (req, res) => {
 
 
 // POST-create Admin Request 
-app.post("/adminRequests/create", async (req, res) => {
+app.post("/api/adminRequests/create", async (req, res) => {
     const { requesterEmail, requestText, requestStatus } = req.body;
     // Validate required fields
     if (!requesterEmail || !requestText || !requestStatus) {
@@ -683,7 +663,7 @@ app.post("/adminRequests/create", async (req, res) => {
 
 
 //PUT
-app.put("/adminRequests/:id", async (req, res) => {
+app.put("/api/adminRequests/:id", async (req, res) => {
     const adminRequestId = req.params.id;
     const { requesterEmail, requestText, requestStatus } = req.body;
 
@@ -716,7 +696,7 @@ app.put("/adminRequests/:id", async (req, res) => {
 });
 
 // Get by field
-app.get("/adminRequests/findByField", async (req, res) => {
+app.get("/api/adminRequests/findByField", async (req, res) => {
     try {
         const { requestStatus, requesterEmail, requestText} = req.query;
         const ReqCollectionRef = collection(db, 'AdminRequests');
@@ -757,7 +737,7 @@ app.get("/adminRequests/findByField", async (req, res) => {
 });
 
 //Get Requests
-app.get("/adminRequests", async (req, res) => {
+app.get("/api/adminRequests", async (req, res) => {
     try {
         
         const ReqCollectionRef = collection(db, 'AdminRequests');
@@ -916,7 +896,7 @@ app.get("/Reports/types", async (req, res) => {
     }
 });
 
-app.get("/Schedules", async (req, res) => {
+app.get("/api/schedules", async (req, res) => {
     try {
         
         const schedules = collection(db, 'Schedules');
@@ -929,12 +909,67 @@ app.get("/Schedules", async (req, res) => {
  res.status(200).json({ entry });
     } catch (error) {
         console.error("Error retrieving Schedules:", error);
+        res.status(500).json({ error: "Internal Server Error" });
+    }
+});
+
+// Get schedules by field API
+app.get("/api/schedules/findByField", async (req, res) => {
+    // Extract optional query parameters from the request
+    const { venueID, bookingDay, bookingEndTime, bookingStartTime, venueBooker, bookingDescription} = req.query;
+    const schedulesCollection = collection(db, 'Schedules'); // Reference to the "Schedules" collection in Firestore
+
+    try {
+        // Start building the query
+        let schedulesQuery = schedulesCollection;
+
+        // Apply filters if query parameters are provided
+        if (venueID) {
+            schedulesQuery = query(schedulesQuery, where("venueID", "==", venueID));
+        }
+
+        if (bookingDay) {
+            schedulesQuery = query(schedulesQuery, where("bookingDay", "==", bookingDay));
+        }
+
+        if (bookingEndTime) {
+            schedulesQuery = query(schedulesQuery, where("bookingEndTime", "==", bookingEndTime));
+        }
+
+        if (bookingStartTime) {
+            schedulesQuery = query(schedulesQuery, where("bookingStartTime", "==", bookingStartTime));
+        }
+
+        if (venueBooker) {
+            schedulesQuery = query(schedulesQuery, where("venueBooker", "==", venueBooker));
+        }
+
+        if (bookingDescription) {
+            schedulesQuery = query(schedulesQuery, where("bookingDescription", "==", bookingDescription));
+        }
+
+        // Execute the query
+        const schedulesSnapshot = await getDocs(schedulesQuery);
+        const schedulesList = [];
+
+        // Iterate over each document and push it to the list
+        schedulesSnapshot.forEach((doc) => {
+            schedulesList.push({
+                id: doc.id,
+                ...doc.data()
+            });
+        });
+
+        // Send the filtered schedules as a JSON response
+        res.status(200).json(schedulesList);
+    } catch (error) {
+        console.error("Error getting schedules:", error);
         res.status(500).json({ error: "Internal Server Error" });
     }
 });
 
 //POST- schedules , for reoccuring bookings
-app.get("/Schedules", async (req, res) => {
+app.get("/api/schedules", async (req, res) => {
     try {
         
         const schedules = collection(db, 'Schedules');
@@ -953,7 +988,7 @@ app.get("/Schedules", async (req, res) => {
 
 
 
-app.post("/Schedules/create", async (req, res) => {
+app.post("/api/schedules/create", async (req, res) => {
     const { venueBooker, bookingDescription ,venueID, bookingDay, bookingStartTime, bookingEndTime} = req.body;
 
     // make sure no fields are empty 
@@ -984,7 +1019,7 @@ app.post("/Schedules/create", async (req, res) => {
 
 
 
-app.put("/Schedules/:id", async (req, res) => {
+app.put("/api/schedules/:id", async (req, res) => {
     const scheduleId = req.params.id;
     const { venueBooker, venueID, bookingDay, bookingStartTime, bookingEndTime, bookingDescription } = req.body;
 
@@ -1071,3 +1106,11 @@ app.get("/notifications/:recipientEmail", async (req, res) => {
         res.status(500).json({ error: "Internal Server Error" });
     }
 });
+
+// Left out for deployment
+// Prints to console the port of the server
+app.listen(PORT, () => {
+console.log(`Server listening on ${PORT}`);
+});
+
+exports.api = onRequest(app);

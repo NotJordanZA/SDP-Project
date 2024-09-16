@@ -39,7 +39,7 @@ function MyBookings() {
         if(user){
             getCurrentUsersBookings(user.email, setBookingsList);// Gets the bookings of the current user by their email
         }
-      }, [user]);// Only runs if user is defined
+    }, [user]);// Only runs if user is defined
 
     const bookingComponents = bookingsList.map((booking) => { // Creates a list of the bookings to be displayed
         return (                                              // Passes in booking information to BookingRow component

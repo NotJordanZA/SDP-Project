@@ -2,15 +2,13 @@ import React, { useState, useEffect } from 'react';
 import '../styles/ManageBookings.css';
 import EditBooking from '../pages/ManageBookingsEdit.js';
 
-const API_URL = process.env.NODE_ENV === 'production' ? 'https://your-production-site.com' : 'http://localhost:3002';
-
 const getAllBookings = async () => {
-  const response = await fetch(`${API_URL}/bookings`);
+  const response = await fetch(`/api/bookings`);
   return await response.json();
 };
 
 const updateBooking = async (id, bookingData) => {
-  const response = await fetch(`${API_URL}/bookings/${id}`, {
+  const response = await fetch(`/api/bookings/${id}`, {
     method: "PUT",
     headers: {
       "Content-Type": "application/json",
@@ -25,7 +23,7 @@ const updateBooking = async (id, bookingData) => {
 };
 
 const deleteBooking = async (id) => {
-  const response = await fetch(`${API_URL}/bookings/${id}`, {
+  const response = await fetch(`/api/bookings/${id}`, {
     method: "DELETE",
   });
   return await response.json();

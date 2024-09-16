@@ -2,7 +2,7 @@ import { render, screen, fireEvent, waitFor} from '@testing-library/react';
 import { MemoryRouter } from "react-router-dom";
 import * as router from 'react-router-dom';
 import { getCurrentUsersBookings } from '../utils/getCurrentUsersBookings';
-import MyBookings from '../pages/myBookings';
+import MyBookings from '../pages/MyBookings';
 import BookingRow from '../components/BookingRow';
 import { auth } from '../firebase';
 import { onAuthStateChanged } from "firebase/auth";

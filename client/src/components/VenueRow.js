@@ -27,19 +27,32 @@ function VenueRow({venueName, campus, venueType, venueCapacity, timeSlots, isClo
     const toggleBookingDetails = () => setIsVenueOpen(!isVenueOpen); //Toggles venue details dropdown
     
     useEffect(() => { // Populates list with the venues time slots
-        setTimeSlotsArray(timeSlots);
+        setTimeSlotsArray(timeSlots);// eslint-disable-next-line
     }, []);
 
     const firstRender = useRef(true);
+
 
     useEffect(() => {
         if (firstRender.current){// Doesn't run on first render in order to give bookingTime and bookingEndTime time to reflect changes
             firstRender.current = false;
             return;
         }
+        const compileBookingData = () => { // Gets all information needed for a booking together and calls the makeBooking function
+        
+            const booker = user.email; // Gets user email
+    
+            if (bookingDescriptionText !== ""){
+                makeBooking(booker, venueName, relevantDate, bookingTime, bookingEndingTime, bookingDescriptionText);
+            }
+            else{
+                makeBooking(booker, venueName, relevantDate, bookingTime, bookingEndingTime, null);
+            }
+            
+        }
         if (bookingTime && bookingEndingTime) { // If updated, compileBookingData
             compileBookingData();
-        }
+        }// eslint-disable-next-line
     }, [bookingEndingTime]); // Runs whenever bookingEndTime changes
 
     const updateBookingEndTime = () => { // Sets bookingEndTime to be 45 minutes after the selected time

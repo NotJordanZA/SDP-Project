@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import '../styles/homePage.css';
-import MainIcon from '../components/mainIcon'; // Ensure the correct import path
+import MainIcon from '../components/mainIcon.js'; // Ensure the correct import path
 import { useNavigate } from "react-router-dom";
 import { auth } from "../firebase";
 import { onAuthStateChanged } from "firebase/auth";

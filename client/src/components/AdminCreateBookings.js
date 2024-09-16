@@ -4,12 +4,10 @@ import '../styles/AdminCreateBookings.css';
 import "../styles/CalendarAdmin.css"; // Calendar custom styles
 import Search from './Search'; // Adjust the path based on your folder structure
 
-const API_URL = 'http://localhost:3001';
-
 //api call to fetch venues
 const fetchVenues = async () => {
   try {
-    const response = await fetch(`${API_URL}/venues`);
+    const response = await fetch(`/api/venues`);
     return response.json();
   } catch (error) {
     console.error("Error fetching venues:", error);
@@ -21,7 +19,7 @@ const fetchVenues = async () => {
 const fetchBookingsByDate = async (selectedDate) => {
   try {
     const formattedDate = selectedDate.toISOString().split('T')[0]; // Format date as YYYY-MM-DD
-    const response = await fetch(`http://localhost:3001/bookings?bookingDate=${formattedDate}`);
+    const response = await fetch(`/api/bookings?bookingDate=${formattedDate}`);
     return response.json();
   } catch (error) {
     console.error("Error fetching bookings:", error);
@@ -31,7 +29,7 @@ const fetchBookingsByDate = async (selectedDate) => {
 
 const fetchSchedules = async () => {
   try {
-    const response = await fetch(`${API_URL}/Schedules`);
+    const response = await fetch(`/api/schedules`);
     return response.json();
   } catch (error) {
     console.error("Error fetching schedules:", error);
@@ -39,20 +37,20 @@ const fetchSchedules = async () => {
   }
 };
 
-const createBooking = async (bookingData) => {
-  try {
-    const response = await fetch('http://localhost:3001/bookings/create', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(bookingData),
-    });
-    return response.json();
-  } catch (error) {
-    console.error("Error creating booking:", error);
-  }
-};
+// const createBooking = async (bookingData) => {
+//   try {
+//     const response = await fetch(`/api/bookings/create`, {
+//       method: 'POST',
+//       headers: {
+//         'Content-Type': 'application/json',
+//       },
+//       body: JSON.stringify(bookingData),
+//     });
+//     return response.json();
+//   } catch (error) {
+//     console.error("Error creating booking:", error);
+//   }
+// };
 
 const AdmincreateBooking = () => {
   const [venues, setVenues] = useState([]);// stores the list of available venues that will be displayed to the Admin,(setVenues) is the function used to update the venues state
@@ -163,7 +161,7 @@ const AdmincreateBooking = () => {
 
     try {
       console.log('Sending booking data:', bookingData);
-      const response = await fetch(`${API_URL}/bookings/create`, {
+      const response = await fetch(`/api/bookings/create`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

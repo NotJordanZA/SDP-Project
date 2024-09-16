@@ -44,11 +44,12 @@
   
   .app-header h1 {
     margin: 0;
-    font-size: 2rem;
-    flex-grow: 1;              /* Allow the title to grow and take available space */
-    text-align: center;        /* Center text in its flex item */
-    padding-left: 20px;        /* Add padding to align the title properly */
+    font-size: 4vw; /* Font size scales with the viewport width */
+    flex-grow: 1;
+    text-align: center;
+    padding-left: 20px;
   }
+  
   
   .logo {
     height: 55px;              /* Adjust height as needed */

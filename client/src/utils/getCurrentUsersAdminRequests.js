@@ -1,6 +1,6 @@
 export const getCurrentUsersAdminRequests = async (currentUserEmail, setRequestsList) =>{ // Gets the requests of the current user by their email
     try{
-      const response = await fetch(`/adminRequests/findByField?requesterEmail=${currentUserEmail}`, { // API call which GETs based on user email
+      const response = await fetch(`/api/adminRequests/findByField?requesterEmail=${currentUserEmail}`, { // API call which GETs based on user email
         method: 'GET',
       });
 
