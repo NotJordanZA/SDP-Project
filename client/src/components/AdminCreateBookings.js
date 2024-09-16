@@ -249,7 +249,7 @@ const clearSearch = () => {
             <label htmlFor="type">Venue Type:</label>
             <select
               id="type"
-              className="adminbook-filter-select"
+              className="filter-select"
               value={selectedType}
               onChange={handleTypeChange}
             >

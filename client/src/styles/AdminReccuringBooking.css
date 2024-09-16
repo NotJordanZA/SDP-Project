@@ -39,8 +39,16 @@
     background-color: #043673;
     color: #f0f0f0;
     font-size: 1rem; 
-}
+}  
 
+.adminrecurringbookings-container button {
+    background-color: #043673;
+    border-radius: 4px;
+    padding: 10px 10px;
+    color: white;
+    font-size: 1.1rem;
+    border: none;
+}
 
 
 /*available and scheduled cells */
