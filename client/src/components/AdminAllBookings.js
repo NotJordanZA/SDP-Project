@@ -128,6 +128,7 @@ const AdminAllBookings = () => {
             filteredBookings.map(booking => (
               <div key={booking.id} className="booking-card">
                 <h3>{booking.bookingDate}</h3>
+                <p>{booking.bookingDescription}</p>
                 <p>Booked by: {booking.venueBooker}</p>
                 <p>Date & Time: {booking.bookingDate} - Time: {booking.bookingStartTime} - {booking.bookingEndTime}</p>
                 <p>Venue Name: {booking.venueID}</p>

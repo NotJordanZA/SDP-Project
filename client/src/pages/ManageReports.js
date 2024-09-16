@@ -7,13 +7,13 @@ import '../styles/ManageReports.css';
 
 // Fetch all the reports
 export const getAllReports = async () => {
-  const response = await fetch(`/api/Reports`);
+  const response = await fetch(`/api/reports`);
   return await response.json();
 };
 
 // Update a report
 export const updateRep = async (id, RepData) => {
-  const response = await fetch(`/api/Reports/${id}`, {
+  const response = await fetch(`/api/reports/${id}`, {
     method: "PUT",
     headers: {
       "Content-Type": "application/json",

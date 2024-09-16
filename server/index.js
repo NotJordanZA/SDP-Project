@@ -976,7 +976,7 @@ app.put("/api/schedules/:id", async (req, res) => {
 });
 
 // POST - create Notification
-app.post("/notifications", async (req, res) => {
+app.post("/api/notifications", async (req, res) => {
     const { dateCreated, notificationMessage, notificationType, read, recipientEmail } = req.body;
 
     // make sure all the fields are entered 
@@ -1007,7 +1007,7 @@ app.post("/notifications", async (req, res) => {
 });
 
 // GET - retrieve all notifications for a specific recipient
-app.get("/notifications/:recipientEmail", async (req, res) => {
+app.get("/api/notifications/:recipientEmail", async (req, res) => {
     const recipientEmail = req.params.recipientEmail;
 
     try {
@@ -1025,6 +1025,44 @@ app.get("/notifications/:recipientEmail", async (req, res) => {
         res.status(200).json(notificationsList);
     } catch (error) {
         console.error("Error getting notifications:", error);
+        res.status(500).json({ error: "Internal Server Error" });
+    }
+});
+// PUT - update Notification
+app.put("/api/notifications/:id", async (req, res) => {
+    const notificationId = req.params.id;
+    const { dateCreated, notificationMessage, notificationType, read, recipientEmail } = req.body;
+
+    // make sure all the fields are entered 
+    if (!dateCreated || !notificationMessage || !notificationType || read === undefined || !recipientEmail) {
+        return res.status(400).json({ error: "All fields are required." });
+    }
+
+    try {
+        // Reference to the notification document
+        const notificationRef = doc(db, 'Notifications', notificationId);
+        
+        // Check if the notification exists
+        const notificationDoc = await getDoc(notificationRef);
+        if (!notificationDoc.exists()) {
+            return res.status(404).json({ error: "Notification not found." });
+        }
+
+        // Update the notification data
+        const updatedNotificationData = {
+            dateCreated,
+            notificationMessage,
+            notificationType,
+            read,
+            recipientEmail
+        };
+
+        // Save the updated notification data
+        await setDoc(notificationRef, updatedNotificationData, { merge: true });
+
+        res.status(200).json({ message: "Notification updated successfully" });
+    } catch (error) {
+        console.error("Error updating notification:", error);
         res.status(500).json({ error: "Internal Server Error" });
     }
 });
