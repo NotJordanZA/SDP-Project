@@ -19,7 +19,7 @@ jest.mock('../components/AdminCreateBookings', () => () => <div>Create Booking C
 jest.mock('../components/AdminRecurringBookings', () => () => <div>Recurring Booking Component</div>);
 
 describe('ManageBookings Component', () => {
-  test('renders ManageBookings Static Components', () => {
+  test('Renders ManageBookings Static Components', () => {
     render(<ManageBookings />);
 
     expect(screen.getByText('All Bookings')).toBeInTheDocument(); // Checks that all buttons are on the screen
