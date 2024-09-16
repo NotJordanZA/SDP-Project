@@ -7,6 +7,8 @@ import { CreateAdminRequest } from '../utils/createAdminRequest';
 import AdminRequestRow from '../components/AdminRequestRow';
 import AdminRequest from '../pages/AdminRequest';
 import { auth } from '../firebase';
+import { onAuthStateChanged } from "firebase/auth";
+import { wait } from '@testing-library/user-event/dist/utils';
 
 jest.mock('react-router-dom', () => ({
     ...jest.requireActual('react-router-dom'),
@@ -19,6 +21,23 @@ jest.mock('../firebase', () => ({
       currentUser: null // Default mock value
     }
   }));
+
+jest.mock("firebase/auth", () => ({
+    // getAuth: jest.fn(() => ({currentUser: { email: 'test@wits.ac.za' }})),
+    // onAuthStateChanged: jest.fn((auth, callback) => {
+    //     // Simulate that a user is logged in, and return a mock unsubscribe function
+    //     callback({ email: 'test@wits.ac.za' });
+    //     // console.log("Unsubscribe returned!");
+    //     return jest.fn(); // This is the mock unsubscribe function
+    // }),
+    onAuthStateChanged: jest.fn(),
+}));
+
+jest.mock('firebase/firestore', () => ({
+    getDoc: jest.fn(() => Promise.resolve({
+        data: () => ({ isAdmin: true })  // Mock Firestore document with isAdmin
+    })),
+}));
 
 jest.mock('../utils/getCurrentUsersAdminRequests', () => ({
     getCurrentUsersAdminRequests: jest.fn(),
@@ -35,6 +54,13 @@ describe("AdminRequests", () => {
         // Mock useNavigate function
         jest.spyOn(router, 'useNavigate').mockImplementation(() => navigate);
         
+        onAuthStateChanged.mockImplementation((auth, callback) => {
+            // Simulate that a user is logged in, and return a mock unsubscribe function
+            callback({ email: 'test@wits.ac.za' });
+            // console.log("Unsubscribe returned!");
+            return jest.fn(); // This is the mock unsubscribe function
+        });
+
         // Mock the current date's requests
         getCurrentUsersAdminRequests.mockImplementation((currentUserEmail, setRequestsList) => {
             setRequestsList([
@@ -69,13 +95,15 @@ describe("AdminRequests", () => {
         expect(requestButton).toBeInTheDocument(); //Check if button rendered
     });
 
-    test('Renders AdminRequestRow Component with Correct Data (From RequestsList)', () => {
-        auth.currentUser = { email: 'test@wits.ac.za' };
+    test('Renders AdminRequestRow Component with Correct Data (From RequestsList)', async () => {
+        // auth.currentUser = { email: 'test@wits.ac.za' };
         render(<AdminRequest/>); //Render AdminRequest Page
-        const request1 = screen.getByText("Description: Please please please book the great hall for me every day");// Looking for first request
-        const request2 = screen.getByText("Description: I want sturrock park. Give it to me.");// Looking for second request
-        expect(request1).toBeInTheDocument();// Check if first request is rendered
-        expect(request2).toBeInTheDocument();// Check if second request is rendered
+        await waitFor(() => {
+            const request1 = screen.getByText("Description: Please please please book the great hall for me every day");// Looking for first request
+            const request2 = screen.getByText("Description: I want sturrock park. Give it to me.");// Looking for second request
+            expect(request1).toBeInTheDocument();// Check if first request is rendered
+            expect(request2).toBeInTheDocument();// Check if second request is rendered
+        });
     });
 
     test('Checks that form pops up when submit a request button is clicked', () => {
@@ -96,8 +124,9 @@ describe("AdminRequests", () => {
     });
 
     test('Checks that form submission calls createAdminRequest with correct arguments', async () => {
-        auth.currentUser = { email: 'test@wits.ac.za' };
+        // auth.currentUser = { email: 'test@wits.ac.za' };
         render(<AdminRequest/>); //Render AdminRequest Page
+        // auth.currentUser = { email: 'test@wits.ac.za' };
         const requestButton = screen.getByText("Submit a Request"); ////AdminRequestPage Component
         fireEvent.click(requestButton);
         const requestTextArea = screen.getByPlaceholderText("Describe your request");
@@ -110,7 +139,12 @@ describe("AdminRequests", () => {
     });
 
     test('Check if user that is not logged in is redirected to /login', () => {
-        auth.currentUser = null;
+        onAuthStateChanged.mockImplementation((auth, callback) => {
+            // Simulate that a user is not logged in, and return a mock unsubscribe function
+            callback(null);
+            // console.log("Unsubscribe returned!");
+            return jest.fn(); // This is the mock unsubscribe function
+        });
         render(<AdminRequest/>); //Render AdminRequest Page
         expect(navigate).toHaveBeenCalledWith("/login");// Check that navigation is called
     })

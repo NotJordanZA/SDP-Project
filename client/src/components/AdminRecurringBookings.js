@@ -43,7 +43,7 @@ const addScheduleSlot = async (scheduleData) => {
   }
 };
 
-const AdminReccuringBookings = () => {
+const AdminRecurringBookings = () => {
   const [venues, setVenues] = useState([]);
   const [schedules, setSchedules] = useState([]);
   const [expandedVenueId, setExpandedVenueId] = useState(null);
@@ -247,4 +247,4 @@ const filteredVenues = venues.filter(venue => {
   
 };
 
-export default AdminReccuringBookings;
+export default AdminRecurringBookings;

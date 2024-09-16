@@ -1,4 +1,8 @@
 import React, { useState, useEffect } from 'react';
+import { auth } from "../firebase";
+import { useNavigate } from "react-router-dom";
+import { onAuthStateChanged } from "firebase/auth";
+// import { getCurrentUser } from '../utils/getCurrentUser';
 import '../styles/ManageReports.css'; 
 
 // Fetch all the reports
@@ -31,7 +35,52 @@ function Reports() {
   const [selectedType, setSelectedType] = useState(''); // For filtering by report type
   const [searchText, setSearchText] = useState(''); // For searching by email or venue
   const [errorMessage, setErrorMessage] = useState(''); // Error message
+  // const [isLoading, setIsLoading] = useState(true);
+  const [user, setUser] = useState(null);
+  // const [userInfo, setUserInfo] = useState({});
+  const navigate = useNavigate();
 
+  // Ensure User is logged in
+  useEffect(() => {
+    // Listen for a change in the auth state
+    const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
+      // If user is authenticated
+      if (firebaseUser) {
+        setUser(firebaseUser); //Set current user
+        console.log(user);
+      } else {
+        navigate("/login"); //Reroute to login if user not signed in
+      }
+      // setIsLoading(false); //Declare firebase as no longer loading
+    });
+    return () => {
+      if (unsubscribe) {
+        unsubscribe();
+      }
+    }; //Return the listener
+    // eslint-disable-next-line
+  }, [auth, navigate]);
+
+  // Get info about the current user from the database once firebase is loaded
+  // useEffect(() => {
+  //   // Fetch current user's info
+  //   const fetchUserInfo = async () => {
+  //     // If user is signed in
+  //     if (user) {
+  //       try {
+  //         // Instantiate userInfo object
+  //         getCurrentUser(user.email, setUserInfo);
+  //       } catch (error) {
+  //         console.error('Failed to fetch user info: ', error);
+  //       }
+  //     }
+  //   };
+  //   // Check if firebase is done loading
+  //   if (!isLoading){
+  //     fetchUserInfo(); //Get user info
+  //   }
+  // }, [user, isLoading]);
+  
   // Fetch all reports on component mount
   useEffect(() => {
     const fetchAllReports = async () => {
