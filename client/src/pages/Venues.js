@@ -124,6 +124,7 @@ function Venues(){
             isClosed={venue.isClosed}
             bookings={matchingBookings}
             relevantDate={formattedDate}
+            setBookingsList={setBookingsList}
           />
         );
       }
@@ -139,6 +140,7 @@ function Venues(){
             isClosed={venue.isClosed}
             bookings={matchingBookings}
             relevantDate={formattedDate}
+            setBookingsList={setBookingsList}
           />
         )
       }
@@ -154,6 +156,7 @@ function Venues(){
             isClosed={venue.isClosed}
             bookings={matchingBookings}
             relevantDate={formattedDate}
+            setBookingsList={setBookingsList}
           />
         )
       }
