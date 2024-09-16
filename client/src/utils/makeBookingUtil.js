@@ -1,4 +1,4 @@
-export const makeBooking = async(venueBooker, venueID, bookingDate, bookingStartTime, bookingEndTime, bookingDescription) => { // Makes a new bookings 
+export const makeBooking = async(venueBooker, venueID, bookingDate, bookingStartTime, bookingEndTime, bookingDescription, setIsVenueOpen, toggleIsBooking, getCurrentDatesBookings, relevantDate, setBookingDescriptionText) => { // Makes a new bookings 
     try{
         const response = await fetch(`/bookings/create`, { //Calls the API to create a new booking
             method: 'POST',
