@@ -1,12 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import '../styles/AdminReccuringBooking.css'; 
 
-const API_URL = 'http://localhost:3001';
-
 //fetch venues
 const fetchVenues = async () => {
   try {
-    const response = await fetch(`${API_URL}/venues`);
+    const response = await fetch(`/api/venues`);
     return response.json();
   } catch (error) {
     console.error("Error fetching venues:", error);
@@ -17,7 +15,7 @@ const fetchVenues = async () => {
 //fetch schedules
 const fetchSchedules = async () => {
   try {
-    const response = await fetch(`${API_URL}/schedules`);
+    const response = await fetch(`/api/schedules`);
     return response.json();
   } catch (error) {
     console.error("Error fetching schedules:", error);
@@ -28,7 +26,7 @@ const fetchSchedules = async () => {
 //add a schedule slot
 const addScheduleSlot = async (scheduleData) => {
   try {
-    const response = await fetch(`${API_URL}/schedules/create`, {
+    const response = await fetch(`/api/schedules/create`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

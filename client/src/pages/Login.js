@@ -1,11 +1,11 @@
-import { GoogleAuthProvider, signInWithPopup, getRedirectResult, signOut, deleteUser } from "firebase/auth";
+import { GoogleAuthProvider, signInWithPopup, /*getRedirectResult,*/ signOut, deleteUser } from "firebase/auth";
 import { auth } from "../firebase";
 import { addNewUser } from "../utils/addNewUserUtil";
 import { useNavigate } from "react-router-dom";
 import '../styles/Login.css'
 import logo from '../assets/logoBlue.png';
 import { useState } from "react";
-
+// eslint-disable-next-line
 const USER_REGEX = /^[\w-\.]+@([\w-]+\.)?(wits\.ac\.za)$/; //Only Wits emails allowed.
 
 function Login(){
@@ -18,8 +18,8 @@ function Login(){
       //getRedirectResult(auth)
         .then((result) => {
             // This gives you a Google Access Token. You can use it to access Google APIs.
-            const credential = GoogleAuthProvider.credentialFromResult(result);
-            const token = credential.accessToken;
+            // const credential = GoogleAuthProvider.credentialFromResult(result);
+            // const token = credential.accessToken;
 
             // The signed-in user info.
             const user = result.user;

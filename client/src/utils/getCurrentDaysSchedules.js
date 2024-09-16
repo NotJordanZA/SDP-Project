@@ -1,6 +1,6 @@
 export const getCurrentDaySchedules = async (bookingDay, bookingsList, setBookingsList) =>{
     try{
-      const response = await fetch(`/schedules/findByField?bookingDay=${bookingDay}`, {
+      const response = await fetch(`/api/schedules/findByField?bookingDay=${bookingDay}`, {
         method: 'GET',
       });
 

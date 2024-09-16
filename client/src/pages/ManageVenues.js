@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import '../styles/ManageVenues.css';
 
-const baseURL = process.env.NODE_ENV === 'production' ? 'https://your-production-site.com' : 'http://localhost:3002';
+// const baseURL = process.env.NODE_ENV === 'production' ? 'https://your-production-site.com' : 'http://localhost:3002';
 
 function Venues() {
   const [searchTerm, setSearchTerm] = useState(''); 
@@ -17,7 +17,7 @@ function Venues() {
   useEffect(() => {
     const fetchVenues = async () => {
       try {
-        const response = await fetch(`${baseURL}/venues`);
+        const response = await fetch(`/api/venues`);
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
@@ -53,13 +53,13 @@ function Venues() {
 
   const handleDeleteClick = async (venueId) => {
     try {
-      const response = await fetch(`${baseURL}/venues/${venueId}`, { method: 'DELETE' });
+      const response = await fetch(`/api/venues/${venueId}`, { method: 'DELETE' });
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
 
       // Refresh venues
-      const fetchResponse = await fetch(`${baseURL}/venues`);
+      const fetchResponse = await fetch(`/api/venues`);
       const venuesFromAPI = await fetchResponse.json();
       setFirebaseVenues(venuesFromAPI);
     } catch (error) {
@@ -73,13 +73,13 @@ function Venues() {
     try {
       let response;
       if (editingVenue) {
-        response = await fetch(`${baseURL}/venues/${editingVenue.id}`, {
+        response = await fetch(`/api/venues/${editingVenue.id}`, {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(newVenue)
         });
       } else {
-        response = await fetch(`${baseURL}/venues`, {
+        response = await fetch(`/api/venues`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ ...newVenue, isClosed: false }) // Default isClosed to false
@@ -94,7 +94,7 @@ function Venues() {
       setEditingVenue(null);
       setNewVenue({ buildingName: '', venueName: '', campus: '', venueCapacity: '', venueType: '', isClosed: false });
 
-      const fetchResponse = await fetch(`${baseURL}/venues`);
+      const fetchResponse = await fetch(`/api/venues`);
       const venuesFromAPI = await fetchResponse.json();
       setFirebaseVenues(venuesFromAPI);
     } catch (error) {
@@ -114,7 +114,7 @@ function Venues() {
 
     if (searchTerm.length > 0) {
       try {
-        const response = await fetch(`${baseURL}/venues?buildingName=${searchTerm}`);
+        const response = await fetch(`/api/venues?buildingName=${searchTerm}`);
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
@@ -138,7 +138,7 @@ function Venues() {
     const confirmation = window.confirm(`Are you sure you want to ${venue.isClosed ? 'open' : 'close'} this venue?`);
     if (confirmation) {
       try {
-        const response = await fetch(`${baseURL}/venues/${venue.id}`, {
+        const response = await fetch(`/api/venues/${venue.id}`, {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ isClosed: !venue.isClosed })
@@ -148,7 +148,7 @@ function Venues() {
         }
 
         // Refresh venues
-        const fetchResponse = await fetch(`${baseURL}/venues`);
+        const fetchResponse = await fetch(`/api/venues`);
         const venuesFromAPI = await fetchResponse.json();
         setFirebaseVenues(venuesFromAPI);
       } catch (error) {

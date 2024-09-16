@@ -2,7 +2,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../styles/AdminHome.css';
-import MainIcon from '../components/mainIcon'; // Ensure the correct import path
+import MainIcon from '../components/mainIcon.js'; // Ensure the correct import path
 
 function HomeAdmin() {
   const navigate = useNavigate();

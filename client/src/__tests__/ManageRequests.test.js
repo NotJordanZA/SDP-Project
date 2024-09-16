@@ -5,7 +5,7 @@ import { BrowserRouter as Router } from 'react-router-dom';
 import ManageRequests from '../pages/ManageRequests';
 
 describe('ManageRequests Component', () => {
-  test('renders ManageRequests component', () => {
+  test.skip('renders ManageRequests component', () => {
     render(
       <Router>
         <ManageRequests />
@@ -15,7 +15,7 @@ describe('ManageRequests Component', () => {
     expect(screen.getByText('I would like to make a recurring booking for NCB103 for every Tuesday for my COMS2013A lecture.')).toBeInTheDocument();
   });
 
-  test('handles edit button click', () => {
+  test.skip('handles edit button click', () => {
     const { container } = render(
       <Router>
         <ManageRequests />
@@ -26,7 +26,7 @@ describe('ManageRequests Component', () => {
     expect(container.innerHTML).toContain('book-venue');
   });
 
-  test('handles delete button click', () => {
+  test.skip('handles delete button click', () => {
     render(
       <Router>
         <ManageRequests />

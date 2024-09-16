@@ -2,15 +2,14 @@
 
 import React, { useState, useEffect } from 'react';
 import '../styles/ManageRequests.css';
-const API_URL = process.env.NODE_ENV === 'production' ? 'https://your-production-site.com' : 'http://localhost:3002'; 
 export const getAllRequests = async () => {
-  const response = await fetch(`${API_URL}/adminRequests`);
+  const response = await fetch(`/api/adminRequests`);
   return await response.json();
 };
 
 // update a Request- change status from pending to approved
 export const updateReq= async (id, ReqData) => {
-const response = await fetch(`${API_URL}/adminRequests/${id}`, {
+const response = await fetch(`/api/adminRequests/${id}`, {
   method: "PUT",
   headers: {
     "Content-Type": "application/json",

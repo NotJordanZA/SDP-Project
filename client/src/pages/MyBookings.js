@@ -21,7 +21,7 @@ function MyBookings() {
     useEffect(() => {
         if(user){
             getCurrentUsersBookings(currentUserEmail, setBookingsList);// Gets the bookings of the current user by their email
-        }
+        }// eslint-disable-next-line
       }, [user]);// Only runs if user is defined
 
     const bookingComponents = bookingsList.map((booking) => { // Creates a list of the bookings to be displayed

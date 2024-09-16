@@ -1,29 +1,27 @@
 import React, { useState, useEffect } from 'react';
 import '../styles/ManageBookingsEdit.css';
 
-const API_URL = process.env.NODE_ENV === 'production' ? 'https://your-production-site.com' : 'http://localhost:3002';
-
-//fetch all bookings from the API
+// Fetch all bookings from the API
 const getAllBookings = async () => {
-  const response = await fetch(`${API_URL}/bookings`);
+  const response = await fetch(`/api/bookings`);
   return await response.json();
 };
 
-//update a booking by its ID
-const updateBooking = async (id, bookingData) => {
-  const response = await fetch(`${API_URL}/bookings/${id}`, {
-    method: "PUT",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(bookingData),
-  });
+// Update a booking by its ID
+// const updateBooking = async (id, bookingData) => {
+//   const response = await fetch(`/api/bookings/${id}`, {
+//     method: "PUT",
+//     headers: {
+//       "Content-Type": "application/json",
+//     },
+//     body: JSON.stringify(bookingData),
+//   });
 
-  if (!response.ok) {
-    throw new Error('Failed to update booking');
-  }
-  return response.json();
-};
+//   if (!response.ok) {
+//     throw new Error('Failed to update booking');
+//   }
+//   return response.json();
+// };
 
 const EditBookingForm = ({ booking, onSave, onCancel }) => {
   const [venueBooker, setVenueBooker] = useState(booking.venueBooker || '');
