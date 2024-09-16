@@ -104,7 +104,7 @@ const determinerole = (email) => {
               {/* Show "Approve" and "Deny" buttons only for pending requests */}
               {request.requestStatus === 'pending' && (
                 <>
-                  <button className="approve-btn" onClick={() => handleApproveClick(request.id)}>
+                  <button className="approve-btn" onClick={() => handleApproveClick(request.id, setRequests)}>
                     Approve Request
                   </button>
                   <button className="deny-btn" onClick={() => handleDenyClick(request.id)}>

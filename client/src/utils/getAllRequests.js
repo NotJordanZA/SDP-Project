@@ -1,6 +1,3 @@
-
-
-
    export const fetchRequests = async (setRequests, getAllRequests) => {
       try {
         const response = await getAllRequests();

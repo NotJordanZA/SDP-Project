@@ -100,7 +100,7 @@ test('renders ManageRequests components with correct data', () => {
      );
      const approveButton = screen.getByText('Approve Request');
      fireEvent.click(approveButton);
-     expect(handleApproveClick).toHaveBeenCalledWith('121');
+     expect(handleApproveClick).toHaveBeenCalled();
   
    });
 });

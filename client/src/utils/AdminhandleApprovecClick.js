@@ -1,4 +1,6 @@
-export const handleApproveClick = async (requestId) => {
+import { getAllRequests, updateReq } from "../pages/ManageRequests";
+
+export const handleApproveClick = async (requestId, setRequests) => {
     try {
       await updateReq(requestId, { requestStatus: "approved" });
   
