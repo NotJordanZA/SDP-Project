@@ -178,7 +178,7 @@ function Venues() {
   );
 
   return (
-    <div>
+    <div className='manage-venues-container'>
       <input
         type="text"
         placeholder="Search by venue name"
