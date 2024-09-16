@@ -67,9 +67,9 @@ describe('ManageBookings Component', () => {
 
     expect(screen.getByText('All Bookings Component')).toBeInTheDocument(); // Checks that All Bookings Component is rendered
 
-    expect(screen.getByText('All Bookings')).toHaveClass('active'); // Checks that the correct button is active
-    expect(screen.getByText('Create Booking')).not.toHaveClass('active');
-    expect(screen.getByText('Recurring Booking')).not.toHaveClass('active');
+    expect(screen.getByText('All Bookings')).toHaveClass('adminmanage-active'); // Checks that the correct button is active
+    expect(screen.getByText('Create Booking')).not.toHaveClass('adminmanage-active');
+    expect(screen.getByText('Recurring Booking')).not.toHaveClass('adminmanage-active');
   });
 
   test('Switches to Create Booking tab when clicked', () => {
@@ -82,9 +82,9 @@ describe('ManageBookings Component', () => {
 
     expect(screen.getByText('Create Booking Component')).toBeInTheDocument(); // Checks that Create Booking Component is rendered on click
 
-    expect(screen.getByText('All Bookings')).not.toHaveClass('active'); // Checks that button classes have changed as expected
-    expect(createBookingButton).toHaveClass('active');
-    expect(screen.getByText('Recurring Booking')).not.toHaveClass('active');
+    expect(screen.getByText('All Bookings')).not.toHaveClass('adminmanage-active'); // Checks that button classes have changed as expected
+    expect(createBookingButton).toHaveClass('adminmanage-active');
+    expect(screen.getByText('Recurring Booking')).not.toHaveClass('adminmanage-active');
   });
 
   test('Switches to Recurring Booking tab when clicked', () => {
@@ -97,9 +97,9 @@ describe('ManageBookings Component', () => {
 
     expect(screen.getByText('Recurring Booking Component')).toBeInTheDocument(); // Checks that Recurringç Booking Component is rendered on click
 
-    expect(screen.getByText('All Bookings')).not.toHaveClass('active'); // Checks that button classes have changed as expected
-    expect(screen.getByText('Create Booking')).not.toHaveClass('active');
-    expect(recurringBookingButton).toHaveClass('active');
+    expect(screen.getByText('All Bookings')).not.toHaveClass('adminmanage-active'); // Checks that button classes have changed as expected
+    expect(screen.getByText('Create Booking')).not.toHaveClass('adminmanage-active');
+    expect(recurringBookingButton).toHaveClass('adminmanage-active');
   });
 
   test('Switches back to All Bookings Tab when clicked', () => {
@@ -113,15 +113,15 @@ describe('ManageBookings Component', () => {
 
     expect(screen.getByText('Recurring Booking Component')).toBeInTheDocument(); // Checks that Recurringç Booking Component is rendered on click
 
-    expect(allBookingsButton).not.toHaveClass('active'); // Checks that button classes have changed as expected
-    expect(screen.getByText('Create Booking')).not.toHaveClass('active');
-    expect(recurringBookingButton).toHaveClass('active');
+    expect(allBookingsButton).not.toHaveClass('adminmanage-active'); // Checks that button classes have changed as expected
+    expect(screen.getByText('Create Booking')).not.toHaveClass('adminmanage-active');
+    expect(recurringBookingButton).toHaveClass('adminmanage-active');
 
     fireEvent.click(allBookingsButton);
     expect(screen.getByText('All Bookings Component')).toBeInTheDocument(); // Checks that All Bookings Component is rendered after click
 
-    expect(allBookingsButton).toHaveClass('active'); // Checks that the correct button is active
-    expect(screen.getByText('Create Booking')).not.toHaveClass('active');
-    expect(recurringBookingButton).not.toHaveClass('active');
+    expect(allBookingsButton).toHaveClass('adminmanage-active'); // Checks that the correct button is active
+    expect(screen.getByText('Create Booking')).not.toHaveClass('adminmanage-active');
+    expect(recurringBookingButton).not.toHaveClass('adminmanage-active');
   });
 });
