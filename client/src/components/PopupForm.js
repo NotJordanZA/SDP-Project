@@ -39,7 +39,7 @@ const PopupForm = ({ isOpen, onClose }) => {
   // Fetch all venues from the API
   const getAllVenues = async () => {
     try {
-      const response = await fetch('/venues', { // API call to get all Venues from the database
+      const response = await fetch('/api/venues', { // API call to get all Venues from the database
         method: 'GET',
         cache: 'no-store',
       });
