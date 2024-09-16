@@ -108,7 +108,7 @@ function Venues(){
         );
       }
 
-      if (userInfo.isAdmin === true || user.email === 'test@wits.ac.za'){
+      if (userInfo.isAdmin === true){
         return (
           <VenueRow
             key={venue.venueName}

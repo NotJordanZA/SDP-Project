@@ -1,4 +1,5 @@
 import { render, screen, fireEvent, waitFor, getByTestId, getByText} from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 // import React from 'react';
 import { MemoryRouter } from "react-router-dom";
 import * as router from 'react-router-dom';
@@ -11,6 +12,7 @@ import { formatDate } from "../utils/formatDateUtil";
 import { getAllVenues } from "../utils/getAllVenuesUtil";
 import { getCurrentDatesBookings } from "../utils/getCurrentDatesBookingsUtil";
 import { getCurrentUser } from '../utils/getCurrentUser';
+import { makeBooking } from '../utils/makeBookingUtil';
 import { auth } from "../firebase";
 import { onAuthStateChanged } from "firebase/auth";
 
@@ -68,7 +70,13 @@ jest.mock('../utils/getCurrentUser', () => ({
     getCurrentUser: jest.fn(),
 }));
 
+jest.mock('../utils/makeBookingUtil', () => ({
+    makeBooking: jest.fn(),
+}));
+
 const setBookingTime = jest.fn();
+
+const navigate = jest.fn();
 
 describe("Venues", () => {
 
@@ -83,13 +91,9 @@ describe("Venues", () => {
     // Before each test, ensure we have the correct mock data
     beforeEach(() => {
         jest.clearAllMocks();
-        // Mock the venues list
-        // let userInfo = null; // Define the userInfo variable to track the state
-        // const setUserInfo = jest.fn((newUserInfo) => {
-        //     userInfo = newUserInfo; // Set userInfo in the mock
-        // });
-        // jest.spyOn(React, 'useState').mockImplementationOnce(() => [userInfo, setUserInfo]);
-        // setUserInfo(mockUserInfo);
+
+        // Mock useNavigate function
+        jest.spyOn(router, 'useNavigate').mockImplementation(() => navigate);
 
         onAuthStateChanged.mockImplementation((auth, callback) => {
             // Simulate that a user is logged in, and return a mock unsubscribe function
@@ -198,22 +202,8 @@ describe("Venues", () => {
     });
 
     test('Renders VenueRow Component with Correct Data (From VenuesList)', async () => {
-        // auth.currentUser = { email: 'test@wits.ac.za' };
-        // getCurrentUser.mockImplementation((currentUserEmail, setUserInfo) => {
-        //     setUserInfo({
-        //         firstName:'Test',
-        //         isAdmin:true,
-        //         isLecturer:false,
-        //         isStudent:false,
-        //         lastName:'User',
-        //     });
-        // });
-        // console.log(userInfo);
-        // userInfo = mockUserInfo;
         render(<Venues/>); //Render Venues Page
-        // screen.debug();
         await waitFor(() => {
-        //     screen.debug();
             const testVenue1 = screen.getByText('MSL004'); //MSL004
             const testVenue2 = screen.getByText('OLS03'); //OLS03
             expect(testVenue1).toBeInTheDocument(); //Check if MSL004 is rendered
@@ -224,39 +214,7 @@ describe("Venues", () => {
 
     test('Renders Correct Venue Details in VenueRow', () => {
         auth.currentUser = { email: 'test@wits.ac.za' };
-        // Venues.setUserInfo();
-        // getCurrentUser.mockImplementation((currentUserEmail, setUserInfo) => {
-        //     setUserInfo({
-        //         firstName:'Test',
-        //         isAdmin:true,
-        //         isLecturer:false,
-        //         isStudent:false,
-        //         lastName:'User',
-        //     });
-        // });
-        // console.log(userInfo);
         render(<Venues/>); //Render Venues Page
-        // render(<VenueRow
-        //     key={'MSL004'}
-        //     venueName={'MSL004'}
-        //     campus={'West'}
-        //     venueType={'Lab'}
-        //     venueCapacity={100}
-        //     timeSlots={['14:15','15:15','16:15']}
-        //     isClosed={false}
-        //     bookings={[
-        //         {
-        //         id:'MSL004-2024-10-31-14:00',
-        //         bookingDate:'2024-10-31',
-        //         bookingDescription:'CGV Exam',
-        //         bookingEndTime:'15:00',
-        //         bookingStartTime:'14:15',
-        //         venueBooker:'branden.ingram@wits.ac.za',
-        //         venueID:'MSL004'
-        //         }
-        //     ]}
-        //     relevantDate={2024-10-31}
-        // />);
         const testVenueRow = screen.getByText('MSL004'); //Get a VenueRow by its displayed Venue Name
         fireEvent.click(testVenueRow); //Click the VenueRow to show its dropdown menu
         const testCampus = screen.getByText('West'); //MSL004 Campus
@@ -317,7 +275,7 @@ describe("Venues", () => {
                 venueID:'MSL004'
                 }
             ]}
-            relevantDate={2024-10-31}
+            relevantDate={'2024-10-31'}
         />); //Render VenueRow with a booking
         const testVenueRow = screen.getByText('MSL004'); //Get a VenueRow by its displayed Venue Name
         fireEvent.click(testVenueRow); //Click the VenueRow to show its dropdown menu
@@ -333,5 +291,46 @@ describe("Venues", () => {
         fireEvent.click(testButton1415);
         expect(setBookingTime).not.toHaveBeenCalledWith("14:15");//Check that button is disabled
     });
+
+    test('During an available slot, clicking the Book button successfully makes a booking', async () => {
+        auth.currentUser = { email: 'test@wits.ac.za' };
+        render(<VenueRow
+            key={'MSL004'}
+            venueName={'MSL004'}
+            campus={'West'}
+            venueType={'Lab'}
+            venueCapacity={100}
+            timeSlots={['14:15','15:15','16:15']}
+            isClosed={false}
+            bookings={[]}
+            relevantDate={'2024-10-31'}
+        />); //Render VenueRow with no bookings
+        const testVenueRow = screen.getByText('MSL004'); //Get a VenueRow by its displayed Venue Name
+        fireEvent.click(testVenueRow); //Click the VenueRow to show its dropdown menu
+        const testButton1415 = screen.getByText('14:15'); //Button for 14:15
+        fireEvent.click(testButton1415); //Click the button for the 14:15 slot
+        const descriptionInput = screen.getByTestId('description-input-id'); //Description input field
+        await userEvent.type(descriptionInput, "Wouldn't you like to know, weather boy?"); //Type in booking description
+        const bookButton = screen.getByText('Book'); //Book button
+        fireEvent.click(bookButton); //Click the Book button
+        expect(makeBooking).toHaveBeenCalledWith(
+            'test@wits.ac.za',
+            'MSL004',
+            '2024-10-31',
+            '14:15',
+            '15:00',
+            "Wouldn't you like to know, weather boy?"
+        );
+    });
+
+    test('User that is not logged in is redirected to /login', () => {
+        onAuthStateChanged.mockImplementation((auth, callback) => {
+            // Simulate that a user is logged in, and return a mock unsubscribe function
+            callback(null);
+            return jest.fn(); // This is the mock unsubscribe function
+        });
+        render(<Venues/>); //Render AdminRequest Page
+        expect(navigate).toHaveBeenCalledWith("/login");// Check that navigation is called
+    })
 
 });

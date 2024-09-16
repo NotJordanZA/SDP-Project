@@ -1,5 +1,6 @@
 import '../styles/Venues.css';
 import { getCurrentDatesBookings } from "../utils/getCurrentDatesBookingsUtil";
+import { makeBooking } from '../utils/makeBookingUtil';
 import { useState, useEffect, useRef } from "react";
 import { auth } from "../firebase";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -57,38 +58,6 @@ function VenueRow({venueName, campus, venueType, venueCapacity, timeSlots, isClo
             makeBooking(booker, venueName, relevantDate, bookingTime, bookingEndingTime, null);
         }
         
-    }
-
-    const makeBooking = async(venueBooker, venueID, bookingDate, bookingStartTime, bookingEndTime, bookingDescription) => { // Makes a new bookings 
-        try{
-            const response = await fetch(`/bookings/create`, { //Calls the API to create a new booking
-                method: 'POST',
-                headers: {
-                  'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    venueBooker,
-                    venueID,
-                    bookingDate,
-                    bookingStartTime,
-                    bookingEndTime,
-                    bookingDescription,
-                }),
-            });
-    
-            const data = await response.json();
-            if (response.ok) {
-                // console.log('Booking added successfully:', data);
-                setIsVenueOpen(false); // Closes the dropdown on booking
-                toggleIsBooking(); // Changes the booking status, closing the popup
-                getCurrentDatesBookings(relevantDate); // Calls this function again so that the new booking is reflected on the page
-                setBookingDescriptionText(""); // Resets the booking description field
-            } else {
-                console.error('Error making booking:', data.error); // Logs error
-            }
-          } catch (error) {
-            console.error('Error:', error); // Logs error
-          }
     }
 
     const isTimeSlotInactive = (timeSlot) => { // Checks whether there is an existing booking during the current time slot
@@ -178,7 +147,7 @@ function VenueRow({venueName, campus, venueType, venueCapacity, timeSlots, isClo
                     {timeSlotButtons}
                 </div>
                 <div className="book-action-container">
-                    <textarea className={`description-input ${isBooking ? "shown" : "hidden"}`} value = { bookingDescriptionText } onChange={(e) => setBookingDescriptionText(e.target.value)} required placeholder="Input a booking description" onClick={(e) => e.stopPropagation()}></textarea>
+                    <textarea className={`description-input ${isBooking ? "shown" : "hidden"}`} data-testid = 'description-input-id' value = { bookingDescriptionText } onChange={(e) => setBookingDescriptionText(e.target.value)} required placeholder="Input a booking description" onClick={(e) => e.stopPropagation()}></textarea>
                     <button className={`book-button ${isBooking ? "shown" : "hidden"}`} onClick={(e) => { e.stopPropagation(); updateBookingEndTime();}}>Book</button>
                 </div>
             </div>
