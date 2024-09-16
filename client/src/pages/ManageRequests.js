@@ -144,8 +144,6 @@ const determinerole = (email) => {
         <div className="manageadminrequests-list">
           {filteredRequests.map(request => (
             <div key={request.id} className={`manageadminrequests-card ${request.requestStatus}`}>
-              <h3>Requester email: {request.requesterEmail}</h3>
-            <div key={request.id} className={`manageadminrequests-card ${request.requestStatus}`}>
               <h3>
             <strong>  Requester email: </strong>{request.requesterEmail} </h3>
               <p><strong>Role:</strong> {determinerole(request.requesterEmail)}</p>
