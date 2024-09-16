@@ -3,23 +3,39 @@ import '../styles/reports.css';
 import PopupForm from '../components/PopupForm';
 import { useNavigate } from "react-router-dom";
 import { auth } from "../firebase";
+import { onAuthStateChanged } from "firebase/auth";
 
 const Reports = () => {
     const [isPopupOpen, setIsPopupOpen] = useState(false);
     const [reports, setReports] = useState([]);
-    const [user, setUser] = useState(auth.currentUser); // Local state to track current user
+    // const [isLoading, setIsLoading] = useState(true);
+    const [user, setUser] = useState(null);
     const navigate = useNavigate();
 
-    useEffect(() => {   
-        // Reroutes user to /login if they are not logged in
-        if (!user) {
-            navigate("/login");
-        }
-    }, [user, navigate]);
-
+    // Ensure User is logged in
     useEffect(() => {
-        setUser(auth.currentUser);  // Ensure that the current user is synced with state
-    }, []);
+        // Listen for a change in the auth state
+        const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
+          // If user is authenticated
+          if (firebaseUser) {
+            setUser(firebaseUser); //Set current user
+            console.log(user);
+          } else {
+            navigate("/login"); //Reroute to login if user not signed in
+          }
+        //   setIsLoading(false); //Declare firebase as no longer loading
+        });
+        return () => {
+          if (unsubscribe) {
+            unsubscribe();
+          }
+        }; //Return the listener
+    // eslint-disable-next-line
+    }, [auth, navigate]);
+
+    // useEffect(() => {
+    //     setUser(auth.currentUser);  // Ensure that the current user is synced with state
+    // }, []);
 
     const togglePopup = () => {
         setIsPopupOpen(!isPopupOpen);
@@ -48,7 +64,7 @@ useEffect(() => {
         return null;  // Prevents rendering if no user is logged in, redirect happens in the useEffect
     }
 
-    let email = user.email;
+    // let email = user.email;
 
     return (
         <section className="report-page">
@@ -60,7 +76,7 @@ useEffect(() => {
                 <ul>
                     {reports.length > 0 ? (
                         reports
-                            .filter(report => report.createdBy === email)  // Filter reports by createdBy field
+                            .filter(report => report.createdBy === user.email)  // Filter reports by createdBy field
                             .map(report => (
                                 <li key={report.id}>
                                     <p className="report-title">{report.reportType}</p>

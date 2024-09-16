@@ -2,16 +2,41 @@ import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import '@testing-library/jest-dom/extend-expect';
 import ManageBookings from '../pages/ManageBookings';
+import { BrowserRouter as Router, MemoryRouter } from 'react-router-dom';
+import { auth } from "../firebase";
+import { onAuthStateChanged } from "firebase/auth";
+import { getCurrentUser } from '../utils/getCurrentUser';
 import AllBookings from '../components/AdminAllBookings';
 import CreateBooking from '../components/AdminCreateBookings';
 import RecurringBooking from '../components/AdminRecurringBookings';
 import * as router from 'react-router-dom';
+
 
 jest.mock('react-router-dom', () => ({
   ...jest.requireActual('react-router-dom'),
   useLocation: jest.fn(),
   useNavigate: jest.fn(),
 }));
+
+jest.mock('../firebase', () => ({
+  auth: {
+      currentUser: null //Default mock value
+  }
+}));
+
+jest.mock("firebase/auth", () => ({
+      getAuth: jest.fn(() => ({currentUser: { email: 'test@wits.ac.za' }})),
+      onAuthStateChanged: jest.fn(),
+}));
+
+jest.mock('firebase/firestore', () => ({
+  getDoc: jest.fn(() => Promise.resolve({
+    data: () => ({ isAdmin: true })  // Mock Firestore document with isAdmin
+  })),
+}));
+
+jest.mock('../utils/getCurrentUser');
+
 const navigate = jest.fn();
 
 jest.mock('../components/AdminAllBookings', () => () => <div>All Bookings Component</div>); // Mocks All Bookings Component. First ()=> is jest.fn itself, second ()=> is to make it a functional react component.
@@ -19,6 +44,16 @@ jest.mock('../components/AdminCreateBookings', () => () => <div>Create Booking C
 jest.mock('../components/AdminRecurringBookings', () => () => <div>Recurring Booking Component</div>);
 
 describe('ManageBookings Component', () => {
+  beforeEach(() => {
+    auth.currentUser = { email: 'test@wits.ac.za' };
+    onAuthStateChanged.mockImplementation((auth, callback) => {
+      // Simulate that a user is logged in, and return a mock unsubscribe function
+      callback({ email: 'test@wits.ac.za' });
+      // console.log("Unsubscribe returned!");
+      return jest.fn(); // This is the mock unsubscribe function
+    });
+  });
+  
   test('Renders ManageBookings Static Components', () => {
     render(<ManageBookings />);
 

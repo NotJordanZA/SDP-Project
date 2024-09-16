@@ -1,12 +1,34 @@
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import '@testing-library/jest-dom/extend-expect';
-import { BrowserRouter as Router } from 'react-router-dom';
-import { MemoryRouter } from "react-router-dom";
+import { BrowserRouter as Router, MemoryRouter } from 'react-router-dom';
 import * as router from 'react-router-dom';
+import { auth } from "../firebase";
+import { onAuthStateChanged } from "firebase/auth";
 import ManageRequests from '../pages/ManageRequests';
 import {fetchRequests} from '../utils/getAllRequests';
+import { getCurrentUser } from '../utils/getCurrentUser';
 import {handleApproveClick} from '../utils/AdminhandleApprovecClick';
+
+jest.mock('../firebase', () => ({
+  auth: {
+      currentUser: null //Default mock value
+  }
+}));
+
+jest.mock("firebase/auth", () => ({
+      getAuth: jest.fn(() => ({currentUser: { email: 'test@wits.ac.za' }})),
+      onAuthStateChanged: jest.fn(),
+}));
+
+jest.mock('firebase/firestore', () => ({
+  getDoc: jest.fn(() => Promise.resolve({
+    data: () => ({ isAdmin: true })  // Mock Firestore document with isAdmin
+  })),
+}));
+
+jest.mock('../utils/getCurrentUser');
+
 
 jest.mock('../utils/getAllRequests', () => ({
 fetchRequests: jest.fn(),
@@ -26,6 +48,14 @@ jest.mock('../utils/AdminhandleApprovecClick', () => ({
 describe('ManageRequests Component', () => {
 
   beforeEach(() => {
+    auth.currentUser = { email: 'test@wits.ac.za' };
+    onAuthStateChanged.mockImplementation((auth, callback) => {
+      // Simulate that a user is logged in, and return a mock unsubscribe function
+      callback({ email: 'test@wits.ac.za' });
+      // console.log("Unsubscribe returned!");
+      return jest.fn(); // This is the mock unsubscribe function
+    });
+  
     // Mock useNavigate function
 
     jest.spyOn(router, 'useNavigate').mockImplementation(() => navigate);
