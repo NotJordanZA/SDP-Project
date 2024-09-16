@@ -1,5 +1,5 @@
 import '../styles/Venues.css';
-import { getCurrentDatesBookings } from "../utils/getCurrentDatesBookingsUtil";
+// import { getCurrentDatesBookings } from "../utils/getCurrentDatesBookingsUtil";
 import { makeBooking } from '../utils/makeBookingUtil';
 import { useState, useEffect, useRef } from "react";
 import { auth } from "../firebase";
@@ -60,18 +60,18 @@ function VenueRow({venueName, campus, venueType, venueCapacity, timeSlots, isClo
         setBookingEndingTime(((slotEnd.getHours() < 10 ? '0' : '') + slotEnd.getHours())+":"+((slotEnd.getMinutes() < 10 ? '0' : '') + slotEnd.getMinutes()));// Puts time in the correct format, hh:mm
     }
 
-    const compileBookingData = () => { // Gets all information needed for a booking together and calls the makeBooking function
+    // const compileBookingData = () => { // Gets all information needed for a booking together and calls the makeBooking function
         
-        const booker = user.email; // Gets user email
+    //     const booker = user.email; // Gets user email
 
-        if (bookingDescriptionText != ""){
-            makeBooking(booker, venueName, relevantDate, bookingTime, bookingEndingTime, bookingDescriptionText, setIsVenueOpen, toggleIsBooking, getCurrentDatesBookings, relevantDate, setBookingDescriptionText);
-        }
-        else{
-            makeBooking(booker, venueName, relevantDate, bookingTime, bookingEndingTime, null, setIsVenueOpen, toggleIsBooking, getCurrentDatesBookings, relevantDate, setBookingDescriptionText);
-        }
+    //     if (bookingDescriptionText !== ""){
+    //         makeBooking(booker, venueName, relevantDate, bookingTime, bookingEndingTime, bookingDescriptionText, setIsVenueOpen, toggleIsBooking, getCurrentDatesBookings, relevantDate, setBookingDescriptionText);
+    //     }
+    //     else{
+    //         makeBooking(booker, venueName, relevantDate, bookingTime, bookingEndingTime, null, setIsVenueOpen, toggleIsBooking, getCurrentDatesBookings, relevantDate, setBookingDescriptionText);
+    //     }
         
-    }
+    // }
 
     const isTimeSlotInactive = (timeSlot) => { // Checks whether there is an existing booking during the current time slot
         const slotStart = new Date(`1970-01-01T${timeSlot}:00`); // Convert to Date for easier comparisions

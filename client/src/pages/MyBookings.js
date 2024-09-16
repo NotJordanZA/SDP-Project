@@ -8,7 +8,7 @@ import { getCurrentUsersBookings } from "../utils/getCurrentUsersBookings";
 
 function MyBookings() {
     const [bookingsList, setBookingsList] = useState([]);
-    const [isLoading, setIsLoading] = useState(true);
+    // const [isLoading, setIsLoading] = useState(true);
     const [user, setUser] = useState(null);
 
     const navigate = useNavigate();
@@ -24,13 +24,14 @@ function MyBookings() {
         } else {
           navigate("/login"); //Reroute to login if user not signed in
         }
-        setIsLoading(false); //Declare firebase as no longer loading
+        // setIsLoading(false); //Declare firebase as no longer loading
       });
       return () => {
         if (unsubscribe) {
           unsubscribe();
         }
       }; //Return the listener
+      // eslint-disable-next-line
     }, [auth, navigate]);
     
     // const currentUserEmail = user ? user.email : null; // Gets current user email if not null, otherwise sets it to null

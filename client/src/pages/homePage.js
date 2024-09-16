@@ -35,6 +35,7 @@ const HomePage = () => {
         unsubscribe();
       }
     }; //Return the listener
+    // eslint-disable-next-line
   }, [auth, navigate]);
 
   // Get info about the current user from the database once firebase is loaded

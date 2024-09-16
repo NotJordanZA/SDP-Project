@@ -10,7 +10,7 @@ import PopupForm from "../components/AdminRequestForm";
 function AdminRequest() {
     const [requestsList, setRequestsList] = useState([]);
     const [isPopupOpen, setIsPopupOpen] = useState(false);
-    const [isLoading, setIsLoading] = useState(true);
+    // const [isLoading, setIsLoading] = useState(true);
     const [user, setUser] = useState(null);
     
     // console.log(user);
@@ -28,13 +28,14 @@ function AdminRequest() {
           } else {
             navigate("/login"); //Reroute to login if user not signed in
           }
-          setIsLoading(false); //Declare firebase as no longer loading
+          // setIsLoading(false); //Declare firebase as no longer loading
         });
         return () => {
           if (unsubscribe) {
             unsubscribe();
           }
         }; //Return the listener
+        // eslint-disable-next-line
       }, [auth, navigate]);
 
     const togglePopup = () => {

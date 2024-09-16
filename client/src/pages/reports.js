@@ -8,7 +8,7 @@ import { onAuthStateChanged } from "firebase/auth";
 const Reports = () => {
     const [isPopupOpen, setIsPopupOpen] = useState(false);
     const [reports, setReports] = useState([]);
-    const [isLoading, setIsLoading] = useState(true);
+    // const [isLoading, setIsLoading] = useState(true);
     const [user, setUser] = useState(null);
     const navigate = useNavigate();
 
@@ -23,14 +23,15 @@ const Reports = () => {
           } else {
             navigate("/login"); //Reroute to login if user not signed in
           }
-          setIsLoading(false); //Declare firebase as no longer loading
+        //   setIsLoading(false); //Declare firebase as no longer loading
         });
         return () => {
           if (unsubscribe) {
             unsubscribe();
           }
         }; //Return the listener
-      }, [auth, navigate]);
+    // eslint-disable-next-line
+    }, [auth, navigate]);
 
     // useEffect(() => {
     //     setUser(auth.currentUser);  // Ensure that the current user is synced with state
@@ -63,7 +64,7 @@ useEffect(() => {
         return null;  // Prevents rendering if no user is logged in, redirect happens in the useEffect
     }
 
-    let email = user.email;
+    // let email = user.email;
 
     return (
         <section className="report-page">
