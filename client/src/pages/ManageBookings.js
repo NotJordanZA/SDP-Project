@@ -70,29 +70,29 @@ const ManageBookings = () => {
   };
 
   return (
-    <div className="manage-bookings-container">
-      <div className="tabs">
+    <div className="adminmanage-bookings-container">
+      <div className="adminmanage-tabs">
         <button
           onClick={() => setActiveTab('all')}
-          className={activeTab === 'all' ? 'active' : ''}
+          className={`adminmanage-tab ${activeTab === 'all' ? 'adminmanage-active' : ''}`}
         >
           All Bookings
         </button>
         <button
           onClick={() => setActiveTab('createbooking')}
-          className={activeTab === 'createbooking' ? 'active' : ''}
+          className={`adminmanage-tab ${activeTab === 'createbooking' ? 'adminmanage-active' : ''}`}
         >
           Create Booking
         </button>
         <button
           onClick={() => setActiveTab('recurringbooking')}
-          className={activeTab === 'recurringbooking' ? 'active' : ''}
+          className={`adminmanage-tab ${activeTab === 'recurringbooking' ? 'adminmanage-active' : ''}`}
         >
           Recurring Booking
         </button>
       </div>
 
-      <div className="tab-content">
+      <div className="adminmanage-tab-content">
         {renderTabContent()}
       </div>
     </div>

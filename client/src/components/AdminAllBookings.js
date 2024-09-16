@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import '../styles/ManageBookings.css';
+import '../styles/AdminAllBookings.css';
 import EditBooking from '../pages/ManageBookingsEdit.js';
 
 const getAllBookings = async () => {
@@ -79,12 +79,12 @@ const AdminAllBookings = () => {
   });
 
   return (
-    <div className="booking-tabs-container">
-   
+    <div className="adminallbookings-tabs-container">
       <div className="filters">
         <div className="date-filter">
           <label htmlFor="filter-date">Filter by Date:</label>
           <input
+            className="filter-select"
             type="date"
             id="filter-date"
             value={filterDate}
@@ -94,6 +94,7 @@ const AdminAllBookings = () => {
         <div className="email-filter">
           <label htmlFor="filter-bookerEmail">Filter by Booker Email (Lecturer/Student):</label>
           <select
+            className="filter-select"
             id="filter-bookerEmail"
             value={filterBookerEmail}
             onChange={(e) => setFilterBookerEmail(e.target.value)}
@@ -106,6 +107,7 @@ const AdminAllBookings = () => {
         <div className="venue-filter">
           <label htmlFor="filter-venue">Filter by Venue:</label>
           <select
+            className="filter-select"
             id="filter-venue"
             value={filterVenue}
             onChange={(e) => setFilterVenue(e.target.value)}

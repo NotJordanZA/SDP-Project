@@ -115,10 +115,10 @@ const determinerole = (email) => {
 };
 
   return (
-    <div className="requests-container">
+    <div className="manageadminrequests-container">
       <h1>Admin Requests Management</h1>
 
-      <div className="tabs">
+      <div className="manageadminrequests-tabs">
         <button
           className={activeTab === 'pending' ? 'active' : ''}
           onClick={() => setActiveTab('pending')}
@@ -141,9 +141,9 @@ const determinerole = (email) => {
 
       {/* List of filtered requests based on active tab */}
       {filteredRequests.length > 0 ? (
-        <div className="requests-list">
+        <div className="manageadminrequests-list">
           {filteredRequests.map(request => (
-            <div key={request.id} className={`request-card ${request.requestStatus}`}>
+            <div key={request.id} className={`manageadminrequests-card ${request.requestStatus}`}>
               <h3>
             <strong>  Requester email: </strong>{request.requesterEmail} </h3>
               <p><strong>Role:</strong> {determinerole(request.requesterEmail)}</p>
@@ -153,10 +153,10 @@ const determinerole = (email) => {
               {/* Show "Approve" and "Deny" buttons only for pending requests */}
               {request.requestStatus === 'pending' && (
                 <>
-                  <button className="approve-btn" onClick={() => handleApproveClick(request.id, setRequests)}>
+                  <button className="manageadminrequests-approve-btn" onClick={() => handleApproveClick(request.id, setRequests)}>
                     Approve Request
                   </button>
-                  <button className="deny-btn" onClick={() => handleDenyClick(request.id)}>
+                  <button className="manageadminrequests-deny-btn" onClick={() => handleDenyClick(request.id)}>
                     Deny Request
                   </button>
                 </>

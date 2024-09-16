@@ -227,7 +227,7 @@ function Venues() {
   );
 
   return (
-    <div>
+    <div className='manage-venues-container'>
       <input
         type="text"
         placeholder="Search by venue name"
@@ -242,7 +242,7 @@ function Venues() {
       />
       <button onClick={() => setShowForm(true)}>Add Venue</button>
 
-      <div className="sort-container">
+      <div className="managevenues-sort-container">
         <label>Sort by: </label>
         <select value={sortCriteria} onChange={(e) => setSortCriteria(e.target.value)}>
           <option value="venueName">Venue Name</option>
@@ -254,7 +254,7 @@ function Venues() {
       </div>
 
       {showForm && (
-        <div className="modal">
+        <div className="managevenues-modal">
           <div className="modal-content">
             <span className="close" onClick={closeForm}>&times;</span>
             <h2>{editingVenue ? 'Edit Venue' : 'Add Venue'}</h2>
@@ -267,7 +267,7 @@ function Venues() {
                 required
               />
               {matchingBuildings.length > 0 && (
-                <ul className="suggestions" ref={suggestionsRef}>
+                <ul className="managevenues-suggestions" ref={suggestionsRef}>
                   {matchingBuildings.map((building, index) => (
                     <li key={index} onClick={() => handleBuildingClick(building)}>
                       {building}
@@ -322,7 +322,7 @@ function Venues() {
 
       {filteredVenues.length > 0 ? (
         filteredVenues.map(venue => (
-          <div key={venue.id} className="venue-card">
+          <div key={venue.id} className="managevenues-venue-card">
             <h3>{venue.venueName}</h3>
             <p>Capacity: {venue.venueCapacity}</p>
             <p>Venue Type: {venue.venueType}</p>
