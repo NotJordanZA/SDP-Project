@@ -1,4 +1,6 @@
 import { render, screen, fireEvent, waitFor, getByTestId, getByText} from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+// import React from 'react';
 import { MemoryRouter } from "react-router-dom";
 import * as router from 'react-router-dom';
 import Venues from '../pages/Venues';
@@ -6,19 +8,47 @@ import VenueRow from "../components/VenueRow";
 import DateHeader from "../components/DateHeader";
 import CalendarPopup from "../components/CalendarPopup";
 import Search from "../components/Search";
+import { formatDate } from "../utils/formatDateUtil";
 import { getAllVenues } from "../utils/getAllVenuesUtil";
 import { getCurrentDatesBookings } from "../utils/getCurrentDatesBookingsUtil";
-import { formatDate } from "../utils/formatDateUtil";
+import { getCurrentUser } from '../utils/getCurrentUser';
+import { makeBooking } from '../utils/makeBookingUtil';
 import { auth } from "../firebase";
+import { onAuthStateChanged } from "firebase/auth";
 
 // jest.mock("firebase/auth", () => ({
 //     getAuth: jest.fn(),
 // }));
 
+const mockUserInfo = {
+    firstName:'Test',
+    isAdmin:true,
+    isLecturer:false,
+    isStudent:false,
+    lastName:'User',
+};
+
+jest.mock('react-router-dom', () => ({
+    ...jest.requireActual('react-router-dom'),
+    useLocation: jest.fn(),
+    useNavigate: jest.fn(),
+}));
+
 jest.mock('../firebase', () => ({
     auth: {
         currentUser: null //Default mock value
     }
+}));
+
+jest.mock("firebase/auth", () => ({
+        getAuth: jest.fn(() => ({currentUser: { email: 'test@wits.ac.za' }})),
+        onAuthStateChanged: jest.fn(),
+}));
+
+jest.mock('firebase/firestore', () => ({
+    getDoc: jest.fn(() => Promise.resolve({
+      data: () => ({ isAdmin: true })  // Mock Firestore document with isAdmin
+    })),
 }));
 
 jest.mock('../utils/getAllVenuesUtil', () => ({
@@ -33,7 +63,25 @@ jest.mock('../utils/formatDateUtil', () => ({
     formatDate: jest.fn(),
 }));
 
+// jest.mock('../utils/getCurrentUser', () => ({
+//     getCurrentUser: jest.fn(),
+// }));
+jest.mock('../utils/getCurrentUser', () => ({
+    getCurrentUser: jest.fn(),
+}));
+
+jest.mock('../utils/makeBookingUtil', () => ({
+    makeBooking: jest.fn(),
+}));
+
 const setBookingTime = jest.fn();
+const setIsVenueOpen = jest.fn();
+const toggleIsBooking = jest.fn();
+const setBookingDescriptionText = jest.fn();
+
+const navigate = jest.fn();
+
+setIsVenueOpen, toggleIsBooking, setBookingDescriptionText
 
 describe("Venues", () => {
 
@@ -47,12 +95,34 @@ describe("Venues", () => {
 
     // Before each test, ensure we have the correct mock data
     beforeEach(() => {
-        // Mock the venues list
+        jest.clearAllMocks();
+
+        // Mock useNavigate function
+        jest.spyOn(router, 'useNavigate').mockImplementation(() => navigate);
+
+        onAuthStateChanged.mockImplementation((auth, callback) => {
+            // Simulate that a user is logged in, and return a mock unsubscribe function
+            callback({ email: 'test@wits.ac.za' });
+            // console.log("Unsubscribe returned!");
+            return jest.fn(); // This is the mock unsubscribe function
+        });
+
+        getCurrentUser.mockImplementation((currentUserEmail, setUserInfo) => {
+            setUserInfo({
+                firstName:'Test',
+                isAdmin:true,
+                isLecturer:false,
+                isStudent:false,
+                lastName:'User',
+            });
+        });
+
         getAllVenues.mockImplementation((setVenuesList, setAllVenues) => {
             setAllVenues([
                 {
                     venueName:'MSL004', 
-                    campus:'West', venueType:'Lab', 
+                    campus:'West', 
+                    venueType:'Lab', 
                     venueCapacity:100, 
                     timeSlots:['14:15','15:15','16:15'], 
                     isClosed:false
@@ -122,30 +192,33 @@ describe("Venues", () => {
     //     jest.clearAllMocks();
     // });
 
-    test.skip('Renders DateHeader Component', () => {
+    test('Renders DateHeader Component', () => {
         auth.currentUser = { email: 'test@wits.ac.za' };
         render(<Venues/>); //Render Venues Page
         const testDateHeader = screen.getByTestId("date-header"); //DateHeader Component
         expect(testDateHeader).toBeInTheDocument(); //Check if DateHeader rendered
     });
 
-    test.skip('Renders Search Component', () => {
+    test('Renders Search Component', () => {
         auth.currentUser = { email: 'test@wits.ac.za' };
         render(<Venues/>); //Render Venues Page
         const testSearch = screen.getByTestId('search'); //Search Component
         expect(testSearch).toBeInTheDocument(); //Check if Search rendered
     });
 
-    test.skip('Renders VenueRow Component with Correct Data (From VenuesList)', () => {
+    test('Renders VenueRow Component with Correct Data (From VenuesList)', async () => {
         auth.currentUser = { email: 'test@wits.ac.za' };
         render(<Venues/>); //Render Venues Page
-        const testVenue1 = screen.getByText('MSL004'); //MSL004
-        const testVenue2 = screen.getByText('OLS03'); //OLS03
-        expect(testVenue1).toBeInTheDocument(); //Check if MSL004 is rendered
-        expect(testVenue2).toBeInTheDocument(); //Check if OLS03 is rendered
+        await waitFor(() => {
+            const testVenue1 = screen.getByText('MSL004'); //MSL004
+            const testVenue2 = screen.getByText('OLS03'); //OLS03
+            expect(testVenue1).toBeInTheDocument(); //Check if MSL004 is rendered
+            expect(testVenue2).toBeInTheDocument(); //Check if OLS03 is rendered
+        });
+        
     });
 
-    test.skip('Renders Correct Venue Details in VenueRow', () => {
+    test('Renders Correct Venue Details in VenueRow', () => {
         auth.currentUser = { email: 'test@wits.ac.za' };
         render(<Venues/>); //Render Venues Page
         const testVenueRow = screen.getByText('MSL004'); //Get a VenueRow by its displayed Venue Name
@@ -158,7 +231,7 @@ describe("Venues", () => {
         expect(testVenueCapacity).toBeInTheDocument(); //Check is MSL004 VenueCapacity is rendered
     });
 
-    test.skip('Displays a Message If No Venues are Retrieved', () => {
+    test('Displays a Message If No Venues are Retrieved', () => {
         auth.currentUser = { email: 'test@wits.ac.za' };
         getAllVenues.mockImplementationOnce((setVenuesList, setAllVenues) => {
             setAllVenues([]); //Set the AllVenues list to be blank
@@ -169,7 +242,7 @@ describe("Venues", () => {
         expect(testNoVenuesMessage).toHaveTextContent('No Venues Available'); //Check that No Venues Message displays
     });
 
-    test.skip('Update the displayed date when the date is changed', () => {
+    test('Update the displayed date when the date is changed', () => {
         const today = new Date();
         const mockOnDateChange = jest.fn();
         
@@ -187,7 +260,7 @@ describe("Venues", () => {
         expect(mockOnDateChange).toHaveBeenCalledWith(expectedDate);// Check that onDateChange was called with the correct new date
     });
 
-    test.skip('Displays the Correct/Relevant Bookings in VenueRow Popup, with Booked Slots Disabled', () => {
+    test('Displays the Correct/Relevant Bookings in VenueRow Popup, with Booked Slots Disabled', () => {
         auth.currentUser = { email: 'test@wits.ac.za' };
         render(<VenueRow
             key={'MSL004'}
@@ -208,7 +281,7 @@ describe("Venues", () => {
                 venueID:'MSL004'
                 }
             ]}
-            relevantDate={2024-10-31}
+            relevantDate={'2024-10-31'}
         />); //Render VenueRow with a booking
         const testVenueRow = screen.getByText('MSL004'); //Get a VenueRow by its displayed Venue Name
         fireEvent.click(testVenueRow); //Click the VenueRow to show its dropdown menu
@@ -224,5 +297,50 @@ describe("Venues", () => {
         fireEvent.click(testButton1415);
         expect(setBookingTime).not.toHaveBeenCalledWith("14:15");//Check that button is disabled
     });
+
+    test('During an available slot, clicking the Book button successfully makes a booking', async () => {
+        auth.currentUser = { email: 'test@wits.ac.za' };
+        render(<VenueRow
+            key={'MSL004'}
+            venueName={'MSL004'}
+            campus={'West'}
+            venueType={'Lab'}
+            venueCapacity={100}
+            timeSlots={['14:15','15:15','16:15']}
+            isClosed={false}
+            bookings={[]}
+            relevantDate={'2024-10-31'}
+        />); //Render VenueRow with no bookings
+        const testVenueRow = screen.getByText('MSL004'); //Get a VenueRow by its displayed Venue Name
+        fireEvent.click(testVenueRow); //Click the VenueRow to show its dropdown menu
+        const testButton1415 = screen.getByText('14:15'); //Button for 14:15
+        fireEvent.click(testButton1415); //Click the button for the 14:15 slot
+        const descriptionInput = screen.getByTestId('description-input-id'); //Description input field
+        await userEvent.type(descriptionInput, "Wouldn't you like to know, weather boy?"); //Type in booking description
+        const bookButton = screen.getByText('Book'); //Book button
+        fireEvent.click(bookButton); //Click the Book button
+        // expect(makeBooking).toHaveBeenCalledWith(
+        //     'test@wits.ac.za',
+        //     'MSL004',
+        //     '2024-10-31',
+        //     '14:15',
+        //     '15:00',
+        //     "Wouldn't you like to know, weather boy?",
+        //     setIsVenueOpen, 
+        //     toggleIsBooking, 
+        //     setBookingDescriptionText
+        // );
+        expect(makeBooking).toHaveBeenCalled();
+    });
+
+    test('User that is not logged in is redirected to /login', () => {
+        onAuthStateChanged.mockImplementation((auth, callback) => {
+            // Simulate that a user is not logged in, and return a mock unsubscribe function
+            callback(null);
+            return jest.fn(); // This is the mock unsubscribe function
+        });
+        render(<Venues/>); //Render AdminRequest Page
+        expect(navigate).toHaveBeenCalledWith("/login");// Check that navigation is called
+    })
 
 });

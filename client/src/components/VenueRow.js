@@ -1,5 +1,6 @@
 import '../styles/Venues.css';
-import { getCurrentDatesBookings } from "../utils/getCurrentDatesBookingsUtil";
+// import { getCurrentDatesBookings } from "../utils/getCurrentDatesBookingsUtil";
+import { makeBooking } from '../utils/makeBookingUtil';
 import { useState, useEffect, useRef } from "react";
 import { auth } from "../firebase";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -42,10 +43,10 @@ function VenueRow({venueName, campus, venueType, venueCapacity, timeSlots, isClo
             const booker = user.email; // Gets user email
     
             if (bookingDescriptionText !== ""){
-                makeBooking(booker, venueName, relevantDate, bookingTime, bookingEndingTime, bookingDescriptionText);
+                makeBooking(booker, venueName, relevantDate, bookingTime, bookingEndingTime, bookingDescriptionText, setIsVenueOpen, toggleIsBooking, setBookingDescriptionText);
             }
             else{
-                makeBooking(booker, venueName, relevantDate, bookingTime, bookingEndingTime, null);
+                makeBooking(booker, venueName, relevantDate, bookingTime, bookingEndingTime, null, setIsVenueOpen, toggleIsBooking, setBookingDescriptionText);;
             }
             
         }
@@ -59,37 +60,18 @@ function VenueRow({venueName, campus, venueType, venueCapacity, timeSlots, isClo
         setBookingEndingTime(((slotEnd.getHours() < 10 ? '0' : '') + slotEnd.getHours())+":"+((slotEnd.getMinutes() < 10 ? '0' : '') + slotEnd.getMinutes()));// Puts time in the correct format, hh:mm
     }
 
-    const makeBooking = async(venueBooker, venueID, bookingDate, bookingStartTime, bookingEndTime, bookingDescription) => { // Makes a new bookings 
-        try{
-            const response = await fetch(`/api/bookings/create`, { //Calls the API to create a new booking
-                method: 'POST',
-                headers: {
-                  'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    venueBooker,
-                    venueID,
-                    bookingDate,
-                    bookingStartTime,
-                    bookingEndTime,
-                    bookingDescription,
-                }),
-            });
-    
-            const data = await response.json();
-            if (response.ok) {
-                // console.log('Booking added successfully:', data);
-                setIsVenueOpen(false); // Closes the dropdown on booking
-                toggleIsBooking(); // Changes the booking status, closing the popup
-                getCurrentDatesBookings(relevantDate); // Calls this function again so that the new booking is reflected on the page
-                setBookingDescriptionText(""); // Resets the booking description field
-            } else {
-                console.error('Error making booking:', data.error); // Logs error
-            }
-          } catch (error) {
-            console.error('Error:', error); // Logs error
-          }
-    }
+    // const compileBookingData = () => { // Gets all information needed for a booking together and calls the makeBooking function
+        
+    //     const booker = user.email; // Gets user email
+
+    //     if (bookingDescriptionText !== ""){
+    //         makeBooking(booker, venueName, relevantDate, bookingTime, bookingEndingTime, bookingDescriptionText, setIsVenueOpen, toggleIsBooking, getCurrentDatesBookings, relevantDate, setBookingDescriptionText);
+    //     }
+    //     else{
+    //         makeBooking(booker, venueName, relevantDate, bookingTime, bookingEndingTime, null, setIsVenueOpen, toggleIsBooking, getCurrentDatesBookings, relevantDate, setBookingDescriptionText);
+    //     }
+        
+    // }
 
     const isTimeSlotInactive = (timeSlot) => { // Checks whether there is an existing booking during the current time slot
         const slotStart = new Date(`1970-01-01T${timeSlot}:00`); // Convert to Date for easier comparisions
@@ -178,7 +160,7 @@ function VenueRow({venueName, campus, venueType, venueCapacity, timeSlots, isClo
                     {timeSlotButtons}
                 </div>
                 <div className="book-action-container">
-                    <textarea className={`description-input ${isBooking ? "shown" : "hidden"}`} value = { bookingDescriptionText } onChange={(e) => setBookingDescriptionText(e.target.value)} required placeholder="Input a booking description" onClick={(e) => e.stopPropagation()}></textarea>
+                    <textarea className={`description-input ${isBooking ? "shown" : "hidden"}`} data-testid = 'description-input-id' value = { bookingDescriptionText } onChange={(e) => setBookingDescriptionText(e.target.value)} required placeholder="Input a booking description" onClick={(e) => e.stopPropagation()}></textarea>
                     <button className={`book-button ${isBooking ? "shown" : "hidden"}`} onClick={(e) => { e.stopPropagation(); updateBookingEndTime();}}>Book</button>
                 </div>
             </div>

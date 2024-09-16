@@ -1,7 +1,9 @@
 import { render, screen, waitFor, fireEvent } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
+import * as router from 'react-router-dom';
 import Reports from '../pages/reports';
 import { auth } from '../firebase';
+import { onAuthStateChanged } from "firebase/auth";
 import { useNavigate } from 'react-router-dom';
 
 jest.mock('../firebase', () => ({
@@ -14,6 +16,19 @@ jest.mock('react-router-dom', () => ({
     ...jest.requireActual('react-router-dom'), // Mocking react router dom
     useNavigate: jest.fn(),
 }));
+
+jest.mock("firebase/auth", () => ({
+        getAuth: jest.fn(() => ({currentUser: { email: 'test@wits.ac.za' }})),
+        onAuthStateChanged: jest.fn(),
+}));
+
+jest.mock('firebase/firestore', () => ({
+    getDoc: jest.fn(() => Promise.resolve({
+      data: () => ({ isAdmin: true })  // Mock Firestore document with isAdmin
+    })),
+}));
+
+const navigate = jest.fn();
 
 // Mock for fetch that simulates the API with query parameter filtering
 global.fetch = jest.fn((url) => {
@@ -62,6 +77,15 @@ describe('Reports Page', () => {
         fetch.mockClear(); // Clear existing fetch mocks
         jest.clearAllMocks(); // Clear other mocks
         useNavigate.mockReturnValue(mockNavigate); // Mock useNavigate
+        // Mock useNavigate function
+        jest.spyOn(router, 'useNavigate').mockImplementation(() => navigate);
+
+        onAuthStateChanged.mockImplementation((auth, callback) => {
+            // Simulate that a user is logged in, and return a mock unsubscribe function
+            callback({ email: 'test@wits.ac.za' });
+            // console.log("Unsubscribe returned!");
+            return jest.fn(); // This is the mock unsubscribe function
+        });
     });
 
     test('Renders static components of Reports page', () => {
@@ -109,17 +133,12 @@ describe('Reports Page', () => {
     });
 
     test('Redirects to /login if user is not logged in', async () => {
-        // Set the current user to null
-        auth.currentUser = null;
-
-        render(
-            <MemoryRouter>
-                <Reports />
-            </MemoryRouter>
-        );
-
-        await waitFor(() => {
-            expect(mockNavigate).toHaveBeenCalledWith('/login');
+        onAuthStateChanged.mockImplementation((auth, callback) => {
+            // Simulate that a user is not logged in, and return a mock unsubscribe function
+            callback(null);
+            return jest.fn(); // This is the mock unsubscribe function
         });
+        render(<Reports/>); //Render AdminRequest Page
+        expect(navigate).toHaveBeenCalledWith("/login");// Check that navigation is called
     });
 });
