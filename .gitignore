@@ -131,3 +131,4 @@ dist
 
 # Mac files
 .DS_Store
+client/env

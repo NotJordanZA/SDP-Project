@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import '../styles/ManageBookings.css';
+import '../styles/AdminAllBookings.css';
 import EditBooking from '../pages/ManageBookingsEdit.js';
 
 const getAllBookings = async () => {
@@ -23,12 +23,61 @@ const updateBooking = async (id, bookingData) => {
 };
 
 const deleteBooking = async (id) => {
-  const response = await fetch(`/api/bookings/${id}`, {
-    method: "DELETE",
-  });
-  return await response.json();
-};
+  try {
+    // Fetch the booking details before deletion
+    const bookingResponse = await fetch(`/api/bookings/${id}`);
+    if (!bookingResponse.ok) {
+      throw new Error('Failed to fetch booking details');
+    }
+    const bookingDetails = await bookingResponse.json();
 
+    // Log booking details to debug missing fields
+    console.log('Booking details:', bookingDetails);
+
+    // Ensure all required fields are present
+    if (!bookingDetails.venueID || !bookingDetails.bookingDate || !bookingDetails.bookingStartTime || !bookingDetails.bookingEndTime || !bookingDetails.bookingDescription || !bookingDetails.venueBooker) {
+      throw new Error('Missing required booking details');
+    }
+
+    // Delete the booking
+    const response = await fetch(`/api/bookings/${id}`, {
+      method: "DELETE",
+    });
+    if (!response.ok) {
+      throw new Error('Failed to delete booking');
+    }
+
+    // Create the notification
+    const notification = {
+      dateCreated: new Date().toLocaleString(),
+      notificationMessage: `This is to inform you that your booking has been cancelled by the admin. These are the booking details: venueID: ${bookingDetails.venueID}, bookingDate: ${bookingDetails.bookingDate}, bookingStartTime: ${bookingDetails.bookingStartTime}, bookingEndTime: ${bookingDetails.bookingEndTime}, bookingDescription: ${bookingDetails.bookingDescription}. Please make another booking or send a request to the admin.`,
+      notificationType: "Booking Cancelled",
+      read: false,
+      recipientEmail: bookingDetails.venueBooker, // Assuming the booking details contain the venueBookerEmail
+    };
+
+    console.log('Notification to be sent:', notification); // Log the notification data
+
+    const notificationResponse = await fetch('/api/notifications', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(notification),
+    });
+
+    if (!notificationResponse.ok) {
+      const errorData = await notificationResponse.json();
+      console.error('Error creating notification:', errorData);
+      throw new Error('Failed to create notification');
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error('Failed to delete booking:', error);
+    throw error;
+  }
+};
 const AdminAllBookings = () => {
   const [bookings, setBookings] = useState([]);
   const [editingBooking, setEditingBooking] = useState(null);
@@ -79,12 +128,12 @@ const AdminAllBookings = () => {
   });
 
   return (
-    <div className="booking-tabs-container">
-   
+    <div className="adminallbookings-tabs-container">
       <div className="filters">
         <div className="date-filter">
           <label htmlFor="filter-date">Filter by Date:</label>
           <input
+            className="filter-select"
             type="date"
             id="filter-date"
             value={filterDate}
@@ -94,6 +143,7 @@ const AdminAllBookings = () => {
         <div className="email-filter">
           <label htmlFor="filter-bookerEmail">Filter by Booker Email (Lecturer/Student):</label>
           <select
+            className="filter-select"
             id="filter-bookerEmail"
             value={filterBookerEmail}
             onChange={(e) => setFilterBookerEmail(e.target.value)}
@@ -106,6 +156,7 @@ const AdminAllBookings = () => {
         <div className="venue-filter">
           <label htmlFor="filter-venue">Filter by Venue:</label>
           <select
+            className="filter-select"
             id="filter-venue"
             value={filterVenue}
             onChange={(e) => setFilterVenue(e.target.value)}
@@ -126,6 +177,7 @@ const AdminAllBookings = () => {
             filteredBookings.map(booking => (
               <div key={booking.id} className="booking-card">
                 <h3>{booking.bookingDate}</h3>
+                <p>{booking.bookingDescription}</p>
                 <p>Booked by: {booking.venueBooker}</p>
                 <p>Date & Time: {booking.bookingDate} - Time: {booking.bookingStartTime} - {booking.bookingEndTime}</p>
                 <p>Venue Name: {booking.venueID}</p>

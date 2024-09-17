@@ -1,4 +1,8 @@
 import React, { useState, useEffect } from 'react';
+import { auth } from "../firebase";
+import { useNavigate } from "react-router-dom";
+import { onAuthStateChanged } from "firebase/auth";
+// import { getCurrentUser } from '../utils/getCurrentUser';
 import '../styles/ManageBookingsEdit.css';
 
 // Fetch all bookings from the API
@@ -33,12 +37,57 @@ const EditBookingForm = ({ booking, onSave, onCancel }) => {
 
   const [validationError, setValidationError] = useState('');
   const [existingBookings, setExistingBookings] = useState([]);
+  // const [userInfo, setUserInfo] = useState({});
+  // const [isLoading, setIsLoading] = useState(true);
+  const [user, setUser] = useState(null);
+  const navigate = useNavigate();
+
+  // Ensure User is logged in
+  useEffect(() => {
+    // Listen for a change in the auth state
+    const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
+      // If user is authenticated
+      if (firebaseUser) {
+        setUser(firebaseUser); //Set current user
+        console.log(user);
+      } else {
+        navigate("/login"); //Reroute to login if user not signed in
+      }
+      // setIsLoading(false); //Declare firebase as no longer loading
+    });
+    return () => {
+      if (unsubscribe) {
+        unsubscribe();
+      }
+    }; //Return the listener
+    // eslint-disable-next-line
+  }, [auth, navigate]);
+
+  // Get info about the current user from the database once firebase is loaded
+  // useEffect(() => {
+  //   // Fetch current user's info
+  //   const fetchUserInfo = async () => {
+  //     // If user is signed in
+  //     if (user) {
+  //       try {
+  //         // Instantiate userInfo object
+  //         getCurrentUser(user.email, setUserInfo);
+  //       } catch (error) {
+  //         console.error('Failed to fetch user info: ', error);
+  //       }
+  //     }
+  //   };
+  //   // Check if firebase is done loading
+  //   if (!isLoading){
+  //     fetchUserInfo(); //Get user info
+  //   }
+  // }, [user, isLoading]);
 
   // Fetch all existing bookings on component load
   useEffect(() => {
     const fetchBookings = async () => {
       try {
-        const { bookings } = await getAllBookings(); // Fetch the bookings
+        const { bookings } = await getAllBookings(); //fetching the bookings
         setExistingBookings(bookings);
       } catch (error) {
         console.error('Error fetching bookings:', error);
@@ -49,10 +98,10 @@ const EditBookingForm = ({ booking, onSave, onCancel }) => {
     fetchBookings();
   }, []);
 
-  // Check for conflicting bookings
+  //check for overlaps in  bookings
   const isBookingConflict = () => {
     if (!Array.isArray(existingBookings) || existingBookings.length === 0) {
-      return false; // No bookings to check against
+      return false; //no bookings to check against
     }
 
     return existingBookings.some(existingBooking => {
@@ -64,27 +113,27 @@ const EditBookingForm = ({ booking, onSave, onCancel }) => {
       // Check if the venue is the same and there is an overlap in time
       return (
         existingBooking.venueID === venueID &&
-        existingBooking.id !== booking.id && // Exclude the current booking being edited
+        existingBooking.id !== booking.id && //exclude the current booking being edited
         (
-          (newBookingStart >= existingBookingStart && newBookingStart < existingBookingEnd) || // Overlapping start
-          (newBookingEnd > existingBookingStart && newBookingEnd <= existingBookingEnd) || // Overlapping end
-          (newBookingStart <= existingBookingStart && newBookingEnd >= existingBookingEnd) // Encapsulates existing booking
+          (newBookingStart >= existingBookingStart && newBookingStart < existingBookingEnd) || 
+          (newBookingEnd > existingBookingStart && newBookingEnd <= existingBookingEnd) || 
+          (newBookingStart <= existingBookingStart && newBookingEnd >= existingBookingEnd) 
         )
       );
     });
   };
 
-  // Handle saving the updated booking
+  // saving the updated booking
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Validate the form for booking conflicts
+    //validate the form for booking overlaps
     if (isBookingConflict()) {
       setValidationError('A booking with the same date, time, and venue already exists.');
       return;
     }
 
-    // Create the updated booking object
+    //create the updated booking object
     const updatedBooking = {
       ...booking,
       venueBooker,
@@ -96,7 +145,7 @@ const EditBookingForm = ({ booking, onSave, onCancel }) => {
     };
 
     try {
-      await onSave(updatedBooking); // Call onSave from the parent component to update the booking
+      await onSave(updatedBooking); //update the booking
     } catch (error) {
       console.error('Error updating booking:', error);
       setValidationError('Error updating booking.');
@@ -104,7 +153,7 @@ const EditBookingForm = ({ booking, onSave, onCancel }) => {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="edit-booking-form">
+    <form onSubmit={handleSubmit} className="edit-adminbooking-form">
       <label>Booker Email</label>
       <input
         type="text"
@@ -147,8 +196,8 @@ const EditBookingForm = ({ booking, onSave, onCancel }) => {
         required
       />
 
-      {/* Validation error message */}
-      {validationError && <p className="error-message" style={{ color: 'red', marginBottom: '10px' }}>{validationError}</p>}
+      {/* validation */}
+      {validationError && <p className="adminbookedit-error-message" >{validationError}</p>}
 
       <button type="submit">Save</button>
       <button type="button" onClick={onCancel}>Cancel</button>

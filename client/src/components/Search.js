@@ -92,6 +92,7 @@ export default function Search({venueList, setVenueList, bookingsList, ...props 
     const venueTypeOptions = [ //All options for venue type
         {value:"lecture venue", label:"Lecture Venue"},
         {value:"study room", label:"Study Room"},
+        {value:"tutorial room", label:"Tutorial Room"},
         {value:"test venue", label:"Test Venue"},
         {value:"theatre", label:"Theatre"},
         {value:"field", label:"Field"}

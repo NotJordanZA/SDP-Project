@@ -1,225 +1,51 @@
-
-.booking-tabs-container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 20px;
-  background-color: #f9f9f9;
-  border-radius: 10px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  font-family: 'Arial', sans-serif;
-}
-
-.tabs {
+.adminmanage-tabs {
   display: flex;
-  justify-content: space-around;
-  margin-bottom: 20px;
+  justify-content: center;
+  gap: 10px;
+  margin: 10px;
+  flex-wrap: wrap; /* tabs wrap on smaller screens -placed on multiple lines*/
 }
 
-.tabs button {
-  
-  color: white;
-  padding: 10px 20px;
-  border: none;
-  border-radius: 5px;
+.adminmanage-tab {
+  flex: 1;
+  padding: 15px 30px;
   cursor: pointer;
-  transition: background-color 0.3s ease;
-}
-
-.tab-content {
-  background-color: #fff;
-  padding: 20px;
-  border-radius: 10px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-}
-
-.createbooking-tab-content {
-  max-width: 600px;
-  margin: 0 auto;
-}
-
-.createbooking-tab-content h2 {
-  color: #043673;
+  border-radius: 4px;
+  color: white;
+  border: none;
+  font-weight: bold;
   text-align: center;
-  margin-bottom: 20px;
-}
-
-.form-group {
-  margin-bottom: 15px;
-}
-
-.form-group label {
-  display: block;
-  margin-bottom: 5px;
-  font-weight: bold;
-  color: #043673;
-}
-
-.form-group input,
-.form-group textarea,
-.form-group select {
-  width: 100%;
-  padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  font-size: 16px;
-}
-
-.form-group textarea {
-  resize: vertical;
-  height: 100px;
-}
-
-button[type="submit"] {
-  background-color: #043673;
-  color: white;
-  padding: 10px 20px;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
   transition: background-color 0.3s ease;
-  width: 100%;
-  margin-top: 20px;
-}
-
-button[type="submit"]:hover {
-  background-color: 043673;
-}
-
-
-.error-message {
-  color:#043673;
-  margin-bottom: 15px;
-}
-
-
-.booking-card {
-  background-color: #fff;
-  border: 1px solid #ccc;
-  border-radius: 10px;
-  padding: 15px;
-  margin-bottom: 15px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-.booking-card h3 {
-  margin: 0 0 10px;
-  color: #043673
-}
-
-.booking-card p {
-  margin: 5px 0;
-  font-size: 14px;
-  color: #043673;
-}
-
-.booking-card button {
+  min-width: 150px; /* ensure buttons have a minimum width */
   background-color: #043673;
+}
+
+.adminmanage-tab:hover {
+  background-color: #917248;
+}
+
+.adminmanage-active {
+  background-color: #917248;
   color: white;
-  padding: 8px 12px;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-  margin-right: 10px;
+  border-bottom: 2px solid #917248;
 }
 
-.booking-card button:hover {
-  background-color: #043673;
-}
-
-
-.filters {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 20px;
-}
-
-
-.filters .date-filter label,
-.filters .email-filter label,
-.filters .venue-filter label {
-  font-weight: bold;
-  color: #043673; 
-  margin-bottom: 5px;
-}
-
-.filters input[type="date"],
-.filters select {
-  width: 100%;
-  padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  background-color: #fff;
-  color: #043673; 
-  font-size: 16px;
-}
-
-/* Style the select dropdown */
-.filters select {
+.adminmanage-tab-content {
   background-color: white;
-  border: 2px solid #043673;
-  color: #917248;
-  padding: 5px 10px;
+  padding: 20px;
   border-radius: 5px;
-  font-size: 16px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
-.filters input[type="date"]:focus,
-.filters select:focus {
-  outline: none;
-  border-color: #043673;
-  box-shadow: 0 0 5px #043673;
-}
-.timeslot-btn {
-  background-color: #004080;
-  color: white;
-  border: none;
-  padding: 5px 10px;
-  margin: 5px;
-  cursor: pointer;
-  border-radius: 3px;
-}
-
-.timeslot-btn.selected {
-  background-color: #8b5e3c; /* Change color for the selected slot */
-  color: white;
-}
-
-.form-group {
-  margin-top: 15px;
-}
-
-.book-btn {
-  background-color: #004080;
-  color: white;
-  padding: 10px 20px;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  margin-top: 10px;
-}
-
-.book-btn:hover {
-  background-color: #003366;
-}
-
-
-/*  for responsiveness */
+/*Responsive  */
 @media (max-width: 768px) {
-  .filters {
+  .adminmanage-tabs {
     flex-direction: column;
+    gap: 5px; /*small  gap between buttons  */
   }
 
-  .filters .form-group {
-    width: 100%;
-    margin-bottom: 15px;
-  }
-
-  .tabs {
-    flex-direction: column;
-  }
-
-  .tabs button {
-    margin-bottom: 10px;
+  .adminmanage-tab {
+    padding: 10px 20px;
+    font-size: 14px;
   }
 }

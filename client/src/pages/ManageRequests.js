@@ -1,12 +1,17 @@
 
 
 import React, { useState, useEffect } from 'react';
+import { auth } from "../firebase";
+import { useNavigate } from "react-router-dom";
+import { onAuthStateChanged } from "firebase/auth";
+// import { getCurrentUser } from '../utils/getCurrentUser';
 import '../styles/ManageRequests.css';
+import {fetchRequests} from '../utils/getAllRequests';
+import {handleApproveClick} from '../utils/AdminhandleApprovecClick';
 export const getAllRequests = async () => {
   const response = await fetch(`/api/adminRequests`);
   return await response.json();
 };
-
 // update a Request- change status from pending to approved
 export const updateReq= async (id, ReqData) => {
 const response = await fetch(`/api/adminRequests/${id}`, {
@@ -28,35 +33,61 @@ return response.json();
 function AdminRequests() {
   const [requests, setRequests] = useState([]);
   const [activeTab, setActiveTab] = useState('pending'); 
+  // const [userInfo, setUserInfo] = useState({});
+  // const [isLoading, setIsLoading] = useState(true);
+  const [user, setUser] = useState(null);
+  const navigate = useNavigate();
 
+  // Ensure User is logged in
+  useEffect(() => {
+    // Listen for a change in the auth state
+    const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
+      // If user is authenticated
+      if (firebaseUser) {
+        setUser(firebaseUser); //Set current user
+        console.log(user);
+      } else {
+        navigate("/login"); //Reroute to login if user not signed in
+      }
+      // setIsLoading(false); //Declare firebase as no longer loading
+    });
+    return () => {
+      if (unsubscribe) {
+        unsubscribe();
+      }
+    }; //Return the listener
+    // eslint-disable-next-line
+  }, [auth, navigate]);
+
+  // Get info about the current user from the database once firebase is loaded
+  // useEffect(() => {
+  //   // Fetch current user's info
+  //   const fetchUserInfo = async () => {
+  //     // If user is signed in
+  //     if (user) {
+  //       try {
+  //         // Instantiate userInfo object
+  //         getCurrentUser(user.email, setUserInfo);
+  //       } catch (error) {
+  //         console.error('Failed to fetch user info: ', error);
+  //       }
+  //     }
+  //   };
+  //   // Check if firebase is done loading
+  //   if (!isLoading){
+  //     fetchUserInfo(); //Get user info
+  //   }
+    
+  // }, [user, isLoading]);
 
   useEffect(() => {
-    const fetchRequests = async () => {
-      try {
-        const response = await getAllRequests();
-        console.log("Fetched Requests:", response.AdReq); 
-        setRequests(response.AdReq); //the AdReq array from the response
-      } catch (error) {
-        console.error("Error fetching requests:", error);
-        setRequests([]); //in case of an error
-      }
-    };
+   
 
-    fetchRequests();
+    fetchRequests(setRequests, getAllRequests);
   }, []);
 
   // this function handles approving a request
-  const handleApproveClick = async (requestId) => {
-    try {
-      await updateReq(requestId, { requestStatus: "approved" });
 
-      //refresh the list of requests after the update
-      const requestsFromAPI = await getAllRequests();
-      setRequests(requestsFromAPI.AdReq);
-    } catch (error) {
-      console.error("Error updating request:", error);
-    }
-  };
 
   //this function handles denying a request
   const handleDenyClick = async (requestId) => {
@@ -84,10 +115,10 @@ const determinerole = (email) => {
 };
 
   return (
-    <div className="requests-container">
+    <div className="manageadminrequests-container">
       <h1>Admin Requests Management</h1>
 
-      <div className="tabs">
+      <div className="manageadminrequests-tabs">
         <button
           className={activeTab === 'pending' ? 'active' : ''}
           onClick={() => setActiveTab('pending')}
@@ -110,10 +141,11 @@ const determinerole = (email) => {
 
       {/* List of filtered requests based on active tab */}
       {filteredRequests.length > 0 ? (
-        <div className="requests-list">
+        <div className="manageadminrequests-list">
           {filteredRequests.map(request => (
-            <div key={request.id} className={`request-card ${request.requestStatus}`}>
-              <h3>Requester email: {request.requesterEmail}</h3>
+            <div key={request.id} className={`manageadminrequests-card ${request.requestStatus}`}>
+              <h3>
+            <strong>  Requester email: </strong>{request.requesterEmail} </h3>
               <p><strong>Role:</strong> {determinerole(request.requesterEmail)}</p>
               <p><strong>Status:</strong> {request.requestStatus}</p>
               <p><strong>Request Text:</strong> {request.requestText || 'No request text provided'}</p> {/*if no requests then display that second part*/}
@@ -121,10 +153,10 @@ const determinerole = (email) => {
               {/* Show "Approve" and "Deny" buttons only for pending requests */}
               {request.requestStatus === 'pending' && (
                 <>
-                  <button className="approve-btn" onClick={() => handleApproveClick(request.id)}>
+                  <button className="manageadminrequests-approve-btn" onClick={() => handleApproveClick(request.id, setRequests)}>
                     Approve Request
                   </button>
-                  <button className="deny-btn" onClick={() => handleDenyClick(request.id)}>
+                  <button className="manageadminrequests-deny-btn" onClick={() => handleDenyClick(request.id)}>
                     Deny Request
                   </button>
                 </>

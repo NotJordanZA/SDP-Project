@@ -8,13 +8,13 @@
   box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
 }
 
-h2, h3 {
+.book-venue h2, h3 {
   color: #043673;
   font-weight: bold;
   margin-bottom: 20px;
 }
 
-label {
+.book-venue label {
   display: block;
   margin-bottom: 10px;
   font-weight: bold;
@@ -22,7 +22,7 @@ label {
 }
 
 
-input,
+.book-venue input,
 select,
 textarea {
   width: 100%;
@@ -75,7 +75,7 @@ textarea {
 }
 
 
-button {
+.book-venue button {
   background-color: #043673;
   color: white;
   padding: 10px 16px;
@@ -86,12 +86,12 @@ button {
   font-size: 16px;
 }
 
-button:hover {
+.book-venue button:hover {
   background-color: #033e69; 
 }
 
 
-button.close {
+.book-venue button.close {
   background: none;
   border: none;
   color: #043673;
@@ -99,7 +99,7 @@ button.close {
   cursor: pointer;
 }
 
-button.close:hover {
+.book-venue button.close:hover {
   color: #033e69;
 }
 
