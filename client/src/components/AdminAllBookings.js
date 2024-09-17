@@ -23,12 +23,61 @@ const updateBooking = async (id, bookingData) => {
 };
 
 const deleteBooking = async (id) => {
-  const response = await fetch(`/api/bookings/${id}`, {
-    method: "DELETE",
-  });
-  return await response.json();
-};
+  try {
+    // Fetch the booking details before deletion
+    const bookingResponse = await fetch(`/api/bookings/${id}`);
+    if (!bookingResponse.ok) {
+      throw new Error('Failed to fetch booking details');
+    }
+    const bookingDetails = await bookingResponse.json();
 
+    // Log booking details to debug missing fields
+    console.log('Booking details:', bookingDetails);
+
+    // Ensure all required fields are present
+    if (!bookingDetails.venueID || !bookingDetails.bookingDate || !bookingDetails.bookingStartTime || !bookingDetails.bookingEndTime || !bookingDetails.bookingDescription || !bookingDetails.venueBooker) {
+      throw new Error('Missing required booking details');
+    }
+
+    // Delete the booking
+    const response = await fetch(`/api/bookings/${id}`, {
+      method: "DELETE",
+    });
+    if (!response.ok) {
+      throw new Error('Failed to delete booking');
+    }
+
+    // Create the notification
+    const notification = {
+      dateCreated: new Date().toLocaleString(),
+      notificationMessage: `This is to inform you that your booking has been cancelled by the admin. These are the booking details: venueID: ${bookingDetails.venueID}, bookingDate: ${bookingDetails.bookingDate}, bookingStartTime: ${bookingDetails.bookingStartTime}, bookingEndTime: ${bookingDetails.bookingEndTime}, bookingDescription: ${bookingDetails.bookingDescription}. Please make another booking or send a request to the admin.`,
+      notificationType: "Booking Cancelled",
+      read: false,
+      recipientEmail: bookingDetails.venueBooker, // Assuming the booking details contain the venueBookerEmail
+    };
+
+    console.log('Notification to be sent:', notification); // Log the notification data
+
+    const notificationResponse = await fetch('/api/notifications', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(notification),
+    });
+
+    if (!notificationResponse.ok) {
+      const errorData = await notificationResponse.json();
+      console.error('Error creating notification:', errorData);
+      throw new Error('Failed to create notification');
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error('Failed to delete booking:', error);
+    throw error;
+  }
+};
 const AdminAllBookings = () => {
   const [bookings, setBookings] = useState([]);
   const [editingBooking, setEditingBooking] = useState(null);
