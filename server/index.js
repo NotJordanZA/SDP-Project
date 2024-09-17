@@ -5,7 +5,7 @@ const express = require("express");
 const cors = require('cors');
 const {onRequest} = require("firebase-functions/v2/https");
 const logger = require("firebase-functions/logger");
-const PORT = process.env.PORT || 3001; //Must be commented out for production build
+// const PORT = process.env.PORT || 3001; //Must be commented out for production build
 
 const app = express();
 app.use(express.json());
@@ -1103,8 +1103,8 @@ app.put("/api/notifications/:id", async (req, res) => {
 
 // Left out for deployment
 // Prints to console the port of the server
-app.listen(PORT, () => {
-console.log(`Server listening on ${PORT}`);
-});
+// app.listen(PORT, () => {
+// console.log(`Server listening on ${PORT}`);
+// });
 
 exports.api = onRequest(app);
