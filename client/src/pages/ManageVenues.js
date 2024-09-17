@@ -2,66 +2,38 @@ import React, { useState, useEffect, useRef } from 'react';
 import { auth } from "../firebase";
 import { useNavigate } from "react-router-dom";
 import { onAuthStateChanged } from "firebase/auth";
-// import { getCurrentUser } from '../utils/getCurrentUser';
 import '../styles/ManageVenues.css';
-
-// const baseURL = process.env.NODE_ENV === 'production' ? 'https://your-production-site.com' : 'http://localhost:3002';
 
 function Venues() {
   const [searchTerm, setSearchTerm] = useState(''); 
   const [firebaseVenues, setFirebaseVenues] = useState([]); 
   const [showForm, setShowForm] = useState(false); 
-  const [newVenue, setNewVenue] = useState({ buildingName: '', venueName: '', campus: '', venueCapacity: '', venueType: '', isClosed: false }); 
+  const [newVenue, setNewVenue] = useState({ buildingName: '', venueName: '', campus: '', venueCapacity: '', venueType: '', isClosed: false, timeSlots: [] }); 
   const [buildingSearchTerm, setBuildingSearchTerm] = useState(''); 
   const [editingVenue, setEditingVenue] = useState(null); 
   const [matchingBuildings, setMatchingBuildings] = useState([]); 
-  const [sortCriteria, setSortCriteria] = useState('venueName'); // State to hold the sort criteria
-  // const [userInfo, setUserInfo] = useState({});
-  // const [isLoading, setIsLoading] = useState(true);
+  const [sortCriteria, setSortCriteria] = useState('venueName'); 
   const [user, setUser] = useState(null);
   const suggestionsRef = useRef(null);
   const navigate = useNavigate();
 
-  // Ensure User is logged in
+  const defaultTimeSlots = ["08:00", "09:00", "10:15", "11:15", "12:30", "14:15", "15:15", "16:15"];
+
   useEffect(() => {
-    // Listen for a change in the auth state
     const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
-      // If user is authenticated
       if (firebaseUser) {
-        setUser(firebaseUser); //Set current user
+        setUser(firebaseUser);
         console.log(user);
       } else {
-        navigate("/login"); //Reroute to login if user not signed in
+        navigate("/");
       }
-      // setIsLoading(false); //Declare firebase as no longer loading
     });
     return () => {
       if (unsubscribe) {
         unsubscribe();
       }
-    }; //Return the listener
-    // eslint-disable-next-line
+    };
   }, [auth, navigate]);
-
-  // Get info about the current user from the database once firebase is loaded
-  // useEffect(() => {
-  //   // Fetch current user's info
-  //   const fetchUserInfo = async () => {
-  //     // If user is signed in
-  //     if (user) {
-  //       try {
-  //         // Instantiate userInfo object
-  //         getCurrentUser(user.email, setUserInfo);
-  //       } catch (error) {
-  //         console.error('Failed to fetch user info: ', error);
-  //       }
-  //     }
-  //   };
-  //   // Check if firebase is done loading
-  //   if (!isLoading){
-  //     fetchUserInfo(); //Get user info
-  //   }
-  // }, [user, isLoading]);
 
   useEffect(() => {
     const fetchVenues = async () => {
@@ -71,7 +43,7 @@ function Venues() {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
         const venuesFromAPI = await response.json();
-        console.log('Fetched venues:', venuesFromAPI); // Log fetched venues
+        console.log('Fetched venues:', venuesFromAPI);
         setFirebaseVenues(venuesFromAPI);
       } catch (error) {
         console.error('Error fetching venues:', error);
@@ -107,7 +79,6 @@ function Venues() {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
 
-      // Refresh venues
       const fetchResponse = await fetch(`/api/venues`);
       const venuesFromAPI = await fetchResponse.json();
       setFirebaseVenues(venuesFromAPI);
@@ -118,7 +89,7 @@ function Venues() {
 
   const handleFormSubmit = async (e) => {
     e.preventDefault();
-    console.log('Form submitted:', newVenue); // Log form submission
+    console.log('Form submitted:', newVenue);
     try {
       let response;
       if (editingVenue) {
@@ -131,17 +102,17 @@ function Venues() {
         response = await fetch(`/api/venues`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ ...newVenue, isClosed: false }) // Default isClosed to false
+          body: JSON.stringify({ ...newVenue, isClosed: false })
         });
       }
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
-      console.log('Response:', await response.json()); // Log response
+      console.log('Response:', await response.json());
 
       setShowForm(false);
       setEditingVenue(null);
-      setNewVenue({ buildingName: '', venueName: '', campus: '', venueCapacity: '', venueType: '', isClosed: false });
+      setNewVenue({ buildingName: '', venueName: '', campus: '', venueCapacity: '', venueType: '', isClosed: false, timeSlots: [] });
 
       const fetchResponse = await fetch(`/api/venues`);
       const venuesFromAPI = await fetchResponse.json();
@@ -154,7 +125,7 @@ function Venues() {
   const closeForm = () => {
     setShowForm(false);
     setEditingVenue(null);
-    setNewVenue({ buildingName: '', venueName: '', campus: '', venueCapacity: '', venueType: '', isClosed: false });
+    setNewVenue({ buildingName: '', venueName: '', campus: '', venueCapacity: '', venueType: '', isClosed: false, timeSlots: [] });
   };
 
   const handleBuildingNameChange = async (e) => {
@@ -196,7 +167,6 @@ function Venues() {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
 
-        // Refresh venues
         const fetchResponse = await fetch(`/api/venues`);
         const venuesFromAPI = await fetchResponse.json();
         setFirebaseVenues(venuesFromAPI);
@@ -204,6 +174,11 @@ function Venues() {
         console.error('Error toggling venue status:', error);
       }
     }
+  };
+
+  const handleTimeSlotChange = (e) => {
+    const selectedOptions = Array.from(e.target.selectedOptions, option => option.value);
+    setNewVenue({ ...newVenue, timeSlots: selectedOptions });
   };
 
   const sortedVenues = [...firebaseVenues].sort((a, b) => {
@@ -240,7 +215,7 @@ function Venues() {
         value={buildingSearchTerm}
         onChange={(e) => setBuildingSearchTerm(e.target.value)}
       />
-      <button onClick={() => setShowForm(true)}>Add Venue</button>
+      <button onClick={() => { setShowForm(true); setNewVenue({ ...newVenue, timeSlots: defaultTimeSlots }); }}>Add Venue</button>
 
       <div className="managevenues-sort-container">
         <label>Sort by: </label>
@@ -254,71 +229,84 @@ function Venues() {
       </div>
 
       {showForm && (
-        <div className="managevenues-modal">
-          <div className="modal-content">
-            <span className="close" onClick={closeForm}>&times;</span>
-            <h2>{editingVenue ? 'Edit Venue' : 'Add Venue'}</h2>
-            <form onSubmit={handleFormSubmit}>
-              <label>Building Name</label>
-              <textarea
-                value={newVenue.buildingName}
-                onChange={handleBuildingNameChange}
-                placeholder="Building Name"
-                required
-              />
-              {matchingBuildings.length > 0 && (
-                <ul className="managevenues-suggestions" ref={suggestionsRef}>
-                  {matchingBuildings.map((building, index) => (
-                    <li key={index} onClick={() => handleBuildingClick(building)}>
-                      {building}
-                    </li>
-                  ))}
-                </ul>
-              )}
-              <label>Venue Name</label>
-              <textarea
-                value={newVenue.venueName}
-                onChange={(e) => setNewVenue({ ...newVenue, venueName: e.target.value })}
-                placeholder="Venue Name"
-                required
-              />
-              <label>Campus</label>
-              <select
-                value={newVenue.campus}
-                onChange={(e) => setNewVenue({ ...newVenue, campus: e.target.value })}
-                required
-              >
-                <option value="">Select Campus</option>
-                <option value="East">East</option>
-                <option value="West">West</option>
-              </select>
-              <label>Capacity</label>
-              <input
-                type="number"
-                placeholder="Capacity"
-                value={newVenue.venueCapacity}
-                onChange={(e) => setNewVenue({ ...newVenue, venueCapacity: e.target.value })}
-                required
-              />
-              <label>Venue Type</label>
-              <select
-                value={newVenue.venueType}
-                onChange={(e) => setNewVenue({ ...newVenue, venueType: e.target.value })}
-                required
-              >
-                <option value="">Select Venue Type</option>
-                <option value="Lecture Venue">Lecture Venue</option>
-                <option value="Tutorial/Study Room">Tutorial/Study Room</option>
-                <option value="Amphitheatre">Amphitheatre</option>
-                <option value="Test Venue">Test Venue</option>
-                <option value="other">Other</option>
-              </select>
-              <button type="submit">Save</button>
-              <button type="button" onClick={closeForm}>Cancel</button>
-            </form>
-          </div>
-        </div>
-      )}
+  <div className="managevenues-modal">
+    <div className="modal-content">
+      <span className="close" onClick={closeForm}>&times;</span>
+      <h2>{editingVenue ? 'Edit Venue' : 'Add Venue'}</h2>
+      <form onSubmit={handleFormSubmit} className="scrollable-form">
+        <label>Building Name</label>
+        <textarea
+          value={newVenue.buildingName}
+          onChange={handleBuildingNameChange}
+          placeholder="Building Name"
+          required
+        />
+        {matchingBuildings.length > 0 && (
+          <ul className="managevenues-suggestions" ref={suggestionsRef}>
+            {matchingBuildings.map((building, index) => (
+              <li key={index} onClick={() => handleBuildingClick(building)}>
+                {building}
+              </li>
+            ))}
+          </ul>
+        )}
+        <label>Venue Name</label>
+        <textarea
+          value={newVenue.venueName}
+          onChange={(e) => setNewVenue({ ...newVenue, venueName: e.target.value })}
+          placeholder="Venue Name"
+          required
+        />
+        <label>Campus</label>
+        <select
+          value={newVenue.campus}
+          onChange={(e) => setNewVenue({ ...newVenue, campus: e.target.value })}
+          required
+        >
+          <option value="">Select Campus</option>
+          <option value="East">East</option>
+          <option value="West">West</option>
+        </select>
+        <label>Capacity</label>
+        <input
+          type="number"
+          placeholder="Capacity"
+          value={newVenue.venueCapacity}
+          onChange={(e) => setNewVenue({ ...newVenue, venueCapacity: e.target.value })}
+          required
+        />
+        <label>Venue Type</label>
+        <select
+          value={newVenue.venueType}
+          onChange={(e) => setNewVenue({ ...newVenue, venueType: e.target.value })}
+          required
+        >
+          <option value="">Select Venue Type</option>
+          <option value="Lecture Venue">Lecture Venue</option>
+          <option value="Tutorial/Study Room">Tutorial/Study Room</option>
+          <option value="Amphitheatre">Amphitheatre</option>
+          <option value="Test Venue">Test Venue</option>
+          <option value="other">Other</option>
+        </select>
+        <label>Time Slots</label>
+        <select
+          multiple
+          value={newVenue.timeSlots}
+          onChange={handleTimeSlotChange}
+          className="time-slots-dropdown"
+        >
+          {defaultTimeSlots.map((slot, index) => (
+            <option key={index} value={slot}>
+              {slot}
+            </option>
+          ))}
+        </select>
+        <button type="submit">Save</button>
+        <button type="button" onClick={closeForm}>Cancel</button>
+      </form>
+    </div>
+  </div>
+)}
 
       {filteredVenues.length > 0 ? (
         filteredVenues.map(venue => (
