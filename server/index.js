@@ -500,10 +500,10 @@ app.get('/api/bookings/venue/:venueid', async (req, res) => {
 // // Venues section
 // // Create a new venue
 app.post('/api/venues', async (req, res) => {
-    const { buildingName, campus, isClosed, venueCapacity, venueName, venueType } = req.body;
+    const { buildingName, campus, isClosed, venueCapacity, venueName, venueType,timeSlots } = req.body;
 
     // Validate the required fields
-    if (!buildingName || !campus || isClosed === undefined || !venueCapacity || !venueName || !venueType) {
+    if (!buildingName || !campus || isClosed === undefined || !venueCapacity || !venueName || !venueType || !timeSlots) {
         return res.status(400).json({ error: "All fields are required." });
     }
 
@@ -520,6 +520,7 @@ app.post('/api/venues', async (req, res) => {
             venueCapacity,
             venueName,
             venueType,
+            timeSlots
         };
 
         // Save the venue to Firestore
@@ -573,11 +574,16 @@ app.get('/api/venues/:id', async (req, res) => {
 // Update a venue by ID
 app.put('/api/venues/:id', async (req, res) => {
     const id = req.params.id;
-    const { buildingName, campus, isClosed, venueCapacity, venueName, venueType } = req.body;
+    const { buildingName, campus, isClosed, venueCapacity, venueName, venueType,timeSlots } = req.body;
 
     // Validate the required fields
-    if (!buildingName && !campus && isClosed === undefined && !venueCapacity && !venueName && !venueType) {
+    if (!buildingName && !campus && isClosed === undefined && !venueCapacity && !venueName && !venueType && !timeSlots) {
         return res.status(400).json({ error: "At least one field is required to update." });
+    }
+
+    // Validate timeSlots if provided
+    if (timeSlots && (!Array.isArray(timeSlots) || !timeSlots.every(slot => typeof slot === 'string'))) {
+        return res.status(400).json({ error: "timeSlots must be an array of strings." });
     }
 
     try {
@@ -595,6 +601,7 @@ app.put('/api/venues/:id', async (req, res) => {
         if (venueCapacity) updates.venueCapacity = venueCapacity;
         if (venueName) updates.venueName = venueName;
         if (venueType) updates.venueType = venueType;
+        if (timeSlots) updates.timeSlots = timeSlots;
 
         await updateDoc(venueDocRef, updates);
 
@@ -761,7 +768,7 @@ app.get("/api/adminRequests", async (req, res) => {
 
 
 
-app.put("/reports/:id", async (req, res) => {
+app.put("/api/reports/:id", async (req, res) => {
     const rID = req.params.id;
     const { reportText, reportType, resolutionLog, venueID, reportStatus }= req.body;
 
@@ -800,7 +807,7 @@ app.put("/reports/:id", async (req, res) => {
 
 
 //Getting each report  type for Admin to filter reports by type
-app.get("/reports/types", async (req, res) => {
+app.get("/api/reports/types", async (req, res) => {
     try {
       
         const reportsCollectionRef = collection(db, 'Reports');
