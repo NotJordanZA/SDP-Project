@@ -32,7 +32,7 @@ function Venues() {
       if (unsubscribe) {
         unsubscribe();
       }
-    };
+    };// eslint-disable-next-line
   }, [auth, navigate]);
 
   useEffect(() => {

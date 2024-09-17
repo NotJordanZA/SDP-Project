@@ -175,7 +175,7 @@ try {
     throw new Error('Failed to create booking');
   }
 
-  const createdBooking = await response.json();
+  // const createdBooking = await response.json();
 
   // Create notification data
   const notificationMessage = `A booking has been made in your name by the admin. Booking details: venueID: ${bookingData.venueID}, bookingDate: ${bookingData.bookingDate}, bookingStartTime: ${bookingData.bookingStartTime}, bookingEndTime: ${bookingData.bookingEndTime}, bookingDescription: ${bookingData.bookingDescription}`;

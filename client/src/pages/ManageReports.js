@@ -94,7 +94,7 @@ function Reports() {
       if (unsubscribe) {
         unsubscribe();
       }
-    };
+    };// eslint-disable-next-line
   }, [auth, navigate]);
 
   // Fetch all reports on component mount
