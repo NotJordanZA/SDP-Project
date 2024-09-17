@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { auth } from "../firebase";
 import { useNavigate } from "react-router-dom";
 import { onAuthStateChanged } from "firebase/auth";
+import {fetchAllReports} from '../utils/AdminfetchAllReports';
+// import { getCurrentUser } from '../utils/getCurrentUser';
 import '../styles/ManageReports.css'; 
 
 // Fetch all the reports
@@ -76,6 +78,7 @@ function Reports() {
   const [newResolutionLog, setNewResolutionLog] = useState(''); 
   const [selectedType, setSelectedType] = useState(''); // For filtering by report type
   const [searchText, setSearchText] = useState(''); // For searching by email or venue
+  // eslint-disable-next-line
   const [errorMessage, setErrorMessage] = useState(''); // Error message
   const [user, setUser] = useState(null);
   const navigate = useNavigate();
@@ -99,19 +102,9 @@ function Reports() {
 
   // Fetch all reports on component mount
   useEffect(() => {
-    const fetchAllReports = async () => {
-      try {
-        const response = await getAllReports();
-        console.log('Fetched Reports:', response);  // Log all fetched reports
-        setReports(response); // Directly set the reports from API
-      } catch (error) {
-        console.error("Error fetching all reports:", error);
-        setReports([]); 
-        setErrorMessage("Failed to fetch reports");
-      }
-    };
+    
   
-    fetchAllReports();
+    fetchAllReports(setReports, getAllReports);
   }, []);
 
   const handleResolveClick = async (reportId) => {
