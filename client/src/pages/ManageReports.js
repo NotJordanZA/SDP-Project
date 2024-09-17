@@ -8,24 +8,67 @@ import '../styles/ManageReports.css';
 
 // Fetch all the reports
 export const getAllReports = async () => {
-  const response = await fetch(`/api/Reports`);
+  const response = await fetch(`/api/reports`);
   return await response.json();
 };
 
-// Update a report
 export const updateRep = async (id, RepData) => {
-  const response = await fetch(`/api/Reports/${id}`, {
-    method: "PUT",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(RepData),
-  });
+  try {
+    const response = await fetch(`/api/reports/${id}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(RepData),
+    });
 
-  if (!response.ok) {
-    throw new Error('Failed to update report');
+    if (!response.ok) {
+      throw new Error("Failed to update report");
+    }
+
+    const updatedReport = await response.json();
+
+    // Ensure reportText and recipientEmail are defined
+    const reportText = RepData.reportText || updatedReport.reportText;
+    const recipientEmail = RepData.recipientEmail || updatedReport.recipientEmail;
+
+    if (!reportText || !recipientEmail) {
+      throw new Error("Missing reportText or recipientEmail");
+    }
+
+    // Create a notification after updating the report
+    const notificationMessage = `Your report status has been changed to ${RepData.reportStatus === 'Resolved' ? 'Resolved' : 'In Progress'}. Report Details: ${reportText}`;
+    const notificationData = {
+      dateCreated: new Date().toISOString(), // Ensure date is in ISO format
+      notificationMessage,
+      notificationType: "Report Update",
+      read: false,
+      recipientEmail,
+    };
+
+    console.log("Notification Data:", notificationData); // Log the notification data for debugging
+
+    const notificationResponse = await fetch(`/api/notifications`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(notificationData),
+    });
+
+    if (!notificationResponse.ok) {
+      const errorText = await notificationResponse.text();
+      console.error("Notification creation error:", errorText); // Log the error response for debugging
+      throw new Error("Failed to create notification");
+    }
+
+    console.log("Notification created successfully");
+
+    return updatedReport;
+  } catch (error) {
+    console.error("Error in updateRep:", error);
+    throw error;
   }
-  return response.json();
 };
 
 function Reports() {
@@ -37,52 +80,26 @@ function Reports() {
   const [searchText, setSearchText] = useState(''); // For searching by email or venue
   // eslint-disable-next-line
   const [errorMessage, setErrorMessage] = useState(''); // Error message
-  // const [isLoading, setIsLoading] = useState(true);
   const [user, setUser] = useState(null);
-  // const [userInfo, setUserInfo] = useState({});
   const navigate = useNavigate();
 
   // Ensure User is logged in
   useEffect(() => {
-    // Listen for a change in the auth state
     const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
-      // If user is authenticated
       if (firebaseUser) {
         setUser(firebaseUser); //Set current user
         console.log(user);
       } else {
         navigate("/login"); //Reroute to login if user not signed in
       }
-      // setIsLoading(false); //Declare firebase as no longer loading
     });
     return () => {
       if (unsubscribe) {
         unsubscribe();
       }
-    }; //Return the listener
-    // eslint-disable-next-line
+    };// eslint-disable-next-line
   }, [auth, navigate]);
 
-  // Get info about the current user from the database once firebase is loaded
-  // useEffect(() => {
-  //   // Fetch current user's info
-  //   const fetchUserInfo = async () => {
-  //     // If user is signed in
-  //     if (user) {
-  //       try {
-  //         // Instantiate userInfo object
-  //         getCurrentUser(user.email, setUserInfo);
-  //       } catch (error) {
-  //         console.error('Failed to fetch user info: ', error);
-  //       }
-  //     }
-  //   };
-  //   // Check if firebase is done loading
-  //   if (!isLoading){
-  //     fetchUserInfo(); //Get user info
-  //   }
-  // }, [user, isLoading]);
-  
   // Fetch all reports on component mount
   useEffect(() => {
     
@@ -95,22 +112,48 @@ function Reports() {
       report.id === reportId ? { ...report, reportStatus: "Resolved" } : report
     );
     setReports(updatedReports);
+  
+    const report = reports.find(report => report.id === reportId);
+  
+    if (!report) {
+      console.error("Report not found for ID:", reportId);
+      return;
+    }
+
+    console.log("Report found:", report);
 
     try {
-      await updateRep(reportId, { reportStatus: "Resolved" });
+      await updateRep(reportId, {
+        reportStatus: "Resolved",
+        reportText: report.reportText, // Ensure reportText is included
+        recipientEmail: report.createdBy // Ensure recipientEmail is included
+      });
     } catch (error) {
       console.error("Error updating report status:", error);
     }
   };
-
+  
   const handleInProgressClick = async (reportId) => {
     const updatedReports = reports.map(report =>
       report.id === reportId ? { ...report, reportStatus: "In Progress" } : report
     );
     setReports(updatedReports);
+  
+    const report = reports.find(report => report.id === reportId);
+  
+    if (!report) {
+      console.error("Report not found for ID:", reportId);
+      return;
+    }
+
+    console.log("Report found:", report);
 
     try {
-      await updateRep(reportId, { reportStatus: "In Progress" });
+      await updateRep(reportId, {
+        reportStatus: "In Progress",
+        reportText: report.reportText, // Ensure reportText is included
+        recipientEmail: report.createdBy // Ensure recipientEmail is included
+      });
     } catch (error) {
       console.error("Error updating report status:", error);
     }

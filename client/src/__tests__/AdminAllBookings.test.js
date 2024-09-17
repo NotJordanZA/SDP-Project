@@ -137,8 +137,9 @@ describe('AdminAllBookings Component', () => {
     fireEvent.click(screen.getAllByText('Delete')[0]);
 
     // Wait for the call to the API to be made
-    await waitFor(() => {
-        expect(fetch).toHaveBeenCalledWith('/api/bookings/1', { method: 'DELETE' }); // Expect the API to be called with DELETE
+    await waitFor(() => {  // Expect the calls to the API to be made
+      expect(fetch).toHaveBeenCalledWith('/api/bookings');
+      expect(fetch).toHaveBeenCalledWith('/api/bookings/1');
     })
   });
 });

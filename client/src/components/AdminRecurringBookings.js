@@ -95,44 +95,69 @@ const filteredVenues = venues.filter(venue => {
     }
   };
 
-  const handleCreateBooking = () => {
-    //Validate inputs
+  const handleCreateBooking = async () => {
+    // Validate inputs
     if (!venueBooker || !bookingDescription) {
       setErrorMessage("Please enter your email and booking description.");
       return;
     }
-
-    //shedule slot end time=starttime +45 mins
+  
+    // Schedule slot end time = start time + 45 mins
     const [hours, minutes] = selectedSlot.time.split(':');
     const startTime = new Date();
     startTime.setHours(hours);
     startTime.setMinutes(minutes);
-    const endTime = new Date(startTime.getTime() + 45 * 60000);  //heres the actual calculation
-
+    const endTime = new Date(startTime.getTime() + 45 * 60000); // 45-minute slot
+  
     const bookingData = {
       venueID: selectedSlot.venueName,
       venueBooker,
       bookingDay: selectedSlot.day,
       bookingStartTime: selectedSlot.time,
-      bookingEndTime: endTime.toTimeString().substring(0, 5),  //Format date as as "HH:MM"
+      bookingEndTime: endTime.toTimeString().substring(0, 5), // Format as "HH:MM"
       bookingDescription: bookingDescription,
     };
-
-    addScheduleSlot(bookingData).then((newSchedule) => {
+  
+    try {
+      const newSchedule = await addScheduleSlot(bookingData);
       if (newSchedule) {
-        setSchedules([...schedules, newSchedule]);  //Update the schedule list
-        setSelectedSlot(null);  // clear the selected slot after adding to schedules
-        setVenueBooker("");  //clear the form fields
+        setSchedules([...schedules, newSchedule]); // Update the schedule list
+        setSelectedSlot(null); // Clear selected slot
+        setVenueBooker(""); // Clear form fields
         setBookingDescription("");
- 
+  
+        // Create notification data
+        const notificationMessage = `A recurring booking has been made in your name by the admin. Booking details: Venue: ${bookingData.venueID}, Day: Every ${bookingData.bookingDay}, Time: ${bookingData.bookingStartTime}-${bookingData.bookingEndTime}, Description: ${bookingData.bookingDescription}.`;
         
-        //re-populate the table with the updated entry
-        fetchSchedules().then(data => setSchedules(data.entry || []));
+        const notificationData = {
+          dateCreated: new Date().toLocaleString('en-US', { timeZone: 'UTC', hour12: true }),
+          notificationMessage,
+          notificationType: 'Recurring Booking Confirmation',
+          read: false,
+          recipientEmail: bookingData.venueBooker,
+        };
+  
+        // Send notification to the server
+        const notificationResponse = await fetch('/api/notifications', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(notificationData),
+        });
+  
+        if (!notificationResponse.ok) {
+          throw new Error('Failed to create notification');
+        }
+  
+        console.log('Notification created successfully');
       }
-    }).catch(() => {
+    } catch (error) {
+      console.error("An error occurred while adding the booking or notification:", error);
       setErrorMessage("An error occurred while adding the booking.");
-    });
+    }
   };
+  
 
   
   const toggleVenue = (id) => {

@@ -148,43 +148,68 @@ const AdmincreateBooking = () => {
     const [hours, minutes] = selectedTimeSlot.time.split(':');
     const startTime = new Date(selectedDate);
     startTime.setHours(hours, minutes);
-    const endTime = new Date(startTime.getTime() + 45 * 60000);
+const endTime = new Date(startTime.getTime() + 45 * 60000);
 
-    const bookingData = {
-      venueID: selectedTimeSlot.venueName,
-      bookingStartTime: selectedTimeSlot.time,
-      bookingEndTime: endTime.toTimeString().substring(0, 5),
-      bookingDate: selectedDate.toLocaleDateString('en-CA'),
-      venueBooker: email,
-      bookingDescription: bookingDescription,
-    };
+const bookingData = {
+  venueID: selectedTimeSlot.venueName,
+  bookingStartTime: selectedTimeSlot.time,
+  bookingEndTime: endTime.toTimeString().substring(0, 5),
+  bookingDate: selectedDate.toLocaleDateString('en-CA'),
+  venueBooker: email,
+  bookingDescription: bookingDescription,
+};
 
-    try {
-      console.log('Sending booking data:', bookingData);
-      const response = await fetch(`/api/bookings/create`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(bookingData),
-      });
-      const result = await response.json();
-    
-      console.log('API response:', result);
-      
-      if (result.message==="Booking created successfully") {
-        
-        setEmail('');
-        setBookingDescription('');
-     
-      } else {
-        setErrorMessage('Error creating booking');
-      }
-    } catch (error) {
-      console.error('Error creating booking:', error);
-      setErrorMessage('An error occurred. Please try again.');
-    }
+try {
+  console.log('Sending booking data:', bookingData);
+
+  // Send booking data to the server
+  const response = await fetch('/api/bookings/create', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(bookingData),
+  });
+
+  if (!response.ok) {
+    throw new Error('Failed to create booking');
+  }
+
+  // const createdBooking = await response.json();
+
+  // Create notification data
+  const notificationMessage = `A booking has been made in your name by the admin. Booking details: venueID: ${bookingData.venueID}, bookingDate: ${bookingData.bookingDate}, bookingStartTime: ${bookingData.bookingStartTime}, bookingEndTime: ${bookingData.bookingEndTime}, bookingDescription: ${bookingData.bookingDescription}`;
+  const notificationData = {
+    dateCreated: new Date().toLocaleString('en-US', { timeZone: 'UTC', hour12: true }),
+    notificationMessage,
+    notificationType: 'Booking Confirmation',
+    read: false,
+    recipientEmail: bookingData.venueBooker,
   };
+
+  console.log('Sending notification data:', notificationData);
+
+  // Send notification data to the server
+  const notificationResponse = await fetch('/api/notifications', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(notificationData),
+  });
+
+  if (!notificationResponse.ok) {
+    const errorText = await notificationResponse.text();
+    console.error('Notification creation error:', errorText);
+    throw new Error('Failed to create notification');
+  }
+
+  console.log('Notification created successfully');
+
+} catch (error) {
+  console.error('Error creating booking or notification:', error);
+}
+  }
 
 
   const filteredVenues = venues.filter(venue => {

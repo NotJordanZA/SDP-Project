@@ -173,3 +173,17 @@ input::placeholder,
     max-width: 90%;
   }
 }
+.managevenues-modal .modal-content {
+  max-height: 80vh; /* Adjust as needed */
+  overflow-y: auto;
+}
+
+.scrollable-form {
+  display: flex;
+  flex-direction: column;
+}
+
+.time-slots-dropdown {
+  width: 100%;
+  height: 100px; /* Adjust as needed */
+}

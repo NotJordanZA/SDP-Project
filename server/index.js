@@ -500,10 +500,10 @@ app.get('/api/bookings/venue/:venueid', async (req, res) => {
 // // Venues section
 // // Create a new venue
 app.post('/api/venues', async (req, res) => {
-    const { buildingName, campus, isClosed, venueCapacity, venueName, venueType } = req.body;
+    const { buildingName, campus, isClosed, venueCapacity, venueName, venueType,timeSlots } = req.body;
 
     // Validate the required fields
-    if (!buildingName || !campus || isClosed === undefined || !venueCapacity || !venueName || !venueType) {
+    if (!buildingName || !campus || isClosed === undefined || !venueCapacity || !venueName || !venueType || !timeSlots) {
         return res.status(400).json({ error: "All fields are required." });
     }
 
@@ -520,6 +520,7 @@ app.post('/api/venues', async (req, res) => {
             venueCapacity,
             venueName,
             venueType,
+            timeSlots
         };
 
         // Save the venue to Firestore
@@ -573,11 +574,16 @@ app.get('/api/venues/:id', async (req, res) => {
 // Update a venue by ID
 app.put('/api/venues/:id', async (req, res) => {
     const id = req.params.id;
-    const { buildingName, campus, isClosed, venueCapacity, venueName, venueType } = req.body;
+    const { buildingName, campus, isClosed, venueCapacity, venueName, venueType,timeSlots } = req.body;
 
     // Validate the required fields
-    if (!buildingName && !campus && isClosed === undefined && !venueCapacity && !venueName && !venueType) {
+    if (!buildingName && !campus && isClosed === undefined && !venueCapacity && !venueName && !venueType && !timeSlots) {
         return res.status(400).json({ error: "At least one field is required to update." });
+    }
+
+    // Validate timeSlots if provided
+    if (timeSlots && (!Array.isArray(timeSlots) || !timeSlots.every(slot => typeof slot === 'string'))) {
+        return res.status(400).json({ error: "timeSlots must be an array of strings." });
     }
 
     try {
@@ -595,6 +601,7 @@ app.put('/api/venues/:id', async (req, res) => {
         if (venueCapacity) updates.venueCapacity = venueCapacity;
         if (venueName) updates.venueName = venueName;
         if (venueType) updates.venueType = venueType;
+        if (timeSlots) updates.timeSlots = timeSlots;
 
         await updateDoc(venueDocRef, updates);
 
@@ -761,7 +768,7 @@ app.get("/api/adminRequests", async (req, res) => {
 
 
 
-app.put("/reports/:id", async (req, res) => {
+app.put("/api/reports/:id", async (req, res) => {
     const rID = req.params.id;
     const { reportText, reportType, resolutionLog, venueID, reportStatus }= req.body;
 
@@ -800,7 +807,7 @@ app.put("/reports/:id", async (req, res) => {
 
 
 //Getting each report  type for Admin to filter reports by type
-app.get("/reports/types", async (req, res) => {
+app.get("/api/reports/types", async (req, res) => {
     try {
       
         const reportsCollectionRef = collection(db, 'Reports');
@@ -976,7 +983,7 @@ app.put("/api/schedules/:id", async (req, res) => {
 });
 
 // POST - create Notification
-app.post("/notifications", async (req, res) => {
+app.post("/api/notifications", async (req, res) => {
     const { dateCreated, notificationMessage, notificationType, read, recipientEmail } = req.body;
 
     // make sure all the fields are entered 
@@ -1007,7 +1014,7 @@ app.post("/notifications", async (req, res) => {
 });
 
 // GET - retrieve all notifications for a specific recipient
-app.get("/notifications/:recipientEmail", async (req, res) => {
+app.get("/api/notifications/:recipientEmail", async (req, res) => {
     const recipientEmail = req.params.recipientEmail;
 
     try {
@@ -1025,6 +1032,44 @@ app.get("/notifications/:recipientEmail", async (req, res) => {
         res.status(200).json(notificationsList);
     } catch (error) {
         console.error("Error getting notifications:", error);
+        res.status(500).json({ error: "Internal Server Error" });
+    }
+});
+// PUT - update Notification
+app.put("/api/notifications/:id", async (req, res) => {
+    const notificationId = req.params.id;
+    const { dateCreated, notificationMessage, notificationType, read, recipientEmail } = req.body;
+
+    // make sure all the fields are entered 
+    if (!dateCreated || !notificationMessage || !notificationType || read === undefined || !recipientEmail) {
+        return res.status(400).json({ error: "All fields are required." });
+    }
+
+    try {
+        // Reference to the notification document
+        const notificationRef = doc(db, 'Notifications', notificationId);
+        
+        // Check if the notification exists
+        const notificationDoc = await getDoc(notificationRef);
+        if (!notificationDoc.exists()) {
+            return res.status(404).json({ error: "Notification not found." });
+        }
+
+        // Update the notification data
+        const updatedNotificationData = {
+            dateCreated,
+            notificationMessage,
+            notificationType,
+            read,
+            recipientEmail
+        };
+
+        // Save the updated notification data
+        await setDoc(notificationRef, updatedNotificationData, { merge: true });
+
+        res.status(200).json({ message: "Notification updated successfully" });
+    } catch (error) {
+        console.error("Error updating notification:", error);
         res.status(500).json({ error: "Internal Server Error" });
     }
 });
