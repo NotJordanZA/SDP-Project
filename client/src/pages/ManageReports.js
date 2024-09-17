@@ -35,6 +35,7 @@ function Reports() {
   const [newResolutionLog, setNewResolutionLog] = useState(''); 
   const [selectedType, setSelectedType] = useState(''); // For filtering by report type
   const [searchText, setSearchText] = useState(''); // For searching by email or venue
+  // eslint-disable-next-line
   const [errorMessage, setErrorMessage] = useState(''); // Error message
   // const [isLoading, setIsLoading] = useState(true);
   const [user, setUser] = useState(null);
