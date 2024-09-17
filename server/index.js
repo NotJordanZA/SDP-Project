@@ -185,6 +185,33 @@ app.post("/api/bookings/create", async (req, res) => {
     }
 
     try {
+        const bookingsRef = collection(db, 'Bookings'); // Get already made bookings
+        const conflictingBookingsQuery = query( // Make query which looks for bookings that are on the same day
+            bookingsRef,                        // and in the same venue, starting before the end time of the new
+            where('bookingDate', '==', bookingDate),// booking and ending after the start time of the new booking
+            where('venueID', '==', venueID),    
+            where('bookingStartTime', '<', bookingEndTime),
+            where('bookingEndTime', '>', bookingStartTime)
+        );
+
+        const conflictingBookingsSnapshot = await getDocs(conflictingBookingsQuery); // Get results from query
+
+        if (!conflictingBookingsSnapshot.empty) { // If the query returned bookings
+            conflictingBookingsSnapshot.forEach((doc) => { // Check each returned booking
+                const existingBooking = doc.data();
+                const existingStartTime = existingBooking.bookingStartTime;
+                const existingEndTime = existingBooking.bookingEndTime;
+
+                if ( // Check that there is no overlap between the two bookings
+                    (bookingStartTime >= existingStartTime && bookingStartTime < existingEndTime) ||
+                    (bookingEndTime > existingStartTime && bookingEndTime <= existingEndTime) ||
+                    (bookingStartTime <= existingStartTime && bookingEndTime >= existingEndTime)
+                ) {
+                    return res.status(409).json({ error: "There is already a booking within the requested timeframe." });
+                }
+            });
+        }
+
         // adding a document to the Bookings collection
         const newBookingRef = doc(db, 'Bookings', `${venueID}-${bookingDate}-${bookingStartTime}`);//the document name/id is the venueID with the date and start time of the bookings
         const bookingData = {
@@ -194,7 +221,7 @@ app.post("/api/bookings/create", async (req, res) => {
             bookingStartTime,
             bookingEndTime,
             bookingDescription,
-           
+        
         };
 
         // Save the booking data 
