@@ -78,6 +78,7 @@ const deleteBooking = async (id) => {
     throw error;
   }
 };
+
 const AdminAllBookings = () => {
   const [bookings, setBookings] = useState([]);
   const [editingBooking, setEditingBooking] = useState(null);
@@ -95,9 +96,64 @@ const AdminAllBookings = () => {
 
   const handleSave = async (updatedBooking) => {
     try {
+      // Fetch the previous booking details
+      const previousBookingResponse = await fetch(`/api/bookings/${updatedBooking.id}`);
+      if (!previousBookingResponse.ok) {
+        throw new Error('Failed to fetch previous booking details');
+      }
+      const previousBookingDetails = await previousBookingResponse.json();
+  
       await updateBooking(updatedBooking.id, updatedBooking);
       setBookings(bookings.map(b => (b.id === updatedBooking.id ? updatedBooking : b)));
       setEditingBooking(null);
+  
+      // Identify the fields that have changed
+      const changes = [];
+    if (previousBookingDetails.bookingStartTime !== updatedBooking.bookingStartTime) {
+      changes.push(`bookingStartTime: ${previousBookingDetails.bookingStartTime} -> ${updatedBooking.bookingStartTime}`);
+    }
+    if (previousBookingDetails.bookingEndTime !== updatedBooking.bookingEndTime) {
+      changes.push(`bookingEndTime: ${previousBookingDetails.bookingEndTime} -> ${updatedBooking.bookingEndTime}`);
+    }
+    if (previousBookingDetails.bookingDescription !== updatedBooking.bookingDescription) {
+      changes.push(`bookingDescription: ${previousBookingDetails.bookingDescription} -> ${updatedBooking.bookingDescription}`);
+    }
+    if (previousBookingDetails.bookingDate !== updatedBooking.bookingDate) {
+      changes.push(`bookingDate: ${previousBookingDetails.bookingDate} -> ${updatedBooking.bookingDate}`);
+    }
+    if (previousBookingDetails.venueID !== updatedBooking.venueID) {
+      changes.push(`venueID: ${previousBookingDetails.venueID} -> ${updatedBooking.venueID}`);
+    }
+    
+      // Create the notification
+      const notification = {
+        dateCreated: new Date().toLocaleString(),
+        notificationMessage: `This is to inform you that your booking details have been updated by the admin.
+      These are the updated booking details: ${changes.join(', ')}.
+      New details: venueID: ${updatedBooking.venueID}, bookingDate: ${updatedBooking.bookingDate}, bookingStartTime: ${updatedBooking.bookingStartTime}, bookingEndTime: ${updatedBooking.bookingEndTime}, bookingDescription: ${updatedBooking.bookingDescription}.`,
+        notificationType: "Booking Details Updated",
+        read: false,
+        recipientEmail: updatedBooking.venueBooker, // Assuming the booking details contain the venueBookerEmail
+      };
+  
+      console.log('Notification to be sent:', notification); // Log the notification data
+  
+      const notificationResponse = await fetch('/api/notifications', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(notification),
+      });
+  
+      if (!notificationResponse.ok) {
+        const errorText = await notificationResponse.text();
+        console.error('Error creating notification:', errorText);
+        throw new Error('Failed to create notification');
+      }
+  
+      console.log('Notification sent successfully');
+  
     } catch (error) {
       console.error("Failed to update booking:", error);
     }
