@@ -5,7 +5,7 @@ const express = require("express");
 const cors = require('cors');
 const {onRequest} = require("firebase-functions/v2/https");
 const logger = require("firebase-functions/logger");
-// const PORT = process.env.PORT || 3001; //Must be commented out for production build
+const PORT = process.env.PORT || 3001; //Must be commented out for production build
 
 const app = express();
 app.use(express.json());
@@ -182,6 +182,13 @@ app.post("/api/bookings/create", async (req, res) => {
     // make sure all the fields are entered 
     if (!venueBooker || !venueID || !bookingDate || !bookingStartTime || !bookingEndTime || !bookingDescription) {
         return res.status(400).json({ error: "All fields are required." });
+    }
+
+    const startTime = new Date(`1970-01-01T${bookingStartTime}:00`);
+    const endTime = new Date(`1970-01-01T${bookingEndTime}:00`);
+
+    if(startTime > endTime){
+        return res.status(400).json({error: "Start time cannot be later than end time"});
     }
 
     try {
@@ -1103,8 +1110,8 @@ app.put("/api/notifications/:id", async (req, res) => {
 
 // Left out for deployment
 // Prints to console the port of the server
-// app.listen(PORT, () => {
-// console.log(`Server listening on ${PORT}`);
-// });
+app.listen(PORT, () => {
+console.log(`Server listening on ${PORT}`);
+});
 
 exports.api = onRequest(app);

@@ -5,8 +5,7 @@ import { useState } from "react";
 import ReactSlider from 'react-slider';
 import Select from 'react-select';
 
-export default function Search({venueList, setVenueList, bookingsList, ...props }) { //A function for searching and filtering venues
-
+export default function Search({venueList, setVenueList, bookingsList, isManaging, setIsManaging, isAdmin, ...props }) { //A function for searching and filtering venues
     const [searchInput, setSearchInput] = useState("");
     const [isFilterOpen, setIsFilterOpen] = useState(false);
     const [selectedCampusOption, setSelectedCampusOption] = useState("");
@@ -121,6 +120,9 @@ export default function Search({venueList, setVenueList, bookingsList, ...props 
                     <input className="search-input" placeholder='Search...' value={searchInput} onChange={handleInputChange}/>
                     <button className="search-row-button" onClick = {searchVenue}><FontAwesomeIcon icon={faSearch}/></button>
                     <button className="search-row-button" onClick = {toggleFilterDropwdown}><FontAwesomeIcon icon={faSliders}/></button>
+                    {isAdmin && (
+                        <button className={`search-manage-button ${isManaging ? "clicked" : ""}`} onClick={() => setIsManaging(!isManaging)}>MANAGE</button>
+                    )}
                 </div>
                 <div className={`filter-dropdown ${isFilterOpen ? "open" : "closed"}`}>{/* Conditional rendering for filter optoins */}
                     <div className="filter-row">

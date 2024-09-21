@@ -21,6 +21,7 @@ function Venues(){
     const [userInfo, setUserInfo] = useState({});
     const [isLoading, setIsLoading] = useState(true);
     const [user, setUser] = useState(null);
+    const [isManaging, setIsManaging] = useState(false);
     // const user = auth.currentUser;
     const studentVenueTypes = ["Tutorial Room", "Study Room"];
     const lecturerVenueTypes = ["Tutorial Room", "Study Room", "Lecture Venue", "Lab", "Test Venue"];
@@ -116,6 +117,8 @@ function Venues(){
         return (
           <VenueRow
             key={venue.venueName}
+            id={venue.id}
+            buildingName={venue.buildingName}
             venueName={venue.venueName}
             campus={venue.campus}
             venueType={venue.venueType}
@@ -125,6 +128,8 @@ function Venues(){
             bookings={matchingBookings}
             relevantDate={formattedDate}
             setBookingsList={setBookingsList}
+            isAdmin={userInfo.isAdmin}
+            isManaging={isManaging}
           />
         );
       }
@@ -141,6 +146,8 @@ function Venues(){
             bookings={matchingBookings}
             relevantDate={formattedDate}
             setBookingsList={setBookingsList}
+            isAdmin={false}
+            isManaging={false}
           />
         )
       }
@@ -157,6 +164,8 @@ function Venues(){
             bookings={matchingBookings}
             relevantDate={formattedDate}
             setBookingsList={setBookingsList}
+            isAdmin={false}
+            isManaging={false}
           />
         )
       }
@@ -168,7 +177,7 @@ function Venues(){
     return (
         <main>
             <DateHeader displayDate={displayDate} onDateChange={handleDateChange} data-testid="date-header"/>
-            <Search venueList = {allVenues} setVenueList = {setVenueList} bookingsList = {bookingsList} data-testid="search"/>
+            <Search venueList = {allVenues} setVenueList = {setVenueList} bookingsList = {bookingsList} isManaging = {isManaging} setIsManaging = {setIsManaging} isAdmin = {userInfo.isAdmin} data-testid="search"/>
             {
               venueComponents.length > 0 ? 
                 (
