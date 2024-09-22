@@ -245,7 +245,7 @@
 }
 
 .book-button {
-  padding-top: 3px;
+  padding-top: 2px;
   background-color: #043673;
   color: white;
   font-size: 1.4rem;
@@ -254,6 +254,10 @@
   border-radius: 4px;
   align-items: center;
   cursor: pointer;
+}
+
+.book-button:hover {
+  background-color: #917248;
 }
   
 .book-button.shown {
@@ -265,6 +269,26 @@
   max-height: 0px;
   opacity: 0;
   pointer-events: none;
+}
+
+.add-venue-button {
+  margin-top: 10px;
+  padding: 1px 8px 0 8px;
+  background-color: #043673;
+  color: white;
+  font-size: 1.4rem;
+  border: none;
+  width: fit-content;
+  border-radius: 6px;
+  align-items: center;
+  cursor: pointer;
+  height: 40px;
+  font-weight: bold;
+  align-self:flex-end;
+}
+
+.add-venue-button:hover {
+  background-color: #917248;
 }
 
 .description-input {

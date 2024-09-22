@@ -28,6 +28,10 @@ function Venues(){
     const weekday = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
     const navigate = useNavigate();
     
+    const callGetAllVenues = () => {
+      getAllVenues(setVenueList, setAllVenues);
+    }
+
     // Ensure User is logged in
     useEffect(() => {
       // Listen for a change in the auth state
@@ -76,7 +80,8 @@ function Venues(){
     }, [userInfo]);
     
     useEffect(() => {
-      getAllVenues(setVenueList, setAllVenues);
+      // getAllVenues(setVenueList, setAllVenues);
+      callGetAllVenues();
     }, []);// Only runs on first load
 
     useEffect(() => {
@@ -130,6 +135,7 @@ function Venues(){
             setBookingsList={setBookingsList}
             isAdmin={userInfo.isAdmin}
             isManaging={isManaging}
+            getAllVenues={callGetAllVenues}
           />
         );
       }
@@ -148,6 +154,7 @@ function Venues(){
             setBookingsList={setBookingsList}
             isAdmin={false}
             isManaging={false}
+            getAllVenues={null}
           />
         )
       }
@@ -166,6 +173,7 @@ function Venues(){
             setBookingsList={setBookingsList}
             isAdmin={false}
             isManaging={false}
+            getAllVenues={null}
           />
         )
       }
@@ -177,7 +185,7 @@ function Venues(){
     return (
         <main>
             <DateHeader displayDate={displayDate} onDateChange={handleDateChange} data-testid="date-header"/>
-            <Search venueList = {allVenues} setVenueList = {setVenueList} bookingsList = {bookingsList} isManaging = {isManaging} setIsManaging = {setIsManaging} isAdmin = {userInfo.isAdmin} data-testid="search"/>
+            <Search venueList = {allVenues} setVenueList = {setVenueList} bookingsList = {bookingsList} isManaging = {isManaging} setIsManaging = {setIsManaging} isAdmin = {userInfo.isAdmin} getAllVenues={callGetAllVenues} data-testid="search"/>
             {
               venueComponents.length > 0 ? 
                 (

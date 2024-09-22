@@ -1,13 +1,15 @@
 import '../styles/Venues.css';
 // import { getCurrentDatesBookings } from "../utils/getCurrentDatesBookingsUtil";
 import { makeBooking } from '../utils/makeBookingUtil';
-import { editVenue } from '../utils/editVenueUtil';
+import { putVenue } from '../utils/putVenueUtil';
+import { deleteVenue } from '../utils/deleteVenueUtil';
+import { VenueForm } from './VenueForm';
 import { useState, useEffect, useRef } from "react";
 import { auth } from "../firebase";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSquareCaretDown, faSquareCaretUp} from '@fortawesome/free-solid-svg-icons';
 
-function VenueRow({id, buildingName, venueName, campus, venueType, venueCapacity, timeSlots, isClosed, bookings, relevantDate, setBookingsList, isAdmin, isManaging}) {
+function VenueRow({id, buildingName, venueName, campus, venueType, venueCapacity, timeSlots, isClosed, bookings, relevantDate, setBookingsList, isAdmin, isManaging, getAllVenues}) {
 
     const user = auth.currentUser;
     
@@ -27,10 +29,14 @@ function VenueRow({id, buildingName, venueName, campus, venueType, venueCapacity
 
     const [timeSlotsArray, setTimeSlotsArray] = useState([]);
 
+    const [isVenueFormOpen, setIsVenueFormOpen] = useState(false);
+
+    const toggleVenueForm = () => {
+        setIsVenueFormOpen(!isVenueFormOpen);
+    }
+
     const toggleIsBooking = () => {
-        if(!isAdmin){
-            setIsBooking(!isBooking);
-        }
+        setIsBooking(!isBooking);
     } //Toggles booking requirements dropdown
 
     const toggleBookingDetails = () => setIsVenueOpen(!isVenueOpen); //Toggles venue details dropdown
@@ -73,11 +79,13 @@ function VenueRow({id, buildingName, venueName, campus, venueType, venueCapacity
             compileBookingData();
             setBookingTime("");
             setCustomEndTime("");
+            setBookerEmail("");
+            setIsBooking(false);
         }// eslint-disable-next-line
     }, [bookingEndingTime]); // Runs whenever bookingEndTime changes
 
     const toggleVenueClosure = () => {
-        editVenue(id, buildingName, venueName, campus, venueType, venueCapacity, timeSlots, !isClosed);
+        putVenue(id, buildingName, venueName, campus, venueType, venueCapacity, timeSlots, !isClosed, getAllVenues);
         toggleBookingDetails();
     }
 
@@ -146,6 +154,19 @@ function VenueRow({id, buildingName, venueName, campus, venueType, venueCapacity
 
     return(
         <div className="venue-row-content" onClick={() => toggleBookingDetails()}>
+            <VenueForm 
+                isOpen = {isVenueFormOpen}
+                onClose = {toggleVenueForm}
+                id = {id} 
+                buildingName = {buildingName}
+                venueName = {venueName}
+                campus = {campus}
+                venueType = {venueType}
+                venueCapacity = {venueCapacity}
+                timeSlots = {timeSlots}
+                isClosed = {isClosed}
+                getAllVenues={getAllVenues}
+             />
             <div className="venue-row-main">
                 <h1 className="venue-row-text">{venueName}</h1>
                 {conditionalDropdown(isClosed)}
@@ -217,8 +238,8 @@ function VenueRow({id, buildingName, venueName, campus, venueType, venueCapacity
                     </div>
                 ):(
                     <div className='admin-management-container'>
-                        <button className='management-button'>Edit</button>
-                        <button className='management-button'>Delete</button>
+                        <button className='management-button' onClick={toggleVenueForm}>Edit</button>
+                        <button className='management-button' onClick={() => deleteVenue(id, getAllVenues)}>Delete</button>
                         {!isClosed ? (
                             <button className='management-button' onClick = {()=>toggleVenueClosure()}>Close</button>
                         ):(

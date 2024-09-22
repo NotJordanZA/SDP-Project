@@ -4,8 +4,9 @@ import { faSearch, faSliders} from '@fortawesome/free-solid-svg-icons';
 import { useState } from "react";
 import ReactSlider from 'react-slider';
 import Select from 'react-select';
+import { VenueForm } from './VenueForm';
 
-export default function Search({venueList, setVenueList, bookingsList, isManaging, setIsManaging, isAdmin, ...props }) { //A function for searching and filtering venues
+export default function Search({venueList, setVenueList, bookingsList, isManaging, setIsManaging, isAdmin, getAllVenues, ...props }) { //A function for searching and filtering venues
     const [searchInput, setSearchInput] = useState("");
     const [isFilterOpen, setIsFilterOpen] = useState(false);
     const [selectedCampusOption, setSelectedCampusOption] = useState("");
@@ -13,6 +14,11 @@ export default function Search({venueList, setVenueList, bookingsList, isManagin
     const [selectedClosureOption, setSelectedClosureOption] = useState(false);
     const [selectedTimeOptions, setSelectedTimeOptions] = useState([]);
     const [selectedCapacity, setSelectedCapacity] = useState(0);
+    const [isVenueFormOpen, setIsVenueFormOpen] = useState(false);
+
+    const toggleVenueForm = () => {
+        setIsVenueFormOpen(!isVenueFormOpen);
+    }
 
     const searchVenue = () => { // Returns all venues with names that match the user's search, ignoring case
         setVenueList(venueList.filter((venue) => venue.venueName.toLowerCase().includes(searchInput.toLowerCase())));
@@ -115,6 +121,19 @@ export default function Search({venueList, setVenueList, bookingsList, isManagin
 
     return (
         <main className="greater-search-container" {...props}>
+            <VenueForm 
+                isOpen = {isVenueFormOpen}
+                onClose = {toggleVenueForm}
+                id = {""} 
+                buildingName = {""}
+                venueName = {""}
+                campus = {""}
+                venueType = {""}
+                venueCapacity = {0}
+                timeSlots = {[]}
+                isClosed = {""}
+                getAllVenues={getAllVenues}
+             />
             <div className="inner-search-container">
                 <div className="main-search-row">
                     <input className="search-input" placeholder='Search...' value={searchInput} onChange={handleInputChange}/>
@@ -221,6 +240,9 @@ export default function Search({venueList, setVenueList, bookingsList, isManagin
                         <button className='book-button' onClick={filterVenues}>Filter</button>
                     </div>
                 </div>
+                {isManaging &&(
+                    <button className='add-venue-button' onClick={toggleVenueForm}>ADD VENUE</button>
+                )}
             </div>
         </main>
     )
