@@ -12,7 +12,6 @@ import MyBookings from './pages/MyBookings';
 import ManageBookings from './pages/ManageBookings';
 import ManageReports from './pages/ManageReports';
 import ManageRequests from './pages/ManageRequests';
-import ManageVenues from './pages/ManageVenues';
 import BookVenue from './pages/BookVenue'; 
 import AdminRequest from './pages/AdminRequest';
 import HomeAdmin from './pages/AdminHome';
@@ -41,7 +40,7 @@ function App() {
           <Route path="/manage-bookings" element={<ManageBookings />} />
           <Route path="/manage-reports" element={<ManageReports />} />
           <Route path="/manage-requests" element={<ManageRequests />} />
-          <Route path="/manage-venues" element={<ManageVenues />} />
+          <Route path="/manage-venues" element={<Venues />} />
           <Route path="/book-venue" element={<BookVenue />} />
         </Route>
       </Routes>

@@ -22,7 +22,7 @@
 }
 
 
-.book-venue input,
+/* .book-venue input,
 select,
 textarea {
   width: 100%;
@@ -32,7 +32,7 @@ textarea {
   border-radius: 5px;
   color: #043673;
   font-size: 16px;
-}
+} */
 
 /* Style time selection buttons */
 .time-selection {

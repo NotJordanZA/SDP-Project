@@ -184,6 +184,13 @@ app.post("/api/bookings/create", async (req, res) => {
         return res.status(400).json({ error: "All fields are required." });
     }
 
+    const startTime = new Date(`1970-01-01T${bookingStartTime}:00`);
+    const endTime = new Date(`1970-01-01T${bookingEndTime}:00`);
+
+    if(startTime > endTime){
+        return res.status(400).json({error: "Start time cannot be later than end time"});
+    }
+
     try {
         const bookingsRef = collection(db, 'Bookings'); // Get already made bookings
         const conflictingBookingsQuery = query( // Make query which looks for bookings that are on the same day
