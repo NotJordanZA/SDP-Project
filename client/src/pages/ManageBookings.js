@@ -61,6 +61,7 @@ const ManageBookings = () => {
         return <AllBookings handleEdit={() => {}} />;
       case 'createbooking':
         navigate("/venues");
+        break;
       case 'recurringbooking':
         return <RecurringBooking />;
       default:
