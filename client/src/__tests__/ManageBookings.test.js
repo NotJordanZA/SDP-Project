@@ -7,7 +7,6 @@ import { auth } from "../firebase";
 import { onAuthStateChanged } from "firebase/auth";
 import { getCurrentUser } from '../utils/getCurrentUser';
 import AllBookings from '../components/AdminAllBookings';
-import CreateBooking from '../components/AdminCreateBookings';
 import RecurringBooking from '../components/AdminRecurringBookings';
 import * as router from 'react-router-dom';
 
@@ -40,7 +39,6 @@ jest.mock('../utils/getCurrentUser');
 const navigate = jest.fn();
 
 jest.mock('../components/AdminAllBookings', () => () => <div>All Bookings Component</div>); // Mocks All Bookings Component. First ()=> is jest.fn itself, second ()=> is to make it a functional react component.
-jest.mock('../components/AdminCreateBookings', () => () => <div>Create Booking Component</div>);
 jest.mock('../components/AdminRecurringBookings', () => () => <div>Recurring Booking Component</div>);
 
 describe('ManageBookings Component', () => {
@@ -52,6 +50,7 @@ describe('ManageBookings Component', () => {
       // console.log("Unsubscribe returned!");
       return jest.fn(); // This is the mock unsubscribe function
     });
+    jest.spyOn(router, 'useNavigate').mockImplementation(() => navigate);
   });
   
   test('Renders ManageBookings Static Components', () => {
@@ -72,7 +71,7 @@ describe('ManageBookings Component', () => {
     expect(screen.getByText('Recurring Booking')).not.toHaveClass('adminmanage-active');
   });
 
-  test('Switches to Create Booking tab when clicked', () => {
+  test('Switches to Venues page when clicked', () => {
     render(<ManageBookings />);
 
     expect(screen.getByText('All Bookings Component')).toBeInTheDocument(); // Checks that All Bookings Component is rendered initially
@@ -80,11 +79,7 @@ describe('ManageBookings Component', () => {
     const createBookingButton = screen.getByText('Create Booking');
     fireEvent.click(createBookingButton);
 
-    expect(screen.getByText('Create Booking Component')).toBeInTheDocument(); // Checks that Create Booking Component is rendered on click
-
-    expect(screen.getByText('All Bookings')).not.toHaveClass('adminmanage-active'); // Checks that button classes have changed as expected
-    expect(createBookingButton).toHaveClass('adminmanage-active');
-    expect(screen.getByText('Recurring Booking')).not.toHaveClass('adminmanage-active');
+    expect(navigate).toHaveBeenCalledWith("/venues"); // Checks that user is navigated to /venues
   });
 
   test('Switches to Recurring Booking tab when clicked', () => {
