@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { collection, addDoc } from 'firebase/firestore';
-import { db } from '../firebase'; // Ensure correct path to your firebase.js
+import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage'; // Import Firebase storage utilities
+import { db, storage } from '../firebase'; // Import Firebase Firestore and Storage
 import '../styles/PopupForm.css';
 import { auth } from "../firebase";
 
@@ -15,7 +16,8 @@ const PopupForm = ({ isOpen, onClose }) => {
 
   const [venues, setVenues] = useState([]); // State to store all venue data
   const [filteredRooms, setFilteredRooms] = useState([]); // Initialize as an empty array
-  
+  const [uploading, setUploading] = useState(false); // State to handle upload status
+
   const user = auth.currentUser;
   let email = user.email;
 
@@ -47,51 +49,71 @@ const PopupForm = ({ isOpen, onClose }) => {
       const data = await response.json();
       if (response.ok) {
         setVenues(data);
-         // Store the venue data in state
       } else {
-        console.error('Error fetching venues:', data.error); // Logs error
+        console.error('Error fetching venues:', data.error);
       }
     } catch (error) {
       console.error('Error:', error);
     }
   };
 
-// Filter room numbers based on selected building name (venue)
-useEffect(() => {
-  if (formData.venue) {
-    // Filter venues that match the selected buildingName
-    const matchingRooms = venues
-      .filter(v => v.buildingName === formData.venue)
-      .map(v => v.venueName); // Get the venueName which represents the room
-
-    setFilteredRooms(matchingRooms); // Set filtered rooms based on the venue selection
-  } else {
-    setFilteredRooms([]); // Reset if no venue is selected
-  }
-}, [formData.venue, venues]);
-
   useEffect(() => {
-    // Get all venues when page first loads
     getAllVenues();
-  }, []); // Only runs on first load
+  }, []);
+
+  // Filter room numbers based on selected building name (venue)
+  useEffect(() => {
+    if (formData.venue) {
+      const matchingRooms = venues
+        .filter(v => v.buildingName === formData.venue)
+        .map(v => v.venueName);
+
+      setFilteredRooms(matchingRooms);
+    } else {
+      setFilteredRooms([]);
+    }
+  }, [formData.venue, venues]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     try {
+      setUploading(true); // Set uploading to true during the process
+
       // Concatenate venue and room number to form venueID
       const venueID = `${formData.venue}${formData.roomNumber}`;
+      let imageUrl = null; // Default image URL
+
+      // Check if there's an image and upload it
+      if (formData.photos) {
+        const storageRef = ref(storage, `reports/${Date.now()}-${formData.photos.name}`);
+        const uploadTask = uploadBytesResumable(storageRef, formData.photos);
+
+        // Wait for the upload to complete
+        await new Promise((resolve, reject) => {
+          uploadTask.on(
+            'state_changed',
+            null,
+            (error) => reject(error),
+            async () => {
+              imageUrl = await getDownloadURL(uploadTask.snapshot.ref); // Get the image download URL
+              resolve();
+            }
+          );
+        });
+      }
 
       const reportData = {
-        venueID, // This is now venue + roomNumber concatenated
+        venueID,
         reportType: formData.reportType,
         reportText: formData.reportText,
-        reportStatus: 'pending', // Default value for reportStatus
-        resolutionLog: '', // Default value for resolutionLog
-        createdBy: email, // Add the email of the logged-in user
+        reportStatus: 'pending',
+        resolutionLog: '',
+        createdBy: email,
+        photos: imageUrl, // Store image URL
       };
 
-      // Add the report to the "Reports" collection in Firestore
+      // Add the report to Firestore
       await addDoc(collection(db, 'Reports'), reportData);
       
       alert('Report submitted successfully!');
@@ -100,6 +122,8 @@ useEffect(() => {
     } catch (error) {
       console.error('Error submitting report:', error);
       alert('Failed to submit the report. Please try again.');
+    } finally {
+      setUploading(false); // Stop the upload state
     }
   };
 
@@ -114,42 +138,43 @@ useEffect(() => {
           <div className="form-group">
             <label htmlFor="venue">Venue:</label>
             <select
-              id="venue"
-              name="venue"
-              value={formData.venue}
-              onChange={handleInputChange}
-              required
-            >
-              <option value="" disabled>Select a venue</option>
-              {venues.map((venue) => (
-                <option key={venue.buildingName} value={venue.buildingName}>
-                  {venue.buildingName}
-                </option>
-              ))}
-            </select>
+  id="venue"
+  name="venue"
+  value={formData.venue}
+  onChange={handleInputChange}
+  required
+>
+  <option value="" disabled>Select a venue</option>
+  {venues.map((venue) => (
+    <option key={venue.id} value={venue.buildingName}>
+      {venue.buildingName}
+    </option>
+  ))}
+</select>
+
           </div>
 
           <div className="form-group">
-  <label htmlFor="roomNumber">Room Number:</label>
-  <select
-    id="roomNumber"
-    name="roomNumber"
-    value={formData.roomNumber}
-    onChange={handleInputChange}
-    required
-  >
-    <option value="" disabled>Select a room number</option>
-    {Array.isArray(filteredRooms) && filteredRooms.length > 0 ? (
-      filteredRooms.map((room) => (
-        <option key={room} value={room}>
-          {room}
-        </option>
-      ))
-    ) : (
-      <option value="" disabled>No rooms available</option>
-    )}
-  </select>
-</div>
+            <label htmlFor="roomNumber">Room Number:</label>
+            <select
+              id="roomNumber"
+              name="roomNumber"
+              value={formData.roomNumber}
+              onChange={handleInputChange}
+              required
+            >
+              <option value="" disabled>Select a room number</option>
+              {Array.isArray(filteredRooms) && filteredRooms.length > 0 ? (
+                filteredRooms.map((room) => (
+                  <option key={room} value={room}>
+                    {room}
+                  </option>
+                ))
+              ) : (
+                <option value="" disabled>No rooms available</option>
+              )}
+            </select>
+          </div>
 
           <div className="form-group">
             <label htmlFor="concernType">Type of Concern:</label>
@@ -192,7 +217,9 @@ useEffect(() => {
             />
           </div>
 
-          <button type="submit" className="submit-button">Submit</button>
+          <button type="submit" className="submit-button" disabled={uploading}>
+            {uploading ? 'Submitting...' : 'Submit'}
+          </button>
         </form>
       </div>
     </div>
