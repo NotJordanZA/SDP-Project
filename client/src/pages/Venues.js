@@ -22,10 +22,15 @@ function Venues(){
     const [isLoading, setIsLoading] = useState(true);
     const [user, setUser] = useState(null);
     const [isManaging, setIsManaging] = useState(false);
+    const [isScheduling, setIsScheduling] = useState(false);
     // const user = auth.currentUser;
     const studentVenueTypes = ["Tutorial Room", "Study Room"];
     const lecturerVenueTypes = ["Tutorial Room", "Study Room", "Lecture Venue", "Lab", "Test Venue"];
     const weekday = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+
+    const toggleIsScheduling = () => {
+        setIsScheduling(!isScheduling);
+    }
     const navigate = useNavigate();
     
     const callGetAllVenues = () => {
@@ -136,6 +141,7 @@ function Venues(){
             isAdmin={userInfo.isAdmin}
             isManaging={isManaging}
             getAllVenues={callGetAllVenues}
+            isScheduling={isScheduling}
           />
         );
       }
@@ -155,6 +161,7 @@ function Venues(){
             isAdmin={false}
             isManaging={false}
             getAllVenues={null}
+            isScheduling={null}
           />
         )
       }
@@ -174,6 +181,7 @@ function Venues(){
             isAdmin={false}
             isManaging={false}
             getAllVenues={null}
+            isScheduling={null}
           />
         )
       }
@@ -184,8 +192,8 @@ function Venues(){
 
     return (
         <main>
-            <DateHeader displayDate={displayDate} onDateChange={handleDateChange} data-testid="date-header"/>
-            <Search venueList = {allVenues} setVenueList = {setVenueList} bookingsList = {bookingsList} isManaging = {isManaging} setIsManaging = {setIsManaging} isAdmin = {userInfo.isAdmin} getAllVenues={callGetAllVenues} data-testid="search"/>
+            <DateHeader displayDate={displayDate} onDateChange={handleDateChange} isManaging={isManaging} data-testid="date-header"/>
+            <Search venueList = {allVenues} setVenueList = {setVenueList} bookingsList = {bookingsList} isManaging = {isManaging} setIsManaging = {setIsManaging} isAdmin = {userInfo.isAdmin} getAllVenues={callGetAllVenues} toggleIsScheduling={toggleIsScheduling} isScheduling={isScheduling} data-testid="search"/>
             {
               venueComponents.length > 0 ? 
                 (
