@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { collection, addDoc } from 'firebase/firestore';
-import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage'; // Import Firebase storage utilities
-import { db, storage } from '../firebase'; // Import Firebase Firestore and Storage
+import { collection, addDoc, updateDoc } from 'firebase/firestore';
+import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
+import { db, storage } from '../firebase';
 import '../styles/PopupForm.css';
 import { auth } from "../firebase";
 
@@ -11,12 +11,12 @@ const PopupForm = ({ isOpen, onClose }) => {
     roomNumber: '',
     reportType: '',
     reportText: '',
-    photos: null,
+    photos: [], // Updated to handle multiple files
   });
 
-  const [venues, setVenues] = useState([]); // State to store all venue data
-  const [filteredRooms, setFilteredRooms] = useState([]); // Initialize as an empty array
-  const [uploading, setUploading] = useState(false); // State to handle upload status
+  const [venues, setVenues] = useState([]);
+  const [filteredRooms, setFilteredRooms] = useState([]);
+  const [uploading, setUploading] = useState(false);
 
   const user = auth.currentUser;
   let email = user.email;
@@ -34,14 +34,14 @@ const PopupForm = ({ isOpen, onClose }) => {
   const handleFileChange = (e) => {
     setFormData((prevData) => ({
       ...prevData,
-      photos: e.target.files[0], // Assuming single file upload for simplicity
+      photos: [...e.target.files], // Store all selected files
     }));
   };
 
   // Fetch all venues from the API
   const getAllVenues = async () => {
     try {
-      const response = await fetch('/api/venues', { // API call to get all Venues from the database
+      const response = await fetch('/api/venues', {
         method: 'GET',
         cache: 'no-store',
       });
@@ -78,31 +78,13 @@ const PopupForm = ({ isOpen, onClose }) => {
     e.preventDefault();
 
     try {
-      setUploading(true); // Set uploading to true during the process
+      setUploading(true);
 
       // Concatenate venue and room number to form venueID
       const venueID = `${formData.venue}${formData.roomNumber}`;
-      let imageUrl = null; // Default image URL
+      let imageUrls = [];
 
-      // Check if there's an image and upload it
-      if (formData.photos) {
-        const storageRef = ref(storage, `reports/${Date.now()}-${formData.photos.name}`);
-        const uploadTask = uploadBytesResumable(storageRef, formData.photos);
-
-        // Wait for the upload to complete
-        await new Promise((resolve, reject) => {
-          uploadTask.on(
-            'state_changed',
-            null,
-            (error) => reject(error),
-            async () => {
-              imageUrl = await getDownloadURL(uploadTask.snapshot.ref); // Get the image download URL
-              resolve();
-            }
-          );
-        });
-      }
-
+      // Step 1: Add the report to Firestore first to get the report ID
       const reportData = {
         venueID,
         reportType: formData.reportType,
@@ -110,20 +92,46 @@ const PopupForm = ({ isOpen, onClose }) => {
         reportStatus: 'pending',
         resolutionLog: '',
         createdBy: email,
-        photos: imageUrl, // Store image URL
+        photos: [], // Initially empty, we'll populate it with the image URLs after the uploads
       };
 
-      // Add the report to Firestore
-      await addDoc(collection(db, 'Reports'), reportData);
-      
+      const docRef = await addDoc(collection(db, 'Reports'), reportData);
+      const reportId = docRef.id;
+
+      // Step 2: Check if there are any photos to upload
+      if (formData.photos.length > 0) {
+        const uploadPromises = formData.photos.map((photo) => {
+          const storageRef = ref(storage, `reports/${reportId}/${photo.name}`);
+          const uploadTask = uploadBytesResumable(storageRef, photo);
+
+          return new Promise((resolve, reject) => {
+            uploadTask.on(
+              'state_changed',
+              null,
+              (error) => reject(error),
+              async () => {
+                const downloadUrl = await getDownloadURL(uploadTask.snapshot.ref);
+                resolve(downloadUrl);
+              }
+            );
+          });
+        });
+
+        // Wait for all uploads to finish and get the image URLs
+        imageUrls = await Promise.all(uploadPromises);
+
+        // Step 3: Update the report document with the image URLs
+        await updateDoc(docRef, { photos: imageUrls });
+      }
+
       alert('Report submitted successfully!');
-      setFormData({ venue: '', roomNumber: '', reportType: '', reportText: '', photos: null });
-      onClose(); // Close the popup after submission
+      setFormData({ venue: '', roomNumber: '', reportType: '', reportText: '', photos: [] });
+      onClose();
     } catch (error) {
       console.error('Error submitting report:', error);
       alert('Failed to submit the report. Please try again.');
     } finally {
-      setUploading(false); // Stop the upload state
+      setUploading(false);
     }
   };
 
@@ -138,20 +146,19 @@ const PopupForm = ({ isOpen, onClose }) => {
           <div className="form-group">
             <label htmlFor="venue">Venue:</label>
             <select
-  id="venue"
-  name="venue"
-  value={formData.venue}
-  onChange={handleInputChange}
-  required
->
-  <option value="" disabled>Select a venue</option>
-  {venues.map((venue) => (
-    <option key={venue.id} value={venue.buildingName}>
-      {venue.buildingName}
-    </option>
-  ))}
-</select>
-
+              id="venue"
+              name="venue"
+              value={formData.venue}
+              onChange={handleInputChange}
+              required
+            >
+              <option value="" disabled>Select a venue</option>
+              {venues.map((venue) => (
+                <option key={venue.id} value={venue.buildingName}>
+                  {venue.buildingName}
+                </option>
+              ))}
+            </select>
           </div>
 
           <div className="form-group">
@@ -214,6 +221,7 @@ const PopupForm = ({ isOpen, onClose }) => {
               id="photos"
               name="photos"
               onChange={handleFileChange}
+              multiple // Allow multiple file uploads
             />
           </div>
 

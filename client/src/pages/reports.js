@@ -74,21 +74,32 @@ useEffect(() => {
             <div className="report-list">
                 <h2>My Reports</h2>
                 <ul>
-                    {reports.length > 0 ? (
-                        reports
-                            .filter(report => report.createdBy === user.email)  // Filter reports by createdBy field
-                            .map(report => (
-                                <li key={report.id}>
-                                    <p className="report-title">{report.reportType}</p>
-                                    <p className="report-text">{report.reportText}</p>
-                                    <p className="report-status">{report.reportStatus}</p>
-                                    <p className="report-venue">Venue: {report.venueID || report.venue}</p>
-                                </li>
-                            ))
-                    ) : (
-                        <li>No reports available</li>
-                    )}
-                </ul>
+  {reports.length > 0 ? (
+    reports
+      .filter(report => report.createdBy === user.email)
+      .map(report => (
+        <li key={report.id}>
+          <p className="report-title">{report.reportType}</p>
+          <p className="report-text">{report.reportText}</p>
+          <p className="report-status">{report.reportStatus}</p>
+          <p className="report-venue">Venue: {report.venueID || report.venue}</p>
+
+          {/* Check if there is a photo URL and display it */}
+          {report.photos && (
+            <img
+              src={report.photos}
+              alt="Report related"
+              className="report-photo"
+              style={{ width: '100px', height: '100px' }}
+            />
+          )}
+        </li>
+      ))
+  ) : (
+    <li>No reports available</li>
+  )}
+</ul>
+
             </div>
         </section>
     );
