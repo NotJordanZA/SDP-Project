@@ -7,7 +7,6 @@ import { auth } from "../firebase";
 import { onAuthStateChanged } from "firebase/auth";
 import { getCurrentUser } from '../utils/getCurrentUser';
 import AllBookings from '../components/AdminAllBookings';
-import RecurringBooking from '../components/AdminRecurringBookings';
 import * as router from 'react-router-dom';
 
 
@@ -39,7 +38,6 @@ jest.mock('../utils/getCurrentUser');
 const navigate = jest.fn();
 
 jest.mock('../components/AdminAllBookings', () => () => <div>All Bookings Component</div>); // Mocks All Bookings Component. First ()=> is jest.fn itself, second ()=> is to make it a functional react component.
-jest.mock('../components/AdminRecurringBookings', () => () => <div>Recurring Booking Component</div>);
 
 describe('ManageBookings Component', () => {
   beforeEach(() => {
@@ -82,7 +80,7 @@ describe('ManageBookings Component', () => {
     expect(navigate).toHaveBeenCalledWith("/venues"); // Checks that user is navigated to /venues
   });
 
-  test('Switches to Recurring Booking tab when clicked', () => {
+  test('Switches to Venues page when clicked', () => {
     render(<ManageBookings />);
 
     expect(screen.getByText('All Bookings Component')).toBeInTheDocument(); // Checks that All Bookings Component is rendered initially
@@ -90,33 +88,6 @@ describe('ManageBookings Component', () => {
     const recurringBookingButton = screen.getByText('Recurring Booking');
     fireEvent.click(recurringBookingButton);
 
-    expect(screen.getByText('Recurring Booking Component')).toBeInTheDocument(); // Checks that Recurringç Booking Component is rendered on click
-
-    expect(screen.getByText('All Bookings')).not.toHaveClass('adminmanage-active'); // Checks that button classes have changed as expected
-    expect(screen.getByText('Create Booking')).not.toHaveClass('adminmanage-active');
-    expect(recurringBookingButton).toHaveClass('adminmanage-active');
-  });
-
-  test('Switches back to All Bookings Tab when clicked', () => {
-    render(<ManageBookings />);
-
-    expect(screen.getByText('All Bookings Component')).toBeInTheDocument(); // Checks that All Bookings Component is rendered initially
-
-    const allBookingsButton = screen.getByText('All Bookings');
-    const recurringBookingButton = screen.getByText('Recurring Booking');
-    fireEvent.click(recurringBookingButton);
-
-    expect(screen.getByText('Recurring Booking Component')).toBeInTheDocument(); // Checks that Recurringç Booking Component is rendered on click
-
-    expect(allBookingsButton).not.toHaveClass('adminmanage-active'); // Checks that button classes have changed as expected
-    expect(screen.getByText('Create Booking')).not.toHaveClass('adminmanage-active');
-    expect(recurringBookingButton).toHaveClass('adminmanage-active');
-
-    fireEvent.click(allBookingsButton);
-    expect(screen.getByText('All Bookings Component')).toBeInTheDocument(); // Checks that All Bookings Component is rendered after click
-
-    expect(allBookingsButton).toHaveClass('adminmanage-active'); // Checks that the correct button is active
-    expect(screen.getByText('Create Booking')).not.toHaveClass('adminmanage-active');
-    expect(recurringBookingButton).not.toHaveClass('adminmanage-active');
+    expect(navigate).toHaveBeenCalledWith("/venues"); // Checks that user is navigated to /venues
   });
 });
