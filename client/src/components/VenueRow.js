@@ -4,32 +4,94 @@ import { makeBooking } from '../utils/makeBookingUtil';
 import { putVenue } from '../utils/putVenueUtil';
 import { deleteVenue } from '../utils/deleteVenueUtil';
 import { VenueForm } from './VenueForm';
+import { fetchSchedules } from '../utils/getSchedulesUtil';
+import { createSchedule } from '../utils/createScheduleUtil';
 import { useState, useEffect, useRef } from "react";
 import { auth } from "../firebase";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSquareCaretDown, faSquareCaretUp} from '@fortawesome/free-solid-svg-icons';
 
-function VenueRow({id, buildingName, venueName, campus, venueType, venueCapacity, timeSlots, isClosed, bookings, relevantDate, setBookingsList, isAdmin, isManaging, getAllVenues}) {
+function VenueRow({id, buildingName, venueName, campus, venueType, venueCapacity, timeSlots, isClosed, bookings, relevantDate, setBookingsList, isAdmin, isManaging, getAllVenues, isScheduling}) {
 
     const user = auth.currentUser;
     
     const [isVenueOpen, setIsVenueOpen] = useState(false);
-
     const [isBooking, setIsBooking] = useState(false);
-
     const [bookingTime, setBookingTime] = useState("");
-
     const [customEndTime, setCustomEndTime] = useState("");
-
     const [bookingEndingTime, setBookingEndingTime] = useState("");
-
     const [bookingDescriptionText, setBookingDescriptionText] = useState("");
-
     const [bookerEmail, setBookerEmail] = useState("");
-
     const [timeSlotsArray, setTimeSlotsArray] = useState([]);
-
     const [isVenueFormOpen, setIsVenueFormOpen] = useState(false);
+    const [selectedSlot, setSelectedSlot] = useState(null); 
+    const [schedules, setSchedules] = useState([]); // eslint-disable-next-line
+    const [errorMessage, setErrorMessage] = useState(""); 
+    const [clickedScheduleEmail, setClickedScheduleEmail] = useState("");
+    const [clickedScheduleDescription, setClickedScheduleDescription] = useState("");
+
+
+    const daysOfWeek = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"]; //schedule table columns
+
+    //now check if a venue has a parrticular timeslot already scheduled
+    const isTimeSlotTaken = (venueName, day, time) => {
+        return schedules.some(
+        (schedule) =>
+            schedule.venueID === venueName &&
+            schedule.bookingDay === day &&
+            schedule.bookingStartTime === time
+        );
+    };
+
+    const handleTimeSlotClick = (venueID, venueName, day, time) => {
+        const clickedSchedule = schedules.find(
+            (schedule) =>
+                schedule.venueID === venueName &&
+                schedule.bookingDay === day &&
+                schedule.bookingStartTime === time
+        );
+        
+        if (clickedSchedule) {
+            setSelectedSlot({});
+            setClickedScheduleEmail(clickedSchedule.venueBooker || "No email available");
+            setClickedScheduleDescription(clickedSchedule.bookingDescription || "No description available");
+        } else {
+            setClickedScheduleEmail("");
+            setClickedScheduleDescription("");
+            setSelectedSlot({ venueID, venueName, day, time });
+        }
+    };
+    
+
+    const handleScheduleButtonClick = async () => {
+        const [hours, minutes] = selectedSlot.time.split(':');
+        const startTime = new Date();
+        startTime.setHours(hours);
+        startTime.setMinutes(minutes);
+        const endTime = new Date(startTime.getTime() + 45 * 60000);
+        if (bookingDescriptionText !== "" && bookerEmail !== ""){
+            const scheduleData= {
+                venueID: venueName,
+                venueBooker: bookerEmail,
+                bookingDay: selectedSlot.day,
+                bookingStartTime: selectedSlot.time,
+                bookingEndTime: endTime.toTimeString().substring(0, 5), // Format as "HH:MM"
+                bookingDescription: bookingDescriptionText,
+            };    
+            createSchedule(scheduleData);
+        }else{
+            const scheduleData = {
+                venueID: venueName,
+                venueBooker: null,
+                bookingDay: selectedSlot.day,
+                bookingStartTime: selectedSlot.time,
+                bookingEndTime: endTime.toTimeString().substring(0, 5), // Format as "HH:MM"
+                bookingDescription: null,
+            }; 
+            createSchedule(scheduleData);
+        }
+        setIsBooking(false);
+    }
 
     const toggleVenueForm = () => {
         setIsVenueFormOpen(!isVenueFormOpen);
@@ -44,6 +106,10 @@ function VenueRow({id, buildingName, venueName, campus, venueType, venueCapacity
     useEffect(() => { // Populates list with the venues time slots
         setTimeSlotsArray(timeSlots);// eslint-disable-next-line
     }, []);
+
+    useEffect(() => {
+        fetchSchedules(setSchedules, venueName)// eslint-disable-next-line
+    }, [isScheduling])
 
     const firstRender = useRef(true);
 
@@ -172,78 +238,140 @@ function VenueRow({id, buildingName, venueName, campus, venueType, venueCapacity
                 {conditionalDropdown(isClosed)}
             </div>
             <div className={`popup ${(isVenueOpen && (!isClosed || isManaging)) ? "open" : "closed"}`} onClick = {(e) => e.stopPropagation()}>{/* Conditional rendering for booking fields */}
-                <div className="venue-info-container">
-                    <div className="venue-info-text-category">
-                        Campus: 
-                    </div>
-                    <div className="venue-info-text">
-                        {campus}
-                    </div>
-                </div>
-                <div className="venue-info-container">
-                    <div className="venue-info-text-category">
-                        Venue Type: 
-                    </div>
-                    <div className="venue-info-text">
-                        {venueType}
-                    </div>
-                </div>
-                <div className="venue-info-container">
-                    <div className="venue-info-text-category">
-                        Capacity: 
-                    </div>
-                    <div className="venue-info-text">
-                        {venueCapacity}
-                    </div>
-                </div>
-                {isManaging &&(
+                {!isScheduling ? (
+                <div>
                     <div className="venue-info-container">
-                    <div className="venue-info-text-category">
-                        Closure Status: 
-                    </div>
-                    <div className="venue-info-text">
-                        {isClosed ? "Closed" : "Open"}
-                    </div>
-                </div>
-                )}
-                {!isManaging ? (
-                    <div>
-                        <div className="timeslot-buttons-container">
-                            {timeSlotButtons}
+                        <div className="venue-info-text-category">
+                            Campus: 
                         </div>
-                        {isAdmin ? (
-                            <div>
-                                <div className="venue-info-container">
-                                    <div className="venue-info-text-category">
-                                        Custom Times?
+                        <div className="venue-info-text">
+                            {campus}
+                        </div>
+                    </div>
+                    <div className="venue-info-container">
+                        <div className="venue-info-text-category">
+                            Venue Type: 
+                        </div>
+                        <div className="venue-info-text">
+                            {venueType}
+                        </div>
+                    </div>
+                    <div className="venue-info-container">
+                        <div className="venue-info-text-category">
+                            Capacity: 
+                        </div>
+                        <div className="venue-info-text">
+                            {venueCapacity}
+                        </div>
+                    </div>
+                    {isManaging &&(
+                        <div className="venue-info-container">
+                        <div className="venue-info-text-category">
+                            Closure Status: 
+                        </div>
+                        <div className="venue-info-text">
+                            {isClosed ? "Closed" : "Open"}
+                        </div>
+                    </div>
+                    )}
+                    {!isManaging ? (
+                        <div>
+                            <div className="timeslot-buttons-container">
+                                {timeSlotButtons}
+                            </div>
+                            {isAdmin ? (
+                                <div>
+                                    <div className="venue-info-container">
+                                        <div className="venue-info-text-category">
+                                            Custom Times?
+                                        </div>
+                                    </div>
+                                    <div className="times-input-container">
+                                        <input className= 'times-input' placeholder='Start Time' type="time" value={bookingTime} onClick={(e) => { e.stopPropagation();}} onChange={ (e) => {setBookingTime(e.target.value);}}></input>
+                                        to
+                                        <input className= 'times-input' placeholder='End Time' type="time" min={"14:15"} value={customEndTime} onClick={(e) => { e.stopPropagation();}} onChange={ (e) => {setCustomEndTime(e.target.value)}}></input>
+                                    </div>
+                                    <div className="admin-book-action-container">
+                                        <textarea className={`description-input ${isBooking ? "shown" : "hidden"}`} data-testid = 'description-input-id' value = { bookingDescriptionText } onChange={(e) => setBookingDescriptionText(e.target.value)} required placeholder="Input a booking description" onClick={(e) => e.stopPropagation()}></textarea>
+                                        <input className={`email-input ${isBooking ? "shown" : "hidden"}`} data-testid = 'email-input-id' value = { bookerEmail } onChange={(e) => setBookerEmail(e.target.value)} required placeholder="Input booker email" onClick={(e) => e.stopPropagation()}></input>
+                                        <button className={`book-button ${isBooking ? "shown" : "hidden"}`} onClick={(e) => { e.stopPropagation(); setBookingEndingTime(customEndTime);}}>Book</button>
                                     </div>
                                 </div>
-                                <div className="times-input-container">
-                                    <input className= 'times-input' placeholder='Start Time' type="time" value={bookingTime} onClick={(e) => { e.stopPropagation();}} onChange={ (e) => {setBookingTime(e.target.value);}}></input>
-                                    to
-                                    <input className= 'times-input' placeholder='End Time' type="time" min={"14:15"} value={customEndTime} onClick={(e) => { e.stopPropagation();}} onChange={ (e) => {setCustomEndTime(e.target.value)}}></input>
-                                </div>
-                                <div className="admin-book-action-container">
+                            ):(
+                                <div className="book-action-container">
                                     <textarea className={`description-input ${isBooking ? "shown" : "hidden"}`} data-testid = 'description-input-id' value = { bookingDescriptionText } onChange={(e) => setBookingDescriptionText(e.target.value)} required placeholder="Input a booking description" onClick={(e) => e.stopPropagation()}></textarea>
-                                    <input className={`email-input ${isBooking ? "shown" : "hidden"}`} data-testid = 'email-input-id' value = { bookerEmail } onChange={(e) => setBookerEmail(e.target.value)} required placeholder="Input booker email" onClick={(e) => e.stopPropagation()}></input>
-                                    <button className={`book-button ${isBooking ? "shown" : "hidden"}`} onClick={(e) => { e.stopPropagation(); setBookingEndingTime(customEndTime);}}>Book</button>
+                                    <button className={`book-button ${isBooking ? "shown" : "hidden"}`} onClick={(e) => { e.stopPropagation(); updateBookingEndTime();}}>Book</button>
                                 </div>
-                            </div>
-                        ):(
-                            <div className="book-action-container">
-                                <textarea className={`description-input ${isBooking ? "shown" : "hidden"}`} data-testid = 'description-input-id' value = { bookingDescriptionText } onChange={(e) => setBookingDescriptionText(e.target.value)} required placeholder="Input a booking description" onClick={(e) => e.stopPropagation()}></textarea>
-                                <button className={`book-button ${isBooking ? "shown" : "hidden"}`} onClick={(e) => { e.stopPropagation(); updateBookingEndTime();}}>Book</button>
+                            )}
+                        </div>
+                    ):(
+                        <div className='admin-management-container'>
+                            <button className='management-button' onClick={toggleVenueForm}>Edit</button>
+                            <button className='management-button' onClick={() => deleteVenue(id, getAllVenues)}>Delete</button>
+                            {!isClosed ? (
+                                <button className='management-button' onClick = {()=>toggleVenueClosure()}>Close</button>
+                            ):(
+                                <button className='management-button' onClick = {()=>toggleVenueClosure()}>Open</button>
+                            )}
+                        </div>
+                    )}
+                </div>
+                ):(
+                    <div className='schedules-container'>
+                        <table className="schedules-table">
+                            <thead>
+                                <tr>
+                                {/* Top-left corner */}
+                                <th className="corner-top-left">Time</th>
+                                {daysOfWeek.map((day, index) => (
+                                    /* Top-right corner */
+                                    <th key={day} className={index === daysOfWeek.length - 1 ? "corner-top-right" : ""}>
+                                    {day}
+                                    </th>
+                                ))}
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {timeSlots.map((time, rowIndex) => (
+                                <tr key={time}>
+                                    {/* Bottom-left corner */}
+                                    <th className={rowIndex === timeSlots.length - 1 ? "corner-bottom-left" : ""}>{time}</th>
+                                    {daysOfWeek.map((day, colIndex) => (
+                                    /* Bottom-right corner */
+                                    <td
+                                        key={day}
+                                        className={
+                                        `${isTimeSlotTaken(venueName, day, time)
+                                            ? 'scheduled'
+                                            : selectedSlot && selectedSlot.venueID === id && selectedSlot.day === day && selectedSlot.time === time
+                                            ? 'selected'
+                                            : 'available'} ` + 
+                                        `${rowIndex === timeSlots.length - 1 && colIndex === daysOfWeek.length - 1 ? "corner-bottom-right" : ""}`
+                                        }
+                                        onClick={() => handleTimeSlotClick(id, venueName, day, time)}
+                                    >
+                                        {isTimeSlotTaken(venueName, day, time) ? 'Scheduled' : 'Available'}
+                                    </td>
+                                    ))}
+                                </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                        {clickedScheduleEmail && clickedScheduleDescription &&(
+                            <div className="schedule-details">
+                                <h3>Schedule Details</h3>
+                                <p><strong>Email:</strong> {clickedScheduleEmail}</p>
+                                <p><strong>Description:</strong> {clickedScheduleDescription}</p>
                             </div>
                         )}
-                    </div>
-                ):(
-                    <div className='admin-management-container'>
-                        <button className='management-button' onClick={toggleVenueForm}>Edit</button>
-                        <button className='management-button' onClick={() => deleteVenue(id, getAllVenues)}>Delete</button>
-                        {!isClosed ? (
-                            <button className='management-button' onClick = {()=>toggleVenueClosure()}>Close</button>
-                        ):(
-                            <button className='management-button' onClick = {()=>toggleVenueClosure()}>Open</button>
+                        {selectedSlot && selectedSlot.venueID === id && (
+                            <div className="admin-book-action-container">
+                                <textarea className="description-input" data-testid = 'description-input-id' value = { bookingDescriptionText } onChange={(e) => setBookingDescriptionText(e.target.value)} required placeholder="Input a schedule description" onClick={(e) => e.stopPropagation()}></textarea>
+                                <input className="email-input" data-testid = 'email-input-id' value = { bookerEmail } onChange={(e) => setBookerEmail(e.target.value)} required placeholder="Input schedule holder email" onClick={(e) => e.stopPropagation()}></input>
+                                <button className="book-button" onClick={(e) => { e.stopPropagation(); handleScheduleButtonClick();}}>Schedule</button>
+                                {/*error message on the card*/}
+                                {errorMessage && <p className="adminrecurringbookings-error-message">{errorMessage}</p>}
+                            </div>
                         )}
                     </div>
                 )}

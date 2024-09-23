@@ -4,7 +4,6 @@ import { useNavigate } from "react-router-dom";
 import { onAuthStateChanged } from "firebase/auth";
 // import { getCurrentUser } from '../utils/getCurrentUser';
 import AllBookings from '../components/AdminAllBookings.js'; 
-import RecurringBooking from '../components/AdminRecurringBookings.js'; 
 import '../styles/ManageBookings.css';
 
 const ManageBookings = () => {
@@ -63,7 +62,8 @@ const ManageBookings = () => {
         navigate("/venues");
         break;
       case 'recurringbooking':
-        return <RecurringBooking />;
+        navigate("/venues");
+        break;
       default:
         return <AllBookings handleEdit={() => {}} />;
     }

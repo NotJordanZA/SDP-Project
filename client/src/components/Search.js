@@ -6,7 +6,7 @@ import ReactSlider from 'react-slider';
 import Select from 'react-select';
 import { VenueForm } from './VenueForm';
 
-export default function Search({venueList, setVenueList, bookingsList, isManaging, setIsManaging, isAdmin, getAllVenues, ...props }) { //A function for searching and filtering venues
+export default function Search({venueList, setVenueList, bookingsList, isManaging, setIsManaging, isAdmin, getAllVenues, toggleIsScheduling, isScheduling, ...props }) { //A function for searching and filtering venues
     const [searchInput, setSearchInput] = useState("");
     const [isFilterOpen, setIsFilterOpen] = useState(false);
     const [selectedCampusOption, setSelectedCampusOption] = useState("");
@@ -241,7 +241,10 @@ export default function Search({venueList, setVenueList, bookingsList, isManagin
                     </div>
                 </div>
                 {isManaging &&(
-                    <button className='add-venue-button' onClick={toggleVenueForm}>ADD VENUE</button>
+                    <div className='manage-popup-container'>
+                        <button onClick={toggleVenueForm}>ADD VENUE</button>
+                        <button className = {`${isScheduling ? "clicked" : ""}`} onClick={toggleIsScheduling}>SCHEDULES</button>
+                    </div>
                 )}
             </div>
         </main>

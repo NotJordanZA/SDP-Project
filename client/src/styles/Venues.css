@@ -226,7 +226,7 @@
 }
 
 .admin-book-action-container{
-  margin-top: 10px;
+  margin: 10px 0;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -271,7 +271,15 @@
   pointer-events: none;
 }
 
-.add-venue-button {
+.manage-popup-container{
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+  width: 100%;
+  gap: 10px;
+}
+
+.manage-popup-container button {
   margin-top: 10px;
   padding: 1px 8px 0 8px;
   background-color: #043673;
@@ -284,10 +292,14 @@
   cursor: pointer;
   height: 40px;
   font-weight: bold;
-  align-self:flex-end;
+  align-self: flex-end;
 }
 
-.add-venue-button:hover {
+.manage-popup-container button.clicked {
+  background-color: #917248;
+}
+
+.manage-popup-container button:hover {
   background-color: #917248;
 }
 
@@ -557,6 +569,87 @@
   background-color: #917248;
 }
 
+.schedules-table {
+  width: 100%; 
+  max-width: 45vw; 
+  border-collapse: separate;
+  border-spacing: 0;
+  border-radius: 10px;
+  text-align: center;
+  font-family: Arial, sans-serif;
+  font-size: 1rem; 
+  margin-left: 20px;
+  border: none;
+  background: none;
+  margin-bottom: 10px;
+}
+
+.schedules-table th, .schedules-table td {
+  padding: 1rem; 
+  background-color: #043673;
+  color: #f0f0f0;
+  font-size: 1rem; 
+  border: none;
+} 
+.schedules-table td {
+  border: 1px solid white;
+}  
+
+.schedules-table th.corner-top-left{
+  border-top-left-radius: 10px;
+}
+
+.schedules-table td.corner-bottom-right{
+  border-bottom-right-radius: 10px;
+}
+
+.schedules-table th.corner-top-right{
+  border-top-right-radius: 10px;
+}
+
+.schedules-table th.corner-bottom-left{
+  border-bottom-left-radius: 10px;
+}
+
+/*available and scheduled cells */
+.schedules-table td.scheduled {
+  background-color: #cc8c8c;
+  color: rgb(74, 0, 0);
+  cursor: pointer;
+}
+
+.schedules-table td.available {
+  background-color: #e1d0b9;
+  color: black;
+  cursor: pointer;
+}
+
+.schedules-table td.selected {
+  background-color: #043673;
+  color: white;
+  cursor: pointer;
+}
+
+/*hover effect for table rows */
+.schedules-table td.available:hover {
+  background-color: #917248;
+  color: white;
+}
+
+.schedules-container {
+  display: flex;
+  flex-direction: column;
+}
+
+.schedule-details {
+  margin-left: 20px ;
+}
+
+.date-content h1{
+  font-size: 2rem;
+  font-weight: normal;
+}
+
 @media screen and (max-width: 768px){
 
   .timeslot-buttons-container{
@@ -566,6 +659,27 @@
   .search-manage-button{
     margin-left: 0px;
     font-size: 1rem;
+  }
+
+  .schedules-table td, .schedules-table th {
+      padding: 0.3rem; /* Adjust padding for medium screens */
+  }
+
+  .schedules-table {
+      font-size: 0.9rem; /* Adjust font size for medium screens */
+  }
+
+}
+
+
+@media (max-width: 500px) {
+  .schedules-table th, .schedules-table td {
+      font-size: 0.3rem; /* Adjust font size for small screens */
+      padding: 0.6rem; /* Adjust padding for small screens */
+  }
+
+  .schedules-table{
+      font-size: 0.8rem; /* Further reduce font size */
   }
 
 }

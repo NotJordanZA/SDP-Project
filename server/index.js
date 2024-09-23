@@ -950,6 +950,31 @@ app.get("/api/schedules", async (req, res) => {
 });
 
 
+app.get("/api/schedules/:venueID", async (req, res) => {
+    const venueID = req.params.venueID;
+    try {
+        
+        const schedules = collection(db, 'Schedules');
+        const snapshot = await getDocs(schedules);
+
+        const schedulesQuery = query(collection(db, 'Schedules'), where('venueID', '==', venueID));
+        const schedulesSnapshot = await getDocs(schedulesQuery);
+        const schedulesList = [];
+
+        schedulesSnapshot.forEach(doc => {
+            schedulesList.push({
+                id: doc.id,
+                ...doc.data()
+            });
+        });
+        res.status(200).json(schedulesList);
+    } catch (error) {
+        console.error("Error retrieving Schedules:", error);
+        res.status(500).json({ error: "Internal Server Error" });
+    }
+});
+
+
 
 app.post("/api/schedules/create", async (req, res) => {
     const { venueBooker, bookingDescription ,venueID, bookingDay, bookingStartTime, bookingEndTime} = req.body;
