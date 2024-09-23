@@ -2,9 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { auth } from "../firebase";
 import { useNavigate } from "react-router-dom";
 import { onAuthStateChanged } from "firebase/auth";
-import {fetchAllReports} from '../utils/AdminfetchAllReports';
-// import { getCurrentUser } from '../utils/getCurrentUser';
-import '../styles/ManageReports.css'; 
+import { fetchAllReports } from '../utils/AdminfetchAllReports';
+import '../styles/ManageReports.css';
 
 // Fetch all the reports
 export const getAllReports = async () => {
@@ -12,6 +11,7 @@ export const getAllReports = async () => {
   return await response.json();
 };
 
+// Update report and create notification logic
 export const updateRep = async (id, RepData) => {
   try {
     const response = await fetch(`/api/reports/${id}`, {
@@ -28,7 +28,6 @@ export const updateRep = async (id, RepData) => {
 
     const updatedReport = await response.json();
 
-    // Ensure reportText and recipientEmail are defined
     const reportText = RepData.reportText || updatedReport.reportText;
     const recipientEmail = RepData.recipientEmail || updatedReport.recipientEmail;
 
@@ -36,17 +35,14 @@ export const updateRep = async (id, RepData) => {
       throw new Error("Missing reportText or recipientEmail");
     }
 
-    // Create a notification after updating the report
     const notificationMessage = `Your report status has been changed to ${RepData.reportStatus === 'Resolved' ? 'Resolved' : 'In Progress'}. Report Details: ${reportText}`;
     const notificationData = {
-      dateCreated: new Date().toISOString(), // Ensure date is in ISO format
+      dateCreated: new Date().toISOString(),
       notificationMessage,
       notificationType: "Report Update",
       read: false,
       recipientEmail,
     };
-
-    console.log("Notification Data:", notificationData); // Log the notification data for debugging
 
     const notificationResponse = await fetch(`/api/notifications`, {
       method: "POST",
@@ -57,12 +53,8 @@ export const updateRep = async (id, RepData) => {
     });
 
     if (!notificationResponse.ok) {
-      const errorText = await notificationResponse.text();
-      console.error("Notification creation error:", errorText); // Log the error response for debugging
       throw new Error("Failed to create notification");
     }
-
-    console.log("Notification created successfully");
 
     return updatedReport;
   } catch (error) {
@@ -70,108 +62,105 @@ export const updateRep = async (id, RepData) => {
     throw error;
   }
 };
-
 function Reports() {
-  const [reports, setReports] = useState([]); 
+  const [, setUser] = useState(null);  // Only keep setUser, ignoring the user variable
+  const [reports, setReports] = useState([]);
   const [activeTab, setActiveTab] = useState('Pending');
-  const [editingLogId, setEditingLogId] = useState(null); 
-  const [newResolutionLog, setNewResolutionLog] = useState(''); 
-  const [selectedType, setSelectedType] = useState(''); // For filtering by report type
-  const [searchText, setSearchText] = useState(''); // For searching by email or venue
-  // eslint-disable-next-line
-  const [errorMessage, setErrorMessage] = useState(''); // Error message
-  const [user, setUser] = useState(null);
+  const [editingLogId, setEditingLogId] = useState(null);
+  const [newResolutionLog, setNewResolutionLog] = useState('');
+  const [selectedType, setSelectedType] = useState('');
+  const [searchText, setSearchText] = useState('');
+  const [selectedImage, setSelectedImage] = useState(null); // For modal image display
   const navigate = useNavigate();
 
   // Ensure User is logged in
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
       if (firebaseUser) {
-        setUser(firebaseUser); //Set current user
-        console.log(user);
+        setUser(firebaseUser);  // Set the user here to manage authentication
       } else {
-        navigate("/login"); //Reroute to login if user not signed in
+        navigate("/login");
       }
     });
     return () => {
       if (unsubscribe) {
         unsubscribe();
       }
-    };// eslint-disable-next-line
-  }, [auth, navigate]);
+    };
+  }, [navigate]);  // No need for setUser in the dependency array
+  
+  // Fetch all reports on component mount
+  useEffect(() => {
+    fetchAllReports(setReports, getAllReports);
+  }, []);// Add setUser to the dependency array
+
 
   // Fetch all reports on component mount
   useEffect(() => {
-    
-  
     fetchAllReports(setReports, getAllReports);
   }, []);
+
+  // Image click handler to show enlarged image in a modal
+  const handleImageClick = (imageUrl) => {
+    setSelectedImage(imageUrl);
+  };
+
+  // Close modal
+  const closeImageModal = () => {
+    setSelectedImage(null);
+  };
 
   const handleResolveClick = async (reportId) => {
     const updatedReports = reports.map(report =>
       report.id === reportId ? { ...report, reportStatus: "Resolved" } : report
     );
     setReports(updatedReports);
-  
-    const report = reports.find(report => report.id === reportId);
-  
-    if (!report) {
-      console.error("Report not found for ID:", reportId);
-      return;
-    }
 
-    console.log("Report found:", report);
+    const report = reports.find(report => report.id === reportId);
+    if (!report) return;
 
     try {
       await updateRep(reportId, {
         reportStatus: "Resolved",
-        reportText: report.reportText, // Ensure reportText is included
-        recipientEmail: report.createdBy // Ensure recipientEmail is included
+        reportText: report.reportText,
+        recipientEmail: report.createdBy,
       });
     } catch (error) {
       console.error("Error updating report status:", error);
     }
   };
-  
+
   const handleInProgressClick = async (reportId) => {
     const updatedReports = reports.map(report =>
       report.id === reportId ? { ...report, reportStatus: "In Progress" } : report
     );
     setReports(updatedReports);
-  
-    const report = reports.find(report => report.id === reportId);
-  
-    if (!report) {
-      console.error("Report not found for ID:", reportId);
-      return;
-    }
 
-    console.log("Report found:", report);
+    const report = reports.find(report => report.id === reportId);
+    if (!report) return;
 
     try {
       await updateRep(reportId, {
         reportStatus: "In Progress",
-        reportText: report.reportText, // Ensure reportText is included
-        recipientEmail: report.createdBy // Ensure recipientEmail is included
+        reportText: report.reportText,
+        recipientEmail: report.createdBy,
       });
     } catch (error) {
       console.error("Error updating report status:", error);
     }
   };
 
-  // Edit resolution log
   const handleEditLogClick = (reportId, currentLog) => {
     setEditingLogId(reportId);
-    setNewResolutionLog(currentLog || ''); 
+    setNewResolutionLog(currentLog || '');
   };
 
-  // Save updated resolution log
   const handleSaveLogClick = async (reportId) => {
     const updatedReports = reports.map(report =>
       report.id === reportId ? { ...report, resolutionLog: newResolutionLog } : report
     );
     setReports(updatedReports);
-    setEditingLogId(null); 
+    setEditingLogId(null);
 
     try {
       await updateRep(reportId, { resolutionLog: newResolutionLog });
@@ -180,77 +169,34 @@ function Reports() {
     }
   };
 
-  // Handle tab change and reset filters and search
   const handleTabChange = (tab) => {
     setActiveTab(tab);
-    setSelectedType('');  // Reset report type filter
-    setSearchText('');    // Reset search text
+    setSelectedType('');
+    setSearchText('');
   };
 
-  // Filter the reports by the selected report type, search term, and the active tab
-  const filteredReports = reports.filter(report => 
-    report.reportStatus.toLowerCase() === activeTab.toLowerCase() && 
+  const filteredReports = reports.filter(report =>
+    report.reportStatus.toLowerCase() === activeTab.toLowerCase() &&
     (selectedType === '' || report.reportType === selectedType) &&
-    (report.createdBy.toLowerCase().includes(searchText.toLowerCase()) || 
-     report.venueID.toLowerCase().includes(searchText.toLowerCase()))
+    (report.createdBy.toLowerCase().includes(searchText.toLowerCase()) ||
+      report.venueID.toLowerCase().includes(searchText.toLowerCase()))
   );
 
   return (
     <div className="reports-container">
       <h1>Reports Management</h1>
 
-      {/* Error messages */}
-      {errorMessage && <div className="error-message">{errorMessage}</div>}
-
       {/* Tabs */}
       <div className="tabs">
-        <button
-          className={activeTab.toLowerCase() === 'pending' ? 'active' : ''}
-          onClick={() => handleTabChange('Pending')}
-        >
+        <button className={activeTab.toLowerCase() === 'pending' ? 'active' : ''} onClick={() => handleTabChange('Pending')}>
           Pending Reports
         </button>
-        <button
-          className={activeTab.toLowerCase() === 'in progress' ? 'active' : ''}
-          onClick={() => handleTabChange('In Progress')}
-        >
+        <button className={activeTab.toLowerCase() === 'in progress' ? 'active' : ''} onClick={() => handleTabChange('In Progress')}>
           In Progress Reports
         </button>
-        <button
-          className={activeTab.toLowerCase() === 'resolved' ? 'active' : ''}
-          onClick={() => handleTabChange('Resolved')}
-        >
+        <button className={activeTab.toLowerCase() === 'resolved' ? 'active' : ''} onClick={() => handleTabChange('Resolved')}>
           Resolved Reports
         </button>
-      </div>
-
-      {/* Dropdown filter for report type */}
-      <div className="report-type-container">
-        <label htmlFor="reportType">Filter by Report Type:</label>
-        <select
-          id="reportType"
-          value={selectedType}
-          onChange={(e) => setSelectedType(e.target.value)} 
-          className="report-type-dropdown"
-        >
-          <option value="">All Types</option>
-          <option value="Equipment">Equipment</option>
-          <option value="Safety">Safety</option>
-          <option value="Incorrect Venue Details">Incorrect Venue Details</option>
-          <option value="Other">Other</option>
-        </select>
-      </div>
-
-      {/* Search by email or venue */}
-      <div className="searchReport-container">
-        <label htmlFor="searchInput">Search by Email or Venue:</label>
-        <input
-          type="text"
-          id="searchInput"
-          placeholder="Search by email or venue"
-          value={searchText}
-          onChange={(e) => setSearchText(e.target.value)} 
-        />
       </div>
 
       {/* Report List */}
@@ -264,6 +210,22 @@ function Reports() {
               <p><strong>Status:</strong> {report.reportStatus}</p>
               <p><strong>Email:</strong> {report.createdBy}</p>
 
+              {/* Display report photos */}
+              {Array.isArray(report.photos) && report.photos.length > 0 && (
+                <div className="photos-container">
+                  {report.photos.map((photoUrl, index) => (
+                    <img
+                      key={index}
+                      src={photoUrl}
+                      alt={`Report ${index + 1}`}
+                      className="report-photo"
+                      style={{ width: '100px', height: '100px', cursor: 'pointer', margin: '5px' }}
+                      onClick={() => handleImageClick(photoUrl)} // Click to enlarge
+                    />
+                  ))}
+                </div>
+              )}
+
               {/* Edit resolution log */}
               {editingLogId === report.id ? (
                 <>
@@ -271,12 +233,8 @@ function Reports() {
                     value={newResolutionLog}
                     onChange={(e) => setNewResolutionLog(e.target.value)}
                   />
-                  <button onClick={() => handleSaveLogClick(report.id)}>
-                    Save
-                  </button>
-                  <button onClick={() => setEditingLogId(null)}>
-                    Cancel
-                  </button>
+                  <button onClick={() => handleSaveLogClick(report.id)}>Save</button>
+                  <button onClick={() => setEditingLogId(null)}>Cancel</button>
                 </>
               ) : (
                 <>
@@ -286,18 +244,11 @@ function Reports() {
                       <button className="edit-log-btn" onClick={() => handleEditLogClick(report.id, report.resolutionLog)}>
                         Edit Resolution Log
                       </button>
-
-                      {/* Conditionally render buttons based on report status */}
                       {report.reportStatus === "pending" && (
-                        <button className="progress-btn" onClick={() => handleInProgressClick(report.id)}>
-                         In Progress
-                        </button>
+                        <button className="progress-btn" onClick={() => handleInProgressClick(report.id)}>In Progress</button>
                       )}
-
                       {report.reportStatus === "In Progress" && (
-                        <button className="resolve-btn" onClick={() => handleResolveClick(report.id)}>
-                          Resolved
-                        </button>
+                        <button className="resolve-btn" onClick={() => handleResolveClick(report.id)}>Resolved</button>
                       )}
                     </>
                   )}
@@ -308,6 +259,16 @@ function Reports() {
         </div>
       ) : (
         <p>No {activeTab} reports available for this type</p>
+      )}
+
+      {/* Image Modal */}
+      {selectedImage && (
+        <div className="image-modal" onClick={closeImageModal}>
+          <div className="image-modal-content">
+            <span className="close-button" onClick={closeImageModal}>X</span>
+            <img src={selectedImage} alt="Enlarged" className="large-image" />
+          </div>
+        </div>
       )}
     </div>
   );

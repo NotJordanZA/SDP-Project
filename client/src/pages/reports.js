@@ -8,63 +8,63 @@ import { onAuthStateChanged } from "firebase/auth";
 const Reports = () => {
     const [isPopupOpen, setIsPopupOpen] = useState(false);
     const [reports, setReports] = useState([]);
-    // const [isLoading, setIsLoading] = useState(true);
     const [user, setUser] = useState(null);
+    const [selectedImage, setSelectedImage] = useState(null); // State for the selected image
     const navigate = useNavigate();
 
     // Ensure User is logged in
     useEffect(() => {
-        // Listen for a change in the auth state
         const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
-          // If user is authenticated
-          if (firebaseUser) {
-            setUser(firebaseUser); //Set current user
-            console.log(user);
-          } else {
-            navigate("/login"); //Reroute to login if user not signed in
-          }
-        //   setIsLoading(false); //Declare firebase as no longer loading
+            if (firebaseUser) {
+                setUser(firebaseUser); // Set current user
+            } else {
+                navigate("/login"); // Reroute to login if user not signed in
+            }
         });
         return () => {
-          if (unsubscribe) {
-            unsubscribe();
-          }
-        }; //Return the listener
-    // eslint-disable-next-line
-    }, [auth, navigate]);
-
-    // useEffect(() => {
-    //     setUser(auth.currentUser);  // Ensure that the current user is synced with state
-    // }, []);
-
+            if (unsubscribe) {
+                unsubscribe();
+            }
+        };
+    }, [navigate]); // Only include 'navigate' if it's coming from React Router and can change
+    
     const togglePopup = () => {
         setIsPopupOpen(!isPopupOpen);
     };
 
-// Fetch reports from the API
-useEffect(() => {
-    const fetchReports = async () => {
-        try {
-            const queryParams = new URLSearchParams({
-                createdBy: user.email // Pass the user's email to filter reports by the creator
-            });
-            const response = await fetch(`/api/reports?${queryParams.toString()}`);  // Adjust the endpoint if necessary
-            const data = await response.json();
-            setReports(data); // Update the state with the fetched reports
-        } catch (error) {
-            console.error('Error fetching reports:', error);
+    // Fetch reports from the API
+    useEffect(() => {
+        const fetchReports = async () => {
+            try {
+                const queryParams = new URLSearchParams({
+                    createdBy: user.email // Pass the user's email to filter reports by the creator
+                });
+                const response = await fetch(`/api/reports?${queryParams.toString()}`);  // Adjust the endpoint if necessary
+                const data = await response.json();
+                setReports(data); // Update the state with the fetched reports
+            } catch (error) {
+                console.error('Error fetching reports:', error);
+            }
+        };
+
+        if (user) {
+            fetchReports();
         }
+    }, [user]);
+
+    if (!user) {
+        return null;
+    }
+
+    // Function to handle image click and show it in a larger view
+    const handleImageClick = (imageUrl) => {
+        setSelectedImage(imageUrl); // Set the clicked image URL in the state
     };
 
-    if (user) {
-        fetchReports();
-    }
-}, [user]);  // Only fetch reports if the user is logged in
-    if (!user) {
-        return null;  // Prevents rendering if no user is logged in, redirect happens in the useEffect
-    }
-
-    // let email = user.email;
+    // Function to close the image modal
+    const closeImageModal = () => {
+        setSelectedImage(null); // Clear the selected image
+    };
 
     return (
         <section className="report-page">
@@ -83,6 +83,23 @@ useEffect(() => {
                                     <p className="report-text">{report.reportText}</p>
                                     <p className="report-status">{report.reportStatus}</p>
                                     <p className="report-venue">Venue: {report.venueID || report.venue}</p>
+
+                                    {/* Display the attached images (if any) */}
+                                    {report.photos && report.photos.length > 0 && (
+                                        <div className="photos-container">
+                                            {report.photos.map((photoUrl, index) => (
+                                                <img
+                                                key={index}
+                                                src={photoUrl}
+                                                alt={``} // Use something descriptive without the word "photo"
+                                                className="report-photo"
+                                                style={{ width: '100px', height: '100px', cursor: 'pointer', margin: '5px' }}
+                                                onClick={() => handleImageClick(photoUrl)}
+                                            />
+                              
+                                            ))}
+                                        </div>
+                                    )}
                                 </li>
                             ))
                     ) : (
@@ -90,6 +107,16 @@ useEffect(() => {
                     )}
                 </ul>
             </div>
+
+            {/* Image Modal */}
+            {selectedImage && (
+                <div className="image-modal" onClick={closeImageModal}>
+                    <div className="image-modal-content">
+                        <span className="close-button" onClick={closeImageModal}>X</span>
+                        <img src={selectedImage} alt="Enlarged" className="large-image" />
+                    </div>
+                </div>
+            )}
         </section>
     );
 };

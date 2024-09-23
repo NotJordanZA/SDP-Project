@@ -3,7 +3,9 @@ const { initializeApp } = require('firebase/app');
 const { getFirestore } = require("firebase/firestore");
 const express = require("express");
 const cors = require('cors');
+const multer = require('multer');
 const {onRequest} = require("firebase-functions/v2/https");
+const { getStorage, ref, uploadBytes, getDownloadURL } = require('firebase/storage'); 
 const logger = require("firebase-functions/logger");
 const PORT = process.env.PORT || 3001; //Must be commented out for production build
 
@@ -21,8 +23,12 @@ const firebaseConfig = {
 };
 
 
+
+
 initializeApp(firebaseConfig);
 const db = getFirestore();
+const storage = multer.memoryStorage();
+const upload = multer({ storage: storage });
 
 // Get user API
 app.get("/api/users/:userEmail", async (req, res) => {
@@ -1132,6 +1138,43 @@ app.put("/api/notifications/:id", async (req, res) => {
         res.status(500).json({ error: "Internal Server Error" });
     }
 });
+//image upload api
+app.post('/api/upload-image', upload.single('image'), async (req, res) => {
+    try {
+        if (!req.file) {
+            return res.status(400).json({ error: 'No file uploaded' });
+        }
+
+        const image = req.file; // Get file from the request
+
+        // Create a reference to the image file in Firebase Storage
+        const storageRef = ref(storage, `images/${Date.now()}-${image.originalname}`);
+
+        // Upload the file to Firebase Storage
+        const snapshot = await uploadBytes(storageRef, image.buffer, {
+            contentType: image.mimetype,
+        });
+
+        // Get the download URL after the upload is complete
+        const downloadURL = await getDownloadURL(snapshot.ref);
+
+        // You can store the download URL in Firestore if needed
+        // Example: Storing the image URL in a "Images" collection
+        const newImageRef = doc(collection(db, 'Images'));
+        await setDoc(newImageRef, {
+            imageUrl: downloadURL,
+            uploadedAt: new Date(),
+        });
+
+        // Return the download URL in the response
+        res.status(200).json({ message: 'Image uploaded successfully', downloadURL });
+    } catch (error) {
+        console.error('Error uploading image:', error);
+        res.status(500).json({ error: 'Failed to upload image' });
+    }
+});
+
+
 
 // Left out for deployment
 // Prints to console the port of the server

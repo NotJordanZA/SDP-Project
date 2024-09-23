@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { collection, addDoc } from 'firebase/firestore';
-import { db } from '../firebase'; // Ensure correct path to your firebase.js
+import { collection, addDoc, updateDoc } from 'firebase/firestore';
+import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
+import { db, storage } from '../firebase';
 import '../styles/PopupForm.css';
 import { auth } from "../firebase";
 
@@ -10,12 +11,13 @@ const PopupForm = ({ isOpen, onClose }) => {
     roomNumber: '',
     reportType: '',
     reportText: '',
-    photos: null,
+    photos: [], // Updated to handle multiple files
   });
 
-  const [venues, setVenues] = useState([]); // State to store all venue data
-  const [filteredRooms, setFilteredRooms] = useState([]); // Initialize as an empty array
-  
+  const [venues, setVenues] = useState([]);
+  const [filteredRooms, setFilteredRooms] = useState([]);
+  const [uploading, setUploading] = useState(false);
+
   const user = auth.currentUser;
   let email = user.email;
 
@@ -32,14 +34,14 @@ const PopupForm = ({ isOpen, onClose }) => {
   const handleFileChange = (e) => {
     setFormData((prevData) => ({
       ...prevData,
-      photos: e.target.files[0], // Assuming single file upload for simplicity
+      photos: [...e.target.files], // Store all selected files
     }));
   };
 
   // Fetch all venues from the API
   const getAllVenues = async () => {
     try {
-      const response = await fetch('/api/venues', { // API call to get all Venues from the database
+      const response = await fetch('/api/venues', {
         method: 'GET',
         cache: 'no-store',
       });
@@ -47,59 +49,89 @@ const PopupForm = ({ isOpen, onClose }) => {
       const data = await response.json();
       if (response.ok) {
         setVenues(data);
-         // Store the venue data in state
       } else {
-        console.error('Error fetching venues:', data.error); // Logs error
+        console.error('Error fetching venues:', data.error);
       }
     } catch (error) {
       console.error('Error:', error);
     }
   };
 
-// Filter room numbers based on selected building name (venue)
-useEffect(() => {
-  if (formData.venue) {
-    // Filter venues that match the selected buildingName
-    const matchingRooms = venues
-      .filter(v => v.buildingName === formData.venue)
-      .map(v => v.venueName); // Get the venueName which represents the room
-
-    setFilteredRooms(matchingRooms); // Set filtered rooms based on the venue selection
-  } else {
-    setFilteredRooms([]); // Reset if no venue is selected
-  }
-}, [formData.venue, venues]);
-
   useEffect(() => {
-    // Get all venues when page first loads
     getAllVenues();
-  }, []); // Only runs on first load
+  }, []);
+
+  // Filter room numbers based on selected building name (venue)
+  useEffect(() => {
+    if (formData.venue) {
+      const matchingRooms = venues
+        .filter(v => v.buildingName === formData.venue)
+        .map(v => v.venueName);
+
+      setFilteredRooms(matchingRooms);
+    } else {
+      setFilteredRooms([]);
+    }
+  }, [formData.venue, venues]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     try {
+      setUploading(true);
+
       // Concatenate venue and room number to form venueID
       const venueID = `${formData.venue}${formData.roomNumber}`;
+      let imageUrls = [];
 
+      // Step 1: Add the report to Firestore first to get the report ID
       const reportData = {
-        venueID, // This is now venue + roomNumber concatenated
+        venueID,
         reportType: formData.reportType,
         reportText: formData.reportText,
-        reportStatus: 'pending', // Default value for reportStatus
-        resolutionLog: '', // Default value for resolutionLog
-        createdBy: email, // Add the email of the logged-in user
+        reportStatus: 'pending',
+        resolutionLog: '',
+        createdBy: email,
+        photos: [], // Initially empty, we'll populate it with the image URLs after the uploads
       };
 
-      // Add the report to the "Reports" collection in Firestore
-      await addDoc(collection(db, 'Reports'), reportData);
-      
+      const docRef = await addDoc(collection(db, 'Reports'), reportData);
+      const reportId = docRef.id;
+
+      // Step 2: Check if there are any photos to upload
+      if (formData.photos.length > 0) {
+        const uploadPromises = formData.photos.map((photo) => {
+          const storageRef = ref(storage, `reports/${reportId}/${photo.name}`);
+          const uploadTask = uploadBytesResumable(storageRef, photo);
+
+          return new Promise((resolve, reject) => {
+            uploadTask.on(
+              'state_changed',
+              null,
+              (error) => reject(error),
+              async () => {
+                const downloadUrl = await getDownloadURL(uploadTask.snapshot.ref);
+                resolve(downloadUrl);
+              }
+            );
+          });
+        });
+
+        // Wait for all uploads to finish and get the image URLs
+        imageUrls = await Promise.all(uploadPromises);
+
+        // Step 3: Update the report document with the image URLs
+        await updateDoc(docRef, { photos: imageUrls });
+      }
+
       alert('Report submitted successfully!');
-      setFormData({ venue: '', roomNumber: '', reportType: '', reportText: '', photos: null });
-      onClose(); // Close the popup after submission
+      setFormData({ venue: '', roomNumber: '', reportType: '', reportText: '', photos: [] });
+      onClose();
     } catch (error) {
       console.error('Error submitting report:', error);
       alert('Failed to submit the report. Please try again.');
+    } finally {
+      setUploading(false);
     }
   };
 
@@ -122,7 +154,7 @@ useEffect(() => {
             >
               <option value="" disabled>Select a venue</option>
               {venues.map((venue) => (
-                <option key={venue.buildingName} value={venue.buildingName}>
+                <option key={venue.id} value={venue.buildingName}>
                   {venue.buildingName}
                 </option>
               ))}
@@ -130,26 +162,26 @@ useEffect(() => {
           </div>
 
           <div className="form-group">
-  <label htmlFor="roomNumber">Room Number:</label>
-  <select
-    id="roomNumber"
-    name="roomNumber"
-    value={formData.roomNumber}
-    onChange={handleInputChange}
-    required
-  >
-    <option value="" disabled>Select a room number</option>
-    {Array.isArray(filteredRooms) && filteredRooms.length > 0 ? (
-      filteredRooms.map((room) => (
-        <option key={room} value={room}>
-          {room}
-        </option>
-      ))
-    ) : (
-      <option value="" disabled>No rooms available</option>
-    )}
-  </select>
-</div>
+            <label htmlFor="roomNumber">Room Number:</label>
+            <select
+              id="roomNumber"
+              name="roomNumber"
+              value={formData.roomNumber}
+              onChange={handleInputChange}
+              required
+            >
+              <option value="" disabled>Select a room number</option>
+              {Array.isArray(filteredRooms) && filteredRooms.length > 0 ? (
+                filteredRooms.map((room) => (
+                  <option key={room} value={room}>
+                    {room}
+                  </option>
+                ))
+              ) : (
+                <option value="" disabled>No rooms available</option>
+              )}
+            </select>
+          </div>
 
           <div className="form-group">
             <label htmlFor="concernType">Type of Concern:</label>
@@ -189,10 +221,13 @@ useEffect(() => {
               id="photos"
               name="photos"
               onChange={handleFileChange}
+              multiple // Allow multiple file uploads
             />
           </div>
 
-          <button type="submit" className="submit-button">Submit</button>
+          <button type="submit" className="submit-button" disabled={uploading}>
+            {uploading ? 'Submitting...' : 'Submit'}
+          </button>
         </form>
       </div>
     </div>
