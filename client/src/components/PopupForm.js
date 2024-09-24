@@ -88,7 +88,7 @@ const PopupForm = ({ isOpen, onClose }) => {
         const uploadPromises = formData.photos.map((photo) => {
           const storageRef = ref(storage, `report/${venueID}/${photo.name}`);
           const uploadTask = uploadBytesResumable(storageRef, photo);
-    
+  
           return new Promise((resolve, reject) => {
             uploadTask.on(
               'state_changed',
@@ -101,7 +101,7 @@ const PopupForm = ({ isOpen, onClose }) => {
             );
           });
         });
-    
+      
         // Wait for all uploads to finish and get the image URLs
         imageUrls = await Promise.all(uploadPromises);
       }
@@ -124,7 +124,14 @@ const PopupForm = ({ isOpen, onClose }) => {
       const analysisResults = await analysisResponse.json();
       console.log('Rekognition analysis results:', analysisResults);
   
-      // You can add logic to handle the analysis results if needed
+      // Check for fire detection in analysis results
+      const fireDetected = analysisResults.some(result => 
+        result.Labels.some(label => label.Name === 'Fire' && label.Confidence > 70) // Adjust confidence threshold as needed
+      );
+  
+      if (fireDetected) {
+        alert('Fire detected in one of the uploaded photos!');
+      }
   
       // Step 3: Send report data to the API
       const reportData = {
