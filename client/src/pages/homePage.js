@@ -5,10 +5,6 @@ import { useNavigate } from "react-router-dom";
 import { auth } from "../firebase";
 import { onAuthStateChanged } from "firebase/auth";
 import { getCurrentUser } from '../utils/getCurrentUser';
-import CalendarAdmin from '../assets/CalendarAdmin.svg';
-import AdminReport from '../assets/AdminReport.svg';
-import question from '../assets/Question.svg';
-import venue from '../assets/Venue.svg';
 
 const HomePage = () => {
   const navigate = useNavigate();
@@ -59,50 +55,19 @@ const HomePage = () => {
     }
   }, [user, isLoading]);
 
-  if (userInfo.isAdmin === true){
-    return (
-      <article>
-        <section className='welcome-section'>
-          <h2 className='welcome-name'>Welcome {userName}</h2> {/* Display the user's name or email */}
-        </section>
-          <div className="home">
-          <div className="card" onClick={() => navigate('/manage-bookings')}>
-            <img src={CalendarAdmin} alt="Manage Bookings" className="card-logo" />
-            <h2>Manage Bookings</h2>
-          </div>
-          <div className="card" onClick={() => navigate('/manage-reports')}>
-            <img src={AdminReport} alt="My Reports" className="card-logo" />
-            <h2>Manage Reports</h2>
-          </div>
-          <div className="card" onClick={() => navigate('/manage-requests')}>
-            <img src={question} alt="Manage Requests" className="card-logo" />
-            <h2>Manage Requests</h2>
-          </div>
-          <div className="card" onClick={() => navigate('/manage-venues')}>
-            <img src={venue} alt="Manage Venues" className="card-logo" />
-            <h2>Manage Venues</h2>
-        </div>
-      </div>
-      </article>
-      
-    );
-  } else {
     return (   
       <article>
         <section className='welcome-section'>
           <h2 className='welcome-name'>Welcome {userName}</h2> {/* Display the user's name or email */}
         </section>
         <section className="home-page">
-          <MainIcon iconClass="fa-solid fa-house icon-img" text="BOOK A VENUE" onClickFunction={() => navigate("/venues")}/>
-          <MainIcon iconClass="fa-solid fa-user-tie icon-img" text="MAKE A REQUEST" onClickFunction ={() =>navigate("/requests")}/>
-          <MainIcon iconClass="fa-solid fa-clipboard-check icon-img" text="MY BOOKINGS" onClickFunction={() => navigate("/bookings")}/>
-          <MainIcon iconClass="fa-solid fa-file-alt icon-img" text="FILE A REPORT" onClickFunction={() => navigate("/reports")}/> 
+          <MainIcon iconClass="fa-solid fa-house icon-img" text={userInfo.isAdmin ? "MANAGE/BOOK VENUES" : "BOOK A VENUE"} onClickFunction={() => navigate("/venues")}/>
+          <MainIcon iconClass="fa-solid fa-user-tie icon-img" text={userInfo.isAdmin ? "MANAGE REQUESTS" : "MAKE A REQUEST"} onClickFunction ={() =>userInfo.isAdmin ? navigate("/manage-requests") : navigate("/requests")}/>
+          <MainIcon iconClass="fa-solid fa-clipboard-check icon-img" text={userInfo.isAdmin ? "MANAGE BOOKINGS" : "MY BOOKINGS"} onClickFunction={() => navigate("/bookings")}/>
+          <MainIcon iconClass="fa-solid fa-file-alt icon-img" text={userInfo.isAdmin ? "MANAGE REPORTS" : "FILE A REPORT"} onClickFunction={() => userInfo.isAdmin ? navigate("/manage-reports") : navigate("/reports")}/> 
         </section>
       </article>
     );
-  }
-
-  
 };
 
 export default HomePage;

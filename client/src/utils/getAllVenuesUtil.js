@@ -9,8 +9,10 @@ export const getAllVenues = async (setVenueList, setAllVenues) =>{
       if (response.ok) {
         console.log('Venues fetched successfully');
         let sortedVenues = data.sort((a, b) => a.venueName.localeCompare(b.venueName));
+        if(setAllVenues){
+          setAllVenues(sortedVenues);
+        }
         setVenueList(sortedVenues);
-        setAllVenues(sortedVenues);
       } else {
         console.error('Error fetching venues:', data.error);
       }
