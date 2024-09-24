@@ -133,6 +133,8 @@ export const VenueForm = ({ id, buildingName, venueName, campus, venueType, venu
                 }),
               }}
               required
+              inputId="campusSelect" // Adding an ID
+              data-testid="campus-select" // Adding the test ID
             />
             <label htmlFor="VenueType">Venue Type:</label>
             <Select
@@ -151,6 +153,8 @@ export const VenueForm = ({ id, buildingName, venueName, campus, venueType, venu
                   }),
                 }}
                 required
+                inputId="venueTypeSelect" // Adding an ID
+                data-testid="venue-type-select" // Adding the test ID
             />
             <label htmlFor="Capacity">Capacity:</label>
             <input 

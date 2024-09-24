@@ -99,6 +99,7 @@ export default function Search({venueList, setVenueList, bookingsList, isManagin
         {value:"study room", label:"Study Room"},
         {value:"tutorial room", label:"Tutorial Room"},
         {value:"test venue", label:"Test Venue"},
+        {value:"lab", label:"Lab"},
         {value:"theatre", label:"Theatre"},
         {value:"field", label:"Field"}
     ]
