@@ -11,7 +11,6 @@ import SideBar from './components/SideBar';
 import MyBookings from './pages/MyBookings';
 import ManageReports from './pages/ManageReports';
 import ManageRequests from './pages/ManageRequests';
-import BookVenue from './pages/BookVenue'; 
 import AdminRequest from './pages/AdminRequest';
 
 function App() {
@@ -36,7 +35,6 @@ function App() {
           <Route path="/requests" element= {<AdminRequest/>} />
           <Route path="/manage-reports" element={<ManageReports />} />
           <Route path="/manage-requests" element={<ManageRequests />} />
-          <Route path="/book-venue" element={<BookVenue />} />
         </Route>
       </Routes>
     </Router>
