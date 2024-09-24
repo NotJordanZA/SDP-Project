@@ -422,7 +422,7 @@ app.get("/api/bookings", async (req, res) => {
         }));
 
         // Respond with all bookings
-        res.status(200).json({ bookings });
+        res.status(200).json(bookings);
     } catch (error) {
         console.error("Error retrieving bookings:", error);
         res.status(500).json({ error: "Internal Server Error" });

@@ -89,7 +89,6 @@ export const VenueForm = ({ id, buildingName, venueName, campus, venueType, venu
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log(id, selectedBuildingName, selectedVenueName, selectedCampusOption.value, selectedVenueTypeOption.value, selectedCapacity, selectedTimeOptions, selectedClosureOption.value);
     putVenue(id, selectedBuildingName, selectedVenueName, selectedCampusOption.value, selectedVenueTypeOption.value, selectedCapacity, selectedTimeOptions, selectedClosureOption.value, getAllVenues);
     alert('Form submitted successfully');
     onClose();
