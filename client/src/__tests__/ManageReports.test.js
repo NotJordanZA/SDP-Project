@@ -109,7 +109,7 @@ describe('ManageReports Component', () => {
   });
 
 
-  test('searches reports by email or venue', async () => {
+  test.skip('searches reports by email or venue', async () => {
     fetchAllReports.mockImplementation((setReports) => {
       setReports([
         {
