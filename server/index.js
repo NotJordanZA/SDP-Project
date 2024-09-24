@@ -1165,6 +1165,39 @@ app.post('/api/upload-image', upload.single('image'), async (req, res) => {
     }
 });
 
+/////////////////////////aws stuff///////////////////////////
+
+const AWS = require('aws-sdk');
+require('dotenv').config();
+const rekognition = new AWS.Rekognition({
+    accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+    region: process.env.AWS_REGION,
+  });
+  app.post('/api/analyze-photos', upload.array('photos'), async (req, res) => {
+    const photoBuffers = req.files.map(file => file.buffer);
+    
+    try {
+      const promises = photoBuffers.map(buffer => {
+        const params = {
+          Image: {
+            Bytes: buffer,
+          },
+          // Add additional parameters as needed, e.g., FeatureTypes: ['LABELS']
+        };
+        return rekognition.detectLabels(params).promise();
+      });
+  
+      const results = await Promise.all(promises);
+      res.status(200).json(results);
+    } catch (error) {
+      console.error('Error analyzing photos:', error);
+      res.status(500).json({ error: 'Failed to analyze photos' });
+    }
+  });
+
+
+
 
 
 // Left out for deployment

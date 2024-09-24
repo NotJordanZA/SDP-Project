@@ -76,19 +76,19 @@ const PopupForm = ({ isOpen, onClose }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-  
+    
     try {
       setUploading(true);
       
       const venueID = `${formData.venue}${formData.roomNumber}`;
       let imageUrls = [];
-  
+    
       // Step 1: Upload images to Firebase Storage and get URLs
       if (formData.photos.length > 0) {
         const uploadPromises = formData.photos.map((photo) => {
           const storageRef = ref(storage, `report/${venueID}/${photo.name}`);
           const uploadTask = uploadBytesResumable(storageRef, photo);
-  
+    
           return new Promise((resolve, reject) => {
             uploadTask.on(
               'state_changed',
@@ -101,12 +101,32 @@ const PopupForm = ({ isOpen, onClose }) => {
             );
           });
         });
-  
+    
         // Wait for all uploads to finish and get the image URLs
         imageUrls = await Promise.all(uploadPromises);
       }
   
-      // Step 2: Send report data to the API
+      // Step 2: Analyze photos using Rekognition
+      const formDataForAnalysis = new FormData();
+      formData.photos.forEach(photo => {
+        formDataForAnalysis.append('photos', photo);
+      });
+  
+      const analysisResponse = await fetch('/api/analyze-photos', {
+        method: 'POST',
+        body: formDataForAnalysis,
+      });
+  
+      if (!analysisResponse.ok) {
+        throw new Error('Failed to analyze photos');
+      }
+  
+      const analysisResults = await analysisResponse.json();
+      console.log('Rekognition analysis results:', analysisResults);
+  
+      // You can add logic to handle the analysis results if needed
+  
+      // Step 3: Send report data to the API
       const reportData = {
         venueID,
         reportType: formData.reportType,
