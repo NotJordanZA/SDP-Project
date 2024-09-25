@@ -35,7 +35,8 @@ function BookingRow({bookingDate, venueID, time, bookingDescription, venueBooker
                 const notificationResponse = await fetch('/api/notifications', {
                     method: 'POST',
                     headers: {
-                    'Content-Type': 'application/json',
+                        'Content-Type': 'application/json',
+                        'x-api-key': process.env.REACT_APP_API_KEY,
                     },
                     body: JSON.stringify(notification),
                 });

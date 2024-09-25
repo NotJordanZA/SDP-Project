@@ -2,6 +2,10 @@ export const getAllBookings = async (currentUserEmail, setBookingsList) =>{ // G
     try{
       const response = await fetch(`/api/bookings`, { // API call which GETs bookings
         method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-api-key': process.env.REACT_APP_API_KEY,
+        },
       });
 
       const data = await response.json();

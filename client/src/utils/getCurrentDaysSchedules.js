@@ -2,6 +2,10 @@ export const getCurrentDaySchedules = async (bookingDay, bookingsList, setBookin
     try{
       const response = await fetch(`/api/schedules/findByField?bookingDay=${bookingDay}`, {
         method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-api-key': process.env.REACT_APP_API_KEY,
+        },
       });
 
       const data = await response.json();

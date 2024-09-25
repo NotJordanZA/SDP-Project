@@ -2,7 +2,10 @@ export const deleteBooking = async(id, setBookingsList, email) => {
     try {
       const response = await fetch(`/api/bookings/${id}`, {
         method: 'DELETE',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          'x-api-key': process.env.REACT_APP_API_KEY,
+        },
       });
       const data = await response.json();
       if (response.ok){
