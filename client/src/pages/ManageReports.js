@@ -103,10 +103,7 @@ function Reports() {
   }, []);// Add setUser to the dependency array
 
 
-  // Fetch all reports on component mount
-  useEffect(() => {
-    fetchAllReports(setReports, getAllReports);
-  }, []);
+
 
   // Image click handler to show enlarged image in a modal
   const handleImageClick = (imageUrl) => {
@@ -139,6 +136,7 @@ function Reports() {
   };
 
   const handleInProgressClick = async (reportId) => {
+    console.log(`In Progress clicked for report: ${reportId}`);
     const updatedReports = reports.map(report =>
       report.id === reportId ? { ...report, reportStatus: "In Progress" } : report
     );
