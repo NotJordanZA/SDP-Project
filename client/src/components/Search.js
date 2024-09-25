@@ -137,9 +137,9 @@ export default function Search({venueList, setVenueList, bookingsList, isManagin
              />
             <div className="inner-search-container">
                 <div className="main-search-row">
-                    <input className="search-input" placeholder='Search...' value={searchInput} onChange={handleInputChange}/>
-                    <button className="search-row-button" onClick = {searchVenue}><FontAwesomeIcon icon={faSearch}/></button>
-                    <button className="search-row-button" onClick = {toggleFilterDropwdown}><FontAwesomeIcon icon={faSliders}/></button>
+                    <input className="search-input" placeholder='Search...' value={searchInput} onChange={handleInputChange} data-testid='search-input'/>
+                    <button className="search-row-button" onClick = {searchVenue} data-testid='search-icon-button'><FontAwesomeIcon icon={faSearch}/></button>
+                    <button className="search-row-button" onClick = {toggleFilterDropwdown} data-testid='filter-icon-button'><FontAwesomeIcon icon={faSliders}/></button>
                     {isAdmin && (
                         <button className={`search-manage-button ${isManaging ? "clicked" : ""}`} onClick={() => setIsManaging(!isManaging)}>MANAGE</button>
                     )}
@@ -162,6 +162,7 @@ export default function Search({venueList, setVenueList, bookingsList, isManagin
                                   zIndex: 9999, // Set z-index to a high value to ensure it's on top
                                 }),
                             }}
+                            aria-label='campus filter select'
                         />
                     </div>
                     <div className="filter-row">
@@ -181,6 +182,7 @@ export default function Search({venueList, setVenueList, bookingsList, isManagin
                                   zIndex: 9999, // Set z-index to a high value to ensure it's on top
                                 }),
                             }}
+                            aria-label='venue type filter select'
                         />
                     </div>
                     <div className="filter-row">
@@ -200,6 +202,7 @@ export default function Search({venueList, setVenueList, bookingsList, isManagin
                                   zIndex: 9999, // Set z-index to a high value to ensure it's on top
                                 }),
                             }}
+                            aria-label='closure filter select'
                         />
                     </div>
                     <div className="filter-row">
@@ -220,6 +223,7 @@ export default function Search({venueList, setVenueList, bookingsList, isManagin
                                   zIndex: 9999, // Set z-index to a high value to ensure it's on top
                                 }),
                             }}
+                            aria-label='timeslots filter select'
                         />
                     </div>
                     <div className="filter-row">

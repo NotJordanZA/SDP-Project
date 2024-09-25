@@ -63,6 +63,7 @@ export const VenueForm = ({ id, buildingName, venueName, campus, venueType, venu
     {value:"Study Room", label:"Study Room"},
     {value:"Tutorial Room", label:"Tutorial Room"},
     {value:"Test Venue", label:"Test Venue"},
+    {value:"lab", label:"Lab"},
     {value:"Theatre", label:"Theatre"},
     {value:"Field", label:"Field"}
   ]
@@ -109,12 +110,14 @@ export const VenueForm = ({ id, buildingName, venueName, campus, venueType, venu
               value = {selectedBuildingName}
               onChange={(e) => setSelectedBuildingName(e.target.value)}
               required
+              data-testid="building-name-input"
             />
             <label htmlFor="VenueName">Venue Name:</label>
             <input 
               value = {selectedVenueName}
               onChange={(e) => setSelectedVenueName(e.target.value)}
               required
+              data-testid="venue-name-input"
             />
             <label htmlFor="Campus">Campus:</label>
             <Select
@@ -133,8 +136,9 @@ export const VenueForm = ({ id, buildingName, venueName, campus, venueType, venu
                 }),
               }}
               required
-              inputId="campusSelect" // Adding an ID
-              data-testid="campus-select" // Adding the test ID
+              inputId="campusSelect"
+              data-testid="campus-select"
+              aria-label='campus select'
             />
             <label htmlFor="VenueType">Venue Type:</label>
             <Select
@@ -153,14 +157,16 @@ export const VenueForm = ({ id, buildingName, venueName, campus, venueType, venu
                   }),
                 }}
                 required
-                inputId="venueTypeSelect" // Adding an ID
-                data-testid="venue-type-select" // Adding the test ID
+                inputId="venueTypeSelect"
+                data-testid="venue-type-select"
+                aria-label='venue type select'
             />
             <label htmlFor="Capacity">Capacity:</label>
             <input 
               value = {selectedCapacity}
               onChange={(e) => setSelectedCapacity(e.target.value)}
               required
+              data-testid="capacity-input"
             />
             <label htmlFor="TimeSlots">Time Slots:</label>
             <CreatableSelect
@@ -181,6 +187,7 @@ export const VenueForm = ({ id, buildingName, venueName, campus, venueType, venu
                   }),
               }}
               required
+              aria-label='timeslots select'
             />
             {timeValidationError && <p style={{ color: 'red' }}>{timeValidationError}</p>}
             <label htmlFor="isClosed">Closure Status:</label>
@@ -200,6 +207,7 @@ export const VenueForm = ({ id, buildingName, venueName, campus, venueType, venu
                 }),
               }}
               required
+              aria-label='closure select'
             />
           </div>
           <button type="submit" className="submit-button">Submit</button>

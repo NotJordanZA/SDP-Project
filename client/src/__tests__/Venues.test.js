@@ -1,4 +1,4 @@
-import { render, screen, fireEvent, waitFor, getByTestId, getByText} from '@testing-library/react';
+import { render, screen, act, fireEvent, waitFor, getByTestId, getByText} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 // import React from 'react';
 import { MemoryRouter } from "react-router-dom";
@@ -16,6 +16,7 @@ import { getCurrentUser } from '../utils/getCurrentUser';
 import { makeBooking } from '../utils/makeBookingUtil';
 import { fetchSchedules } from '../utils/getSchedulesUtil';
 import { createSchedule } from '../utils/createScheduleUtil';
+import { putVenue } from '../utils/putVenueUtil';
 import { auth } from "../firebase";
 import { onAuthStateChanged } from "firebase/auth";
 
@@ -96,6 +97,10 @@ jest.mock('../utils/getSchedulesUtil', () => ({
 
 jest.mock('../utils/createScheduleUtil', () => ({
     createSchedule: jest.fn(),
+}));
+
+jest.mock('../utils/putVenueUtil', () => ({
+    putVenue: jest.fn(),
 }));
 
 const setBookingTime = jest.fn();
@@ -430,6 +435,7 @@ describe("Venues", () => {
         render(<VenueRow
             key={'MSL004'}
             id={'IAMAVENUEID'}
+            buildingName={'MSL'}
             venueName={'MSL004'}
             campus={'West'}
             venueType={'Lab'}
@@ -474,6 +480,7 @@ describe("Venues", () => {
         render(<VenueRow
             key={'MSL004'}
             id={'IAMAVENUEID'}
+            buildingName={'MSL'}
             venueName={'MSL004'}
             campus={'West'}
             venueType={'Lab'}
@@ -535,6 +542,7 @@ describe("Venues", () => {
         render(<VenueRow
             key={'WSS02'}
             id={'IAMAVENUEID'}
+            buildingName={'WSS'}
             venueName={'WSS02'}
             campus={'West'}
             venueType={'Lecture Venue'}
@@ -563,11 +571,11 @@ describe("Venues", () => {
     });
 
     test('Editing a Venue successfully renders the relevant form, and submits correctly', async () => {
-        const handleSubmit = jest.fn();
         auth.currentUser = { email: 'test@wits.ac.za' };
         render(<VenueRow
             key={'WSS02'}
             id={'IAMAVENUEID'}
+            buildingName={'WSS'}
             venueName={'WSS02'}
             campus={'West'}
             venueType={'Lecture Venue'}
@@ -600,32 +608,192 @@ describe("Venues", () => {
         expect(mockCapacity).toBeInTheDocument();
         const mockTimeSlots = screen.getByText('14:15');
         expect(mockTimeSlots).toBeInTheDocument();
-
-        // CHANGE VALUES
-        // fireEvent.click(mockCampus);
-        // const eastCampus = screen.getByDisplayValue('East Campus');
-        // fireEvent.click(eastCampus);
-
-        // GO TO THE GOAT. THERE IS A WAY, RUBEN. YOU WILL FIND IT!!!
-        // MAYBE FIND SOMETHING ELSE TO CLICK
-        // MAYBE FIND A DIFFERENT IDENTIFIER
-        // I BELIEVE YOU CAN DO IT!!!!!!!
-
-        // Find the select input by its role
-        const selectInput = screen.getByRole('combobox', { name: /Campus:/ });
-
-        // Click on the select input to open the dropdown
-        userEvent.click(selectInput);
-
-        // Find the option that you want to select (e.g., "East Campus")
-        const optionToSelect = screen.getByText('East Campus');
-
-        // Click on the option
-        userEvent.click(optionToSelect);
-
-        // Optionally, assert that the selected value has been updated in the component
-        expect(selectInput).toHaveTextContent('East Campus');
+        
+        // CHECK FUNCTIONALITY
+        const selectInput = screen.getByLabelText(/campus select/i); // Retrieve Campus Select by its label
+        fireEvent.mouseDown(selectInput);
+        const optionToSelect = screen.getByText('East Campus'); // Retrieve the 'East Campus' option in the dropdown
+        await act( async () => userEvent.click(optionToSelect)); // Click the option and wait for the useState
+        expect(screen.getByText('East Campus')).toBeInTheDocument(); // If successful, 'East Campus' will be displayed in the Select
+        expect(screen.queryAllByText('West Campus')).toHaveLength(0); // If successful, 'West Campus' will NOT be displayed in the Select
+        const submitButton = screen.getByText('Submit');
+        fireEvent.click(submitButton);
+        expect(putVenue).toHaveBeenCalled();
     });
+
+    test('Filling in the form for adding a venue successfully creates one', async () => {
+        auth.currentUser = { email: 'test@wits.ac.za' };
+        getAllVenues.mockImplementation((setVenuesList, setAllVenues) => {
+            setAllVenues([]);
+            setVenuesList([]);
+        });
+        // Mock the current date's bookings
+        getCurrentDatesBookings.mockImplementation((formattedDate, setBookingsList) => {
+            setBookingsList([]);
+        });
+        render(<Venues/>); //Render Venues Page
+        const manageButton = screen.getByText('MANAGE'); //Get Manage Button by Displayed Text
+        fireEvent.click(manageButton); //Click the Manage Button to Show Subsequent Buttons
+        const addVenueButton = screen.getByText('ADD VENUE'); //Get Add Venue Button by Displayed
+        fireEvent.click(addVenueButton); //Click the Add Venue Button to Show VenueForm
+        
+        // FETCH COMPONENTS
+        const buildingInput = screen.getByTestId('building-name-input');
+        const venueInput = screen.getByTestId('venue-name-input');
+        const campusInput = screen.getByLabelText(/campus select/i); // Retrieve Campus Select by its label
+        const venueTypeInput = screen.getByLabelText(/venue type select/i); // Retrieve Venue Type Select by its label
+        const capacityInput = screen.getByTestId('capacity-input');
+        const timeSlotsInput = screen.getByLabelText(/timeslots select/i); // Retrieve Time Slots Select by its label
+        const closureInput = screen.getByLabelText(/closure select/i); // Retrieve Closure Status Select by its label
+        // ENTERING/SELECTING DETAILS
+        await userEvent.type(buildingInput, "MSL");
+        await userEvent.type(venueInput, "MSL001");
+        fireEvent.mouseDown(campusInput);
+        const campusOptionToSelect = screen.getByText('West Campus');
+        await act( async () => userEvent.click(campusOptionToSelect)); // Click the option and wait for the useState
+        fireEvent.mouseDown(venueTypeInput);
+        const venueTypeOptionToSelect = screen.getByText('Lab');
+        await act( async () => userEvent.click(venueTypeOptionToSelect)); // Click the option and wait for the useState
+        await userEvent.type(capacityInput, "100");
+        await userEvent.type(timeSlotsInput, "08:15");
+        const createTimeButton = screen.getByText(/Create "08:15"/i);
+        await act( async () => userEvent.click(createTimeButton)); // Click the option and wait for the useState
+        fireEvent.mouseDown(closureInput);
+        const closureOptionToSelect = screen.getByText('Open');
+        await act( async () => userEvent.click(closureOptionToSelect)); // Click the option and wait for the useState
+
+        const submitButton = screen.getByText('Submit');
+        fireEvent.click(submitButton);
+        expect(putVenue).toHaveBeenCalled();
+    });
+
+    test('Applying filters and clicking the filter button narrows results by selected criteria', async () => {
+        auth.currentUser = { email: 'test@wits.ac.za' };
+        getAllVenues.mockImplementation((setVenuesList, setAllVenues) => {
+            setAllVenues([
+                {
+                    venueName:'OLS03', 
+                    campus:'East', 
+                    venueType:'Lecture Venue', 
+                    venueCapacity:150, 
+                    timeSlots:['08:00','09:00','10:15','11:15','12:30','14:15','15:15','16:15'], 
+                    isClosed:false
+                },
+                {
+                    venueName:'Amphitheatre', 
+                    campus:'West', 
+                    venueType:'Theatre', 
+                    venueCapacity:500, 
+                    timeSlots:['14:15','15:15','16:15'], 
+                    isClosed:false
+                }
+            ]);
+            setVenuesList([
+                {
+                    venueName:'OLS03', 
+                    campus:'East', 
+                    venueType:'Lecture Venue', 
+                    venueCapacity:150, 
+                    timeSlots:['08:00','09:00','10:15','11:15','12:30','14:15','15:15','16:15'], 
+                    isClosed:false
+                },
+                {
+                    venueName:'Amphitheatre', 
+                    campus:'West', 
+                    venueType:'Theatre', 
+                    venueCapacity:500, 
+                    timeSlots:['14:15','15:15','16:15'], 
+                    isClosed:true
+                }
+            ]);
+        });
+        // Mock the current date's bookings
+        getCurrentDatesBookings.mockImplementation((formattedDate, setBookingsList) => {
+            setBookingsList([]);
+        });
+        fetchSchedules.mockImplementation((setSchedules, venueID) => {
+            setSchedules([]);
+        });
+        render(<Venues/>); //Render Venues Page
+        const filterIconButton = screen.getByTestId('filter-icon-button');
+        fireEvent.click(filterIconButton);
+        const campusInput = screen.getByLabelText(/campus filter select/i); // Retrieve Campus Select by its label
+        const venueTypeInput = screen.getByLabelText(/venue type filter select/i); // Retrieve Venue Type Select by its label
+        const timeSlotsInput = screen.getByLabelText(/timeslots filter select/i); // Retrieve Time Slots Select by its label
+        const closureInput = screen.getByLabelText(/closure filter select/i); // Retrieve Closure Status Select by its label
+        fireEvent.mouseDown(campusInput);
+        const campusOptionToSelect = screen.queryAllByText('East Campus');
+        await act( async () => userEvent.click(campusOptionToSelect[0])); // Click the option and wait for the useState
+        fireEvent.mouseDown(venueTypeInput);
+        const venueTypeOptionToSelect = screen.queryAllByText('Lecture Venue');
+        await act( async () => userEvent.click(venueTypeOptionToSelect[0])); // Click the option and wait for the useState
+        fireEvent.mouseDown(closureInput);
+        const closureOptionToSelect = screen.queryAllByText('Open');
+        await act( async () => userEvent.click(closureOptionToSelect[0])); // Click the option and wait for the useState
+        fireEvent.mouseDown(timeSlotsInput);
+        const timeOptionToSelect = screen.queryAllByText('08:00');
+        await act( async () => userEvent.click(closureOptionToSelect[0])); // Click the option and wait for the useState
+        const filterButton = screen.getByText('Filter');
+        fireEvent.click(filterButton);
+        expect(screen.getByText('OLS03')).toBeInTheDocument;
+        expect(screen.queryAllByText('Amphitheatre')).toHaveLength(0);
+    })
+
+    test('Entering a venue name and clicking the search button narrows results by name', async () => {
+        auth.currentUser = { email: 'test@wits.ac.za' };
+        getAllVenues.mockImplementation((setVenuesList, setAllVenues) => {
+            setAllVenues([
+                {
+                    venueName:'OLS03', 
+                    campus:'East', 
+                    venueType:'Lecture Venue', 
+                    venueCapacity:150, 
+                    timeSlots:['08:00','09:00','10:15','11:15','12:30','14:15','15:15','16:15'], 
+                    isClosed:false
+                },
+                {
+                    venueName:'Amphitheatre', 
+                    campus:'West', 
+                    venueType:'Theatre', 
+                    venueCapacity:500, 
+                    timeSlots:['14:15','15:15','16:15'], 
+                    isClosed:false
+                }
+            ]);
+            setVenuesList([
+                {
+                    venueName:'OLS03', 
+                    campus:'East', 
+                    venueType:'Lecture Venue', 
+                    venueCapacity:150, 
+                    timeSlots:['08:00','09:00','10:15','11:15','12:30','14:15','15:15','16:15'], 
+                    isClosed:false
+                },
+                {
+                    venueName:'Amphitheatre', 
+                    campus:'West', 
+                    venueType:'Theatre', 
+                    venueCapacity:500, 
+                    timeSlots:['14:15','15:15','16:15'], 
+                    isClosed:true
+                }
+            ]);
+        });
+        // Mock the current date's bookings
+        getCurrentDatesBookings.mockImplementation((formattedDate, setBookingsList) => {
+            setBookingsList([]);
+        });
+        fetchSchedules.mockImplementation((setSchedules, venueID) => {
+            setSchedules([]);
+        });
+        render(<Venues/>); //Render Venues Page
+        const searchButton = screen.getByTestId('search-icon-button');
+        const searchInput = screen.getByTestId('search-input');
+        await userEvent.type(searchInput, "OLS");
+        fireEvent.click(searchButton);
+        expect(screen.getByText('OLS03')).toBeInTheDocument;
+        expect(screen.queryAllByText('Amphitheatre')).toHaveLength(0);
+    })
 
     test('User that is not logged in is redirected to /login', () => {
         onAuthStateChanged.mockImplementation((auth, callback) => {
