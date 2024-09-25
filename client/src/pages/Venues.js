@@ -21,12 +21,22 @@ function Venues(){
     const [userInfo, setUserInfo] = useState({});
     const [isLoading, setIsLoading] = useState(true);
     const [user, setUser] = useState(null);
+    const [isManaging, setIsManaging] = useState(false);
+    const [isScheduling, setIsScheduling] = useState(false);
     // const user = auth.currentUser;
     const studentVenueTypes = ["Tutorial Room", "Study Room"];
     const lecturerVenueTypes = ["Tutorial Room", "Study Room", "Lecture Venue", "Lab", "Test Venue"];
     const weekday = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+
+    const toggleIsScheduling = () => {
+        setIsScheduling(!isScheduling);
+    }
     const navigate = useNavigate();
     
+    const callGetAllVenues = () => {
+      getAllVenues(setVenueList, setAllVenues);
+    }
+
     // Ensure User is logged in
     useEffect(() => {
       // Listen for a change in the auth state
@@ -75,7 +85,8 @@ function Venues(){
     }, [userInfo]);
     
     useEffect(() => {
-      getAllVenues(setVenueList, setAllVenues);
+      // getAllVenues(setVenueList, setAllVenues);
+      callGetAllVenues();
     }, []);// Only runs on first load
 
     useEffect(() => {
@@ -116,6 +127,8 @@ function Venues(){
         return (
           <VenueRow
             key={venue.venueName}
+            id={venue.id}
+            buildingName={venue.buildingName}
             venueName={venue.venueName}
             campus={venue.campus}
             venueType={venue.venueType}
@@ -125,6 +138,10 @@ function Venues(){
             bookings={matchingBookings}
             relevantDate={formattedDate}
             setBookingsList={setBookingsList}
+            isAdmin={userInfo.isAdmin}
+            isManaging={isManaging}
+            getAllVenues={callGetAllVenues}
+            isScheduling={isScheduling}
           />
         );
       }
@@ -141,6 +158,10 @@ function Venues(){
             bookings={matchingBookings}
             relevantDate={formattedDate}
             setBookingsList={setBookingsList}
+            isAdmin={false}
+            isManaging={false}
+            getAllVenues={null}
+            isScheduling={null}
           />
         )
       }
@@ -157,6 +178,10 @@ function Venues(){
             bookings={matchingBookings}
             relevantDate={formattedDate}
             setBookingsList={setBookingsList}
+            isAdmin={false}
+            isManaging={false}
+            getAllVenues={null}
+            isScheduling={null}
           />
         )
       }
@@ -167,8 +192,8 @@ function Venues(){
 
     return (
         <main>
-            <DateHeader displayDate={displayDate} onDateChange={handleDateChange} data-testid="date-header"/>
-            <Search venueList = {allVenues} setVenueList = {setVenueList} bookingsList = {bookingsList} data-testid="search"/>
+            <DateHeader displayDate={displayDate} onDateChange={handleDateChange} isManaging={isManaging} data-testid="date-header"/>
+            <Search venueList = {allVenues} setVenueList = {setVenueList} bookingsList = {bookingsList} isManaging = {isManaging} setIsManaging = {setIsManaging} isAdmin = {userInfo.isAdmin} getAllVenues={callGetAllVenues} toggleIsScheduling={toggleIsScheduling} isScheduling={isScheduling} data-testid="search"/>
             {
               venueComponents.length > 0 ? 
                 (

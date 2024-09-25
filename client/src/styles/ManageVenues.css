@@ -7,10 +7,10 @@
 }
 
 /* Normal font-weight for text-related elements */
-.managevenues-h2,  label, input, select, textarea, p {
+/* .managevenues-h2,  label, input, select, textarea, p {
   color: #043673; 
   font-weight: normal; 
-}
+} */
 .managevenues-label {
   color: #043673; 
   font-weight: normal; 
@@ -65,7 +65,7 @@ select,
 }
 
 /* Set blue color for placeholder text */
-input::placeholder,
+/* input::placeholder, */
 .managevenues-textarea::placeholder {
   color: #043673; /* Blue color for placeholder text */
   font-weight: normal; /* Ensure normal font-weight */

@@ -9,7 +9,13 @@ import '../styles/ManageRequests.css';
 import {fetchRequests} from '../utils/getAllRequests';
 import {handleApproveClick} from '../utils/AdminhandleApprovecClick';
 export const getAllRequests = async () => {
-  const response = await fetch(`/api/adminRequests`);
+  const response = await fetch(`/api/adminRequests`, {
+    method: "GET",
+    headers: {
+      'Content-Type': 'application/json',
+      'x-api-key': process.env.REACT_APP_API_KEY,
+    },
+  });
   return await response.json();
 };
 // update a Request- change status from pending to approved
@@ -17,7 +23,8 @@ export const updateReq= async (id, ReqData) => {
 const response = await fetch(`/api/adminRequests/${id}`, {
   method: "PUT",
   headers: {
-    "Content-Type": "application/json",
+    'Content-Type': 'application/json',
+    'x-api-key': process.env.REACT_APP_API_KEY,
   },
   body: JSON.stringify(ReqData),
 });

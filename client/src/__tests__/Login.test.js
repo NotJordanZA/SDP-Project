@@ -23,6 +23,10 @@ jest.mock("firebase/auth", () => ({
 //};
 }));
 
+jest.mock('firebase/storage', () => ({
+    getStorage: jest.fn(),
+}));
+
 jest.mock('../utils/addNewUserUtil', () => ({
 addNewUser: jest.fn(),
 }));

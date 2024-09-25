@@ -27,11 +27,13 @@ jest.mock('../firebase', () => ({
 
 jest.mock('firebase/firestore', () => ({
     getDoc: jest.fn(() => Promise.resolve({
-    data: () => ({ isAdmin: true })  // Mock Firestore document with isAdmin
+    data: () => ({ isAdmin: false })  // Mock Firestore document with isAdmin
     })),
 }));
 
-jest.mock('../utils/getCurrentUser');
+jest.mock('../utils/getCurrentUser', () => ({
+    getCurrentUser: jest.fn(),
+}));
 
 jest.mock('../utils/getCurrentUsersBookings', () => ({
     getCurrentUsersBookings: jest.fn(),
@@ -40,6 +42,15 @@ jest.mock('../utils/getCurrentUsersBookings', () => ({
 const navigate = jest.fn();
 
 describe("MyBookings", () => {
+
+    beforeAll(() => {
+        global.ResizeObserver = class {
+            observe() {}
+            unobserve() {}
+            disconnect() {}
+        };
+    });
+
     beforeEach(() => {
         // Mock useNavigate function
         jest.spyOn(router, 'useNavigate').mockImplementation(() => navigate);
@@ -49,7 +60,17 @@ describe("MyBookings", () => {
             callback({ email: 'test@wits.ac.za' });
             // console.log("Unsubscribe returned!");
             return jest.fn(); // This is the mock unsubscribe function
-          });
+        });
+
+        getCurrentUser.mockImplementation((currentUserEmail, setUserInfo) => {
+        setUserInfo({
+            firstName:'Test',
+            isAdmin:false,
+            isLecturer:false,
+            isStudent:true,
+            lastName:'User',
+        });
+        });
 
         // Mock the current date's bookings
         getCurrentUsersBookings.mockImplementation((currentUserEmail, setBookingsList) => {
@@ -91,13 +112,15 @@ describe("MyBookings", () => {
         expect(myBookingsHeading).toBeInTheDocument(); //Check if heading rendered
     });
 
-    test('Renders BookingRow Component with Correct Data (From BookingsList)', () => {
+    test('Renders BookingRow Component with Correct Data (From BookingsList)', async() => {
         auth.currentUser = { email: 'test@wits.ac.za' };
         render(<MyBookings/>); //Render MyBookings Page
-        const booking1 = screen.getByText('2024-10-31');// Looking for first booking
-        const booking2 = screen.getByText('2024-11-01');// Looking for second booking
-        expect(booking1).toBeInTheDocument();// Check if first booking is rendered
-        expect(booking2).toBeInTheDocument();// Check if second booking is rendered
+        await waitFor(() => {
+            const booking1 = screen.getByText('2024-10-31');// Looking for first booking
+            const booking2 = screen.getByText('2024-11-01');// Looking for second booking
+            expect(booking1).toBeInTheDocument();// Check if first booking is rendered
+            expect(booking2).toBeInTheDocument();// Check if second booking is rendered
+        });
     });
 
     test('Check if user that is not logged in is redirected to /login', () => {

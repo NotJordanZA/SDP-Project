@@ -4,9 +4,9 @@ import { faSearch, faSliders} from '@fortawesome/free-solid-svg-icons';
 import { useState } from "react";
 import ReactSlider from 'react-slider';
 import Select from 'react-select';
+import { VenueForm } from './VenueForm';
 
-export default function Search({venueList, setVenueList, bookingsList, ...props }) { //A function for searching and filtering venues
-
+export default function Search({venueList, setVenueList, bookingsList, isManaging, setIsManaging, isAdmin, getAllVenues, toggleIsScheduling, isScheduling, ...props }) { //A function for searching and filtering venues
     const [searchInput, setSearchInput] = useState("");
     const [isFilterOpen, setIsFilterOpen] = useState(false);
     const [selectedCampusOption, setSelectedCampusOption] = useState("");
@@ -14,6 +14,11 @@ export default function Search({venueList, setVenueList, bookingsList, ...props 
     const [selectedClosureOption, setSelectedClosureOption] = useState(false);
     const [selectedTimeOptions, setSelectedTimeOptions] = useState([]);
     const [selectedCapacity, setSelectedCapacity] = useState(0);
+    const [isVenueFormOpen, setIsVenueFormOpen] = useState(false);
+
+    const toggleVenueForm = () => {
+        setIsVenueFormOpen(!isVenueFormOpen);
+    }
 
     const searchVenue = () => { // Returns all venues with names that match the user's search, ignoring case
         setVenueList(venueList.filter((venue) => venue.venueName.toLowerCase().includes(searchInput.toLowerCase())));
@@ -116,11 +121,27 @@ export default function Search({venueList, setVenueList, bookingsList, ...props 
 
     return (
         <main className="greater-search-container" {...props}>
+            <VenueForm 
+                isOpen = {isVenueFormOpen}
+                onClose = {toggleVenueForm}
+                id = {""} 
+                buildingName = {""}
+                venueName = {""}
+                campus = {""}
+                venueType = {""}
+                venueCapacity = {0}
+                timeSlots = {[]}
+                isClosed = {""}
+                getAllVenues={getAllVenues}
+             />
             <div className="inner-search-container">
                 <div className="main-search-row">
                     <input className="search-input" placeholder='Search...' value={searchInput} onChange={handleInputChange}/>
                     <button className="search-row-button" onClick = {searchVenue}><FontAwesomeIcon icon={faSearch}/></button>
                     <button className="search-row-button" onClick = {toggleFilterDropwdown}><FontAwesomeIcon icon={faSliders}/></button>
+                    {isAdmin && (
+                        <button className={`search-manage-button ${isManaging ? "clicked" : ""}`} onClick={() => setIsManaging(!isManaging)}>MANAGE</button>
+                    )}
                 </div>
                 <div className={`filter-dropdown ${isFilterOpen ? "open" : "closed"}`}>{/* Conditional rendering for filter optoins */}
                     <div className="filter-row">
@@ -219,6 +240,12 @@ export default function Search({venueList, setVenueList, bookingsList, ...props 
                         <button className='book-button' onClick={filterVenues}>Filter</button>
                     </div>
                 </div>
+                {isManaging &&(
+                    <div className='manage-popup-container'>
+                        <button onClick={toggleVenueForm}>ADD VENUE</button>
+                        <button className = {`${isScheduling ? "clicked" : ""}`} onClick={toggleIsScheduling}>SCHEDULES</button>
+                    </div>
+                )}
             </div>
         </main>
     )

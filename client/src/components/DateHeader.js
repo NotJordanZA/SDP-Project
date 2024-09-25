@@ -4,7 +4,7 @@ import {faCaretRight, faCaretLeft} from '@fortawesome/free-solid-svg-icons'
 import CalendarPopup from "../components/CalendarPopup";
 import { useState } from "react";
 
-function DateHeader( {displayDate, onDateChange, ...props} ){
+function DateHeader( {displayDate, onDateChange, isManaging, ...props} ){
     const today = new Date();
     const maxDate = new Date((new Date().getFullYear().toString())+"-12-31");
     
@@ -33,9 +33,15 @@ function DateHeader( {displayDate, onDateChange, ...props} ){
     return (
         <main className="date-container" {...props}>
             <div className="date-content">
-                <button className="arrow-button" onClick={() => handleDateChange(false)}><FontAwesomeIcon icon={faCaretLeft} /></button>
-                <button className="date-button"  onClick = {toggleCalendar}>{displayDate.toDateString()}</button>
-                <button className="arrow-button" data-testid = 'right-arrow-button' onClick={() => handleDateChange(true)}><FontAwesomeIcon icon={faCaretRight} /></button>
+                {!isManaging ? (
+                    <>
+                        <button className="arrow-button" onClick={() => handleDateChange(false)}><FontAwesomeIcon icon={faCaretLeft} /></button>
+                        <button className="date-button"  onClick = {toggleCalendar}>{displayDate.toDateString()}</button>
+                        <button className="arrow-button" data-testid = 'right-arrow-button' onClick={() => handleDateChange(true)}><FontAwesomeIcon icon={faCaretRight} /></button>
+                    </>
+                ):(
+                    <h1>Managing</h1>
+                )}     
             </div>
             <div className={`calendar-popup ${isOpen ? "open" : "closed"}`}>
                 <CalendarPopup

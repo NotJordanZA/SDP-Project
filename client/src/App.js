@@ -9,13 +9,9 @@ import HomePage from './pages/homePage';
 import Reports from './pages/reports';
 import SideBar from './components/SideBar'; 
 import MyBookings from './pages/MyBookings';
-import ManageBookings from './pages/ManageBookings';
 import ManageReports from './pages/ManageReports';
 import ManageRequests from './pages/ManageRequests';
-import ManageVenues from './pages/ManageVenues';
-import BookVenue from './pages/BookVenue'; 
 import AdminRequest from './pages/AdminRequest';
-import HomeAdmin from './pages/AdminHome';
 
 function App() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -37,12 +33,8 @@ function App() {
           <Route path="/reports" element={<Reports />} />
           <Route path="/bookings" element= {<MyBookings/>}/>
           <Route path="/requests" element= {<AdminRequest/>} />
-          <Route path="/HomeAdmin" element={<HomeAdmin />} />
-          <Route path="/manage-bookings" element={<ManageBookings />} />
           <Route path="/manage-reports" element={<ManageReports />} />
           <Route path="/manage-requests" element={<ManageRequests />} />
-          <Route path="/manage-venues" element={<ManageVenues />} />
-          <Route path="/book-venue" element={<BookVenue />} />
         </Route>
       </Routes>
     </Router>

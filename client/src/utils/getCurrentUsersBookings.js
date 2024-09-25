@@ -2,11 +2,15 @@ export const getCurrentUsersBookings = async (currentUserEmail, setBookingsList)
     try{
       const response = await fetch(`/api/bookings/findByField?venueBooker=${currentUserEmail}`, { // API call which GETs based on user email
         method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-api-key': process.env.REACT_APP_API_KEY,
+        },
       });
 
       const data = await response.json();
       if (response.ok) {
-        // console.log('Bookings by ' + currentUserEmail +' fetched successfully');
+        console.log('Bookings by ' + currentUserEmail +' fetched successfully');
         setBookingsList(data); // Sets bookingList with API response
       } else {
         console.error('Error fetching bookings by ' + currentUserEmail +':', data.error); // Logs API error

@@ -1,66 +1,15 @@
-//  get all bookings
-export const getAllBookings = async () => {
-  const response = await fetch(`/api/bookings`);
-  return await response.json();
-};
 
-// get a booking by ID
-export const getBookingById = async (id) => {
-  const response = await fetch(`/api/bookings/${id}`);
-  return await response.json();
-};
-
-//create a new booking
-export const createBooking = async (bookingData) => {
-  const response = await fetch(`/api/bookings/create`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(bookingData),
-  });
-  return await response.json();
-};
-
-// update a booking
-export const updateBooking = async (id, bookingData) => {
-  const response = await fetch(`/api/bookings/${id}`, {
-    method: "PUT",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(bookingData),
-  });
-
- // return await response.json();
- if (!response.ok) {
-    throw new Error('Failed to update booking');
-  }
-  return response.json();
-
-};
-
-//delete a booking
-export const deleteBooking = async (id) => {
-  const response = await fetch(`/api/bookings/${id}`, {
-    method: "DELETE",
-  });
-  return await response.json();
-};
-
-//For filtering bookings by venue
-export const getVenueNameByBookingVenueID = async (venueID) => {
-    const response = await fetch(`/api/bookings/venue/${venueID}`);
-    if (!response.ok) {
-      throw new Error('Failed to fetch venue name');
-    }
-    return await response.json();
-  };
 
 
   //Requests
   export const getAllRequests = async () => {
-    const response = await fetch(`/api/adminRequests`);
+    const response = await fetch(`/api/adminRequests`, {
+      method: "GET",
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': process.env.REACT_APP_API_KEY,
+      },
+    });
     return await response.json();
   };
 
@@ -69,7 +18,8 @@ export const updateReq= async (id, ReqData) => {
   const response = await fetch(`/api/adminRequests/${id}`, {
     method: "PUT",
     headers: {
-      "Content-Type": "application/json",
+      'Content-Type': 'application/json',
+      'x-api-key': process.env.REACT_APP_API_KEY,
     },
     body: JSON.stringify(ReqData),
   });
@@ -83,20 +33,33 @@ export const updateReq= async (id, ReqData) => {
 };
 
 export const getReqById = async (id) => {
-  const response = await fetch(`/api/adminRequests/${id}`);
+  const response = await fetch(`/api/adminRequests/${id}`, {
+    method: "GET",
+    headers: {
+      'Content-Type': 'application/json',
+      'x-api-key': process.env.REACT_APP_API_KEY,
+    },
+  });
   return await response.json();
 };
 
-//Reports
+//reports
 export const getAllReports = async () => {
-  const response = await fetch(`/api/Reports`);
+  const response = await fetch(`/api/reports`, {
+    method: "GET",
+    headers: {
+      'Content-Type': 'application/json',
+      'x-api-key': process.env.REACT_APP_API_KEY,
+    },
+  });
   return await response.json();
 };
 export const updateRep= async (id, RepData) => {
-  const response = await fetch(`/api/Reports/${id}`, {
+  const response = await fetch(`/api/reports/${id}`, {
     method: "PUT",
     headers: {
-      "Content-Type": "application/json",
+      'Content-Type': 'application/json',
+      'x-api-key': process.env.REACT_APP_API_KEY,
     },
     body: JSON.stringify(RepData),
   });
@@ -109,23 +72,23 @@ export const updateRep= async (id, RepData) => {
 
 };
 export const getRepById = async (id) => {
-  const response = await fetch(`/api/Reports/${id}`);
+  const response = await fetch(`/api/reports/${id}`, {
+    method: "GET",
+    headers: {
+      'Content-Type': 'application/json',
+      'x-api-key': process.env.REACT_APP_API_KEY,
+    },
+  });
   return await response.json();
 };
 export const getReportByType = async (reportType) => {
-  const response = await fetch(`/api/Reports/type/${reportType}`);
+  const response = await fetch(`/api/reports/type/${reportType}`, {
+    method: "GET",
+    headers: {
+      'Content-Type': 'application/json',
+      'x-api-key': process.env.REACT_APP_API_KEY,
+    },
+  });
   return await response.json();
-};
-
-//Venues
-export const getAllVenues = async () => {
-  try {
-    const response = await fetch(`/api/venues`);
-    const data = await response.json();
-    return { venues: data }; // Ensure you're returning venues inside an object
-  } catch (error) {
-    console.error("Error fetching venues:", error);
-    return { venues: [] }; // Return an empty array in case of failure
-  }
 };
 

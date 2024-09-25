@@ -106,6 +106,7 @@
   align-items: center;
   justify-content: center;
   width: 100%;
+  gap: 5px;
 }
 
 .search-input {
@@ -121,6 +122,39 @@
   line-height: 40px;
   font-size: 1.2rem;
 }
+
+.times-input {
+  background-color: #f0f0f0;
+  color: black;
+  border-radius: 4px;
+  height: 20px;
+  border: none;
+  resize: none;
+  padding: 0 10px;
+  box-sizing: border-box;
+  font-size: 1rem;
+  width: 120px;
+}
+
+.times-input-container{
+  display: flex;
+  margin-top: 10px;
+  gap: 10px;
+  margin-left: 20px;
+}
+
+/* .email-input {
+  background-color: #f0f0f0;
+  color: black;
+  border-radius: 4px;
+  height: 20px;
+  border: none;
+  resize: none;
+  padding: 0 10px;
+  box-sizing: border-box;
+  font-size: 1rem;
+  width: 120px;
+} */
 
 .venue-info-container{
   justify-content: start;
@@ -192,8 +226,27 @@
   padding-left: 20px;
 }
 
+.admin-book-action-container{
+  margin: 10px 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding-right: 10px;
+  padding-left: 20px;
+  gap: 10px;
+}
+
+.admin-management-container{
+  margin-top: 10px;
+  display: flex;
+  flex-direction: row;
+  padding-right: 10px;
+  padding-left: 20px;
+  gap: 10px;
+}
+
 .book-button {
-  padding-top: 3px;
+  padding: 2px 5px 0 5px;
   background-color: #043673;
   color: white;
   font-size: 1.4rem;
@@ -203,9 +256,13 @@
   align-items: center;
   cursor: pointer;
 }
+
+.book-button:hover {
+  background-color: #917248;
+}
   
 .book-button.shown {
-  max-height: fit-content;
+  max-height: min-content;
   opacity: 1;
 }
 
@@ -215,14 +272,48 @@
   pointer-events: none;
 }
 
+.manage-popup-container{
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+  width: 100%;
+  gap: 10px;
+}
+
+.manage-popup-container button {
+  margin-top: 10px;
+  padding: 1px 8px 0 8px;
+  background-color: #043673;
+  color: white;
+  font-size: 1.4rem;
+  border: none;
+  width: fit-content;
+  border-radius: 6px;
+  align-items: center;
+  cursor: pointer;
+  height: 40px;
+  font-weight: bold;
+  align-self: flex-end;
+}
+
+.manage-popup-container button.clicked {
+  background-color: #917248;
+}
+
+.manage-popup-container button:hover {
+  background-color: #917248;
+}
+
 .description-input {
-  font-family: Roboto;
   background-color: #f0f0f0;
   color: black;
   padding: 2px 5px;
   border-radius: 4px;
   width: 60%;
   resize: none;
+  border: none;
+  font-size: 1rem;
+  font-family: unset;
 }
 
 .description-input::placeholder {
@@ -235,6 +326,32 @@
 }
 
 .description-input.hidden {
+  max-height: 0px;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.email-input {
+  background-color: #f0f0f0;
+  color: black;
+  padding: 2px 5px;
+  border-radius: 4px;
+  width: 60%;
+  resize: none;
+  border: none;
+  font-size: 1rem;
+}
+
+.email-input::placeholder {
+  /* color: rgb(119, 119, 119); */
+  opacity: 0.5;
+}
+
+.email-input.shown {
+  opacity: 1;
+}
+
+.email-input.hidden {
   max-height: 0px;
   opacity: 0;
   pointer-events: none;
@@ -367,6 +484,23 @@
   color: #917248;
 }
 
+.management-button{
+  padding: 2px 5px;
+  background-color: #043673;
+  color: white;
+  font-size: 1.2rem;
+  border: none;
+  opacity: 1;
+  border-radius: 4px;
+  align-items: center;
+  width: fit-content;
+  cursor: pointer;
+}
+
+.management-button:hover{
+  background-color: #917248;
+}
+
 .timeslot-button{
   padding: 2px 5px;
   background-color: #043673;
@@ -379,6 +513,7 @@
   margin-bottom: 10px;
   align-items: center;
   width: fit-content;
+  cursor: pointer;
 }
 
 .timeslot-button.booked{
@@ -411,10 +546,141 @@
   width: fit-content;
 }
 
+.search-manage-button{
+  /* padding-top: 2px; */
+  margin-left: 20px;
+  padding: 2px 8px 0 8px;
+  background-color: #043673;
+  color: white;
+  font-size: 1.4rem;
+  border: none;
+  width: fit-content;
+  border-radius: 6px;
+  align-items: center;
+  cursor: pointer;
+  height: 40px;
+  font-weight: bold;
+}
+
+.search-manage-button:hover{
+  background-color: #917248;
+}
+
+.search-manage-button.clicked{
+  background-color: #917248;
+}
+
+.schedules-table {
+  width: 100%; 
+  max-width: 45vw; 
+  border-collapse: separate;
+  border-spacing: 0;
+  border-radius: 10px;
+  text-align: center;
+  font-family: Arial, sans-serif;
+  font-size: 1rem; 
+  margin-left: 20px;
+  border: none;
+  background: none;
+  margin-bottom: 10px;
+}
+
+.schedules-table th, .schedules-table td {
+  padding: 1rem; 
+  background-color: #043673;
+  color: #f0f0f0;
+  font-size: 1rem; 
+  border: none;
+} 
+.schedules-table td {
+  border: 1px solid white;
+}  
+
+.schedules-table th.corner-top-left{
+  border-top-left-radius: 10px;
+}
+
+.schedules-table td.corner-bottom-right{
+  border-bottom-right-radius: 10px;
+}
+
+.schedules-table th.corner-top-right{
+  border-top-right-radius: 10px;
+}
+
+.schedules-table th.corner-bottom-left{
+  border-bottom-left-radius: 10px;
+}
+
+/*available and scheduled cells */
+.schedules-table td.scheduled {
+  background-color: #cc8c8c;
+  color: rgb(74, 0, 0);
+  cursor: pointer;
+}
+
+.schedules-table td.available {
+  background-color: #e1d0b9;
+  color: black;
+  cursor: pointer;
+}
+
+.schedules-table td.selected {
+  background-color: #043673;
+  color: white;
+  cursor: pointer;
+}
+
+/*hover effect for table rows */
+.schedules-table td.available:hover {
+  background-color: #917248;
+  color: white;
+}
+
+.schedules-container {
+  display: flex;
+  flex-direction: column;
+}
+
+.schedule-details {
+  margin-left: 20px ;
+}
+
+.date-content h1{
+  font-size: 2rem;
+  font-weight: normal;
+}
+
 @media screen and (max-width: 768px){
 
   .timeslot-buttons-container{
     align-items: center;
+  }
+
+  .search-manage-button{
+    margin-left: 0px;
+    font-size: 1rem;
+  }
+
+  .schedules-table td, .schedules-table th {
+      padding: 0.3rem; /* Adjust padding for medium screens */
+  }
+
+  .schedules-table {
+      font-size: 0.9rem; /* Adjust font size for medium screens */
+  }
+
+}
+
+
+@media (max-width: 500px) {
+  .schedules-table th, .schedules-table td {
+      font-size: 0.3rem; /* Adjust font size for small screens */
+      padding: 0.6rem; /* Adjust padding for small screens */
+  }
+
+  .schedules-table{
+      font-size: 0.8rem; /* Further reduce font size */
   }
 
 }
