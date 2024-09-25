@@ -2,7 +2,10 @@ export const deleteVenue = async(id, getAllVenues) => {
       try {
         const response = await fetch(`/api/venues/${id}`, {
           method: 'DELETE',
-          headers: { 'Content-Type': 'application/json' },
+          headers: {
+            'Content-Type': 'application/json',
+            'x-api-key': process.env.REACT_APP_API_KEY,
+          },
         });
         const data = await response.json();
         if (response.ok){

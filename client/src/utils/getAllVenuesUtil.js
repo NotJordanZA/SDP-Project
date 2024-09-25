@@ -2,6 +2,10 @@ export const getAllVenues = async (setVenueList, setAllVenues) =>{
     try{
       const response = await fetch(`/api/venues`, {
         method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-api-key': process.env.REACT_APP_API_KEY,
+        },
         cache: 'no-store',
       });
 

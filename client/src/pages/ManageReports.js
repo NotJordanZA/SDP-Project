@@ -7,7 +7,13 @@ import '../styles/ManageReports.css';
 
 // Fetch all the reports
 export const getAllReports = async () => {
-  const response = await fetch(`/api/reports`);
+  const response = await fetch(`/api/reports`, {
+    method: "GET",
+    headers: {
+      'Content-Type': 'application/json',
+      'x-api-key': process.env.REACT_APP_API_KEY,
+    },
+  });
   return await response.json();
 };
 
@@ -17,7 +23,8 @@ export const updateRep = async (id, RepData) => {
     const response = await fetch(`/api/reports/${id}`, {
       method: "PUT",
       headers: {
-        "Content-Type": "application/json",
+        'Content-Type': 'application/json',
+        'x-api-key': process.env.REACT_APP_API_KEY,
       },
       body: JSON.stringify(RepData),
     });
@@ -47,7 +54,8 @@ export const updateRep = async (id, RepData) => {
     const notificationResponse = await fetch(`/api/notifications`, {
       method: "POST",
       headers: {
-        "Content-Type": "application/json",
+        'Content-Type': 'application/json',
+        'x-api-key': process.env.REACT_APP_API_KEY,
       },
       body: JSON.stringify(notificationData),
     });
