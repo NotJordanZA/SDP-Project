@@ -1,0 +1,50 @@
+/* Notification.css */
+.popupNotif-panel {
+  position: fixed;
+  right: -300px;
+  top: 8px;
+  width: 300px;
+  height: 100%;
+  background-color: #043673;
+  transition: right 0.3s ease-in-out;
+  z-index: 1000;
+}
+
+.popupNotif-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 20px;
+  background-color: #917248; /* background */
+  color: white; /* White text */
+}
+
+.popupNotif-panel.open {
+  right: 0;
+}
+
+.popupNotif-close-btn {
+  background-color: #917248;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  margin-bottom: 20px; /* Add margin to create space between the button and heading */
+}
+
+.popupNotif-list ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+.popupNotif-list li {
+  padding: 10px 0;
+  display: flex;
+  align-items: center;
+  color: white; /* notification text white */
+}
+
+.notifications-list input {
+  margin-right: 10px;
+}
