@@ -43,7 +43,8 @@ jobs:
           name: Populate .env file
           command: |
             cat >> .env << EOF
-            REACT_APP_API_KEY	= ${REACT_APP_API_KEY} 
+            REACT_APP_API_KEY	= ${REACT_APP_API_KEY}
+            EOF 
           working_directory: client
       - run:
           name: Build application for production
@@ -75,6 +76,7 @@ jobs:
             cat >> .env << EOF
             REACT_APP_API_KEY	= ${REACT_APP_API_KEY}
             EVENTS_API_KEY =  ${EVENTS_API_KEY}
+            EOF
           working_directory: server
       - run:
           name: Deploy API to Firebase
