@@ -345,7 +345,7 @@ app.post('/api/report-submit', async (req, res) => {
     try {
       const reportData = {
         venueID,
-        repzortType,
+        reportType,
         reportText,
         reportStatus: 'pending',
         resolutionLog: '',
