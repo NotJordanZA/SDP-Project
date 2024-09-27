@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { collection, addDoc, updateDoc } from 'firebase/firestore';
 import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
-import { db, storage } from '../firebase';
+import { storage } from '../firebase';
 import '../styles/PopupForm.css';
 import { auth } from "../firebase";
 
