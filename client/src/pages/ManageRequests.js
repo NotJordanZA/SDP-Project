@@ -5,7 +5,7 @@ import { auth } from "../firebase";
 import { useNavigate } from "react-router-dom";
 import { onAuthStateChanged } from "firebase/auth";
 // import { getCurrentUser } from '../utils/getCurrentUser';
-import '../styles/ManageRequest.css';
+import '../styles/ManageRequests.css';
 import {fetchRequests} from '../utils/getAllRequests';
 import {handleApproveClick} from '../utils/AdminhandleApprovecClick';
 export const getAllRequests = async () => {
