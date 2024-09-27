@@ -8,7 +8,7 @@ const {onRequest} = require("firebase-functions/v2/https");
 const { getStorage, ref, uploadBytes, getDownloadURL } = require('firebase/storage'); 
 const logger = require("firebase-functions/logger");
 // const PORT = process.env.PORT || 3001; //Must be commented out for production build
-const dotenv = require('dotenv').config({ path: '../.env' });
+const dotenv = require('dotenv').config({ path: './.env' });
 
 const app = express();
 app.use(express.json());
