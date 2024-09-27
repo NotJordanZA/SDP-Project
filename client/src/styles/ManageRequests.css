@@ -1,4 +1,3 @@
-
 .manageadminrequests-container {
     padding: 40px 20px;
     max-width: 900px;
@@ -20,6 +19,11 @@
   }
   
   /* Tabs section */
+  .manageadminrequests-tabs {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+  }
   .manageadminrequests-tabs button {
     padding: 10px 30px;
     margin: 0 10px;
