@@ -5,6 +5,7 @@ import { getAllBookings } from '../utils/getAllBookingsUtil';
 import { makeBooking } from '../utils/makeBookingUtil';
 import { deleteBooking } from '../utils/deleteBookingUtil';
 import { getAllVenues } from "../utils/getAllVenuesUtil";
+import { updateBooking } from '../utils/putBookingUitl';
 
 export const EditBookingForm = ({ id, venueName, bookingDate, bookingTime, bookingDescription, onClose, isOpen, isAdmin, bookerEmail, setBookingsList, getBookings}) => {
   const [selectedVenueName, setSelectedVenueName] = useState(venueName);
@@ -95,7 +96,7 @@ export const EditBookingForm = ({ id, venueName, bookingDate, bookingTime, booki
         (newBookingStart <= existingBookingStart && newBookingEnd >= existingBookingEnd)
       );
   
-      if (isSameVenue && isSameBookingDay && isTimeConflict) {
+      if (isSameVenue && isSameBookingDay && isTimeConflict && existingBooking.id !== id) {
         console.log('Conflict detected for booking:', existingBooking);
         return true;
       } else {
@@ -117,10 +118,61 @@ export const EditBookingForm = ({ id, venueName, bookingDate, bookingTime, booki
       return;
     }
 
-    // Make a new booking with the updated details
-    makeBooking(bookerEmail, selectedVenueName, selectedBookingDate, bookingStartTime, bookingEndTime, selectedBookingDescription, null, null, null, setExistingBookings);
-    // Delete the outdated booking
-    deleteBooking(id, setExistingBookings, bookerEmail);
+    // Check if ID will remain the same
+    if (venueName === selectedVenueName && bookingTime.substring(0, 5) === bookingStartTime && bookingDate === selectedBookingDate) {
+        updateBooking(id, bookerEmail, selectedVenueName, selectedBookingDate, bookingStartTime, bookingEndTime, selectedBookingDescription, null, null, null, setExistingBookings)
+    }else{
+      // Make a new booking with the updated details
+      makeBooking(bookerEmail, selectedVenueName, selectedBookingDate, bookingStartTime, bookingEndTime, selectedBookingDescription, null, null, null, setExistingBookings);
+      // Delete the outdated booking
+      deleteBooking(id, setExistingBookings, bookerEmail);
+    }
+    
+    // Identify the fields that have changed
+    const changes = [];
+    if (bookingTime.substring(0, 5) !== bookingStartTime) {
+      changes.push(`bookingStartTime: ${bookingTime.substring(0, 5)} -> ${bookingStartTime}`);
+    }
+    if (bookingTime.substring(6, 11) !== bookingEndTime) {
+      changes.push(`bookingEndTime: ${bookingTime.substring(6, 11)} -> ${bookingEndTime}`);
+    }
+    if (bookingDescription !== selectedBookingDescription) {
+      changes.push(`bookingDescription: ${bookingDescription} -> ${selectedBookingDescription}`);
+    }
+    if (bookingDate !== selectedBookingDate) {
+      changes.push(`bookingDate: ${bookingDate} -> ${selectedBookingDate}`);
+    }
+    if (venueName !== selectedVenueName) {
+      changes.push(`venueID: ${venueName} -> ${selectedVenueName}`);
+    }
+  
+    // Create the notification
+    const notification = {
+      dateCreated: new Date().toLocaleString(),
+      notificationMessage: `This is to inform you that your booking details have been updated by the admin.
+    These are the updated booking details: ${changes.join(', ')}.
+    New details: venue: ${selectedVenueName}, Date: ${selectedBookingDate}, Start Time: ${bookingStartTime}, End Time: ${bookingEndTime}, Description: ${selectedBookingDescription}.`,
+      notificationType: "Booking Details Updated",
+      read: false,
+      recipientEmail: bookerEmail, // Assuming the booking details contain the venueBookerEmail
+    };
+
+    console.log('Notification to be sent:', notification); // Log the notification data
+
+    const notificationResponse = await fetch('/api/notifications', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': process.env.REACT_APP_API_KEY,
+      },
+      body: JSON.stringify(notification),
+    });
+
+    if (!notificationResponse.ok) {
+      const errorText = await notificationResponse.text();
+      console.error('Error creating notification:', errorText);
+      throw new Error('Failed to create notification');
+    }
     getBookings(bookerEmail, setBookingsList);
     alert('Form submitted successfully');
     onClose();
@@ -191,7 +243,7 @@ export const EditBookingForm = ({ id, venueName, bookingDate, bookingTime, booki
               <div className="form-times-container">
                 <input className= 'times-input' placeholder='Start Time' type="time" value={bookingStartTime} onClick={(e) => { e.stopPropagation();}} onChange={ (e) => {setBookingStartTime(e.target.value);}}></input>
                   to
-                <input className= 'times-input' placeholder='End Time' type="time" min="14:15" value={bookingEndTime} onClick={(e) => { e.stopPropagation();}} onChange={ (e) => {setBookingEndTime(e.target.value)}}></input>
+                <input className= 'times-input' placeholder='End Time' type="time" min={bookingStartTime} value={bookingEndTime} onClick={(e) => { e.stopPropagation();}} onChange={ (e) => {setBookingEndTime(e.target.value)}}></input>
              </div>
             ):(
               <Select
