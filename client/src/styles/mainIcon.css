@@ -37,3 +37,38 @@
     margin-top: 0.5em;
     color: white;                 /* Ensure icon remains white */
 }
+
+@media (max-width: 520px) {
+    .main-icon {
+        margin:0;
+        width: 162px;               
+        height: 180px;  
+    }
+
+    .icon-img {
+        font-size: 3.5em;
+    }
+}
+
+@media (max-width: 384px) {
+    .main-icon {
+        margin:0;
+        width: 135px;               
+        height: 150px;  
+    }
+    .icon-img {
+        font-size: 3em;
+    }
+}
+
+
+@media (max-width: 330px) {
+    .main-icon {
+        margin:0;
+        width: 117px;               
+        height: 130px;  
+    }
+    .icon-img {
+        font-size: 3em;
+    }
+}
