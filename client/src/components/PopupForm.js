@@ -32,9 +32,18 @@ const PopupForm = ({ isOpen, onClose }) => {
   };
 
   const handleFileChange = (e) => {
+    const files = [...e.target.files];
+    const validFiles = files.filter(file =>
+      file.type === 'image/jpeg' || file.type === 'image/png'
+    );
+
+    if (validFiles.length !== files.length) {
+      alert('Please upload only JPEG or PNG images.');
+    }
+
     setFormData((prevData) => ({
       ...prevData,
-      photos: [...e.target.files], // Store all selected files
+      photos: validFiles, // Store only valid image files
     }));
   };
 
@@ -80,34 +89,19 @@ const PopupForm = ({ isOpen, onClose }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+  
     try {
       setUploading(true);
-
-      // Concatenate venue and room number to form venueID
-      const venueID = `${formData.venue}${formData.roomNumber}`;
+      
+      const venueID = formData.roomNumber;
       let imageUrls = [];
-
-      // Step 1: Add the report to Firestore first to get the report ID
-      const reportData = {
-        venueID,
-        reportType: formData.reportType,
-        reportText: formData.reportText,
-        reportStatus: 'pending',
-        resolutionLog: '',
-        createdBy: email,
-        photos: [], // Initially empty, we'll populate it with the image URLs after the uploads
-      };
-
-      const docRef = await addDoc(collection(db, 'Reports'), reportData);
-      const reportId = docRef.id;
-
-      // Step 2: Check if there are any photos to upload
+  
+      // Step 1: Upload images to Firebase Storage and get URLs
       if (formData.photos.length > 0) {
         const uploadPromises = formData.photos.map((photo) => {
-          const storageRef = ref(storage, `reports/${reportId}/${photo.name}`);
+          const storageRef = ref(storage, `report/${venueID}/${photo.name}`);
           const uploadTask = uploadBytesResumable(storageRef, photo);
-
+  
           return new Promise((resolve, reject) => {
             uploadTask.on(
               'state_changed',
@@ -120,14 +114,61 @@ const PopupForm = ({ isOpen, onClose }) => {
             );
           });
         });
-
+  
         // Wait for all uploads to finish and get the image URLs
         imageUrls = await Promise.all(uploadPromises);
-
-        // Step 3: Update the report document with the image URLs
-        await updateDoc(docRef, { photos: imageUrls });
       }
-
+  
+      // Step 2: Conditionally analyze photos using Rekognition only if reportType is 'Safety'
+      if (formData.reportType === "Safety") {
+        const formDataForAnalysis = new FormData();
+        formData.photos.forEach(photo => {
+          formDataForAnalysis.append('photos', photo);
+        });
+  
+        const analysisResponse = await fetch('/api/analyze-photos', {
+          method: 'POST',
+          body: formDataForAnalysis,
+        });
+  
+        if (!analysisResponse.ok) {
+          throw new Error('Failed to analyze photos');
+        }
+  
+        const analysisResults = await analysisResponse.json();
+        console.log('Rekognition analysis results:', analysisResults);
+  
+        // Check for fire detection in analysis results
+        const fireDetected = analysisResults.some(result => 
+          result.Labels.some(label => label.Name === 'Fire' && label.Confidence > 70) // Adjust confidence threshold as needed
+        );
+  
+        if (fireDetected) {
+          alert('Fire detected in one of the uploaded photos!');
+        }
+      }
+  
+      // Step 3: Send report data to the API (this part is executed regardless of report type)
+      const reportData = {
+        venueID,
+        reportType: formData.reportType,
+        reportText: formData.reportText,
+        createdBy: email,
+        photos: imageUrls,
+      };
+  
+      const response = await fetch('/api/report-submit', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(reportData),
+      });
+  
+      if (!response.ok) {
+        throw new Error('Failed to submit the report');
+      }
+  
       alert('Report submitted successfully!');
       setFormData({ venue: '', roomNumber: '', reportType: '', reportText: '', photos: [] });
       onClose();
@@ -138,6 +179,7 @@ const PopupForm = ({ isOpen, onClose }) => {
       setUploading(false);
     }
   };
+  
 
   if (!isOpen) return null;
 
@@ -219,13 +261,14 @@ const PopupForm = ({ isOpen, onClose }) => {
           </div>
 
           <div className="form-group">
-            <label htmlFor="photos">Upload Photos:</label>
+            <label htmlFor="photos">Upload Photos (PNG & JPEG Only)</label>
             <input
               type="file"
               id="photos"
               name="photos"
               onChange={handleFileChange}
               multiple // Allow multiple file uploads
+              accept="image/jpeg, image/png" // Accept only JPEG and PNG files
             />
           </div>
 
