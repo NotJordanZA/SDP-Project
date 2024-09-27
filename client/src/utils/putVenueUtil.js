@@ -3,7 +3,10 @@ export const putVenue = async(id, buildingName, venueName, campus, venueType, ve
       try {
         const response = await fetch(`/api/venues/${id}`, {
           method: 'PUT',
-          headers: { 'Content-Type': 'application/json' },
+          headers: {
+            'Content-Type': 'application/json',
+            'x-api-key': process.env.REACT_APP_API_KEY,
+          },
           body: JSON.stringify({ 
             buildingName: buildingName,
             venueName: venueName,
@@ -28,7 +31,10 @@ export const putVenue = async(id, buildingName, venueName, campus, venueType, ve
       try {
         const response = await fetch(`/api/venues`, {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: {
+            'Content-Type': 'application/json',
+            'x-api-key': process.env.REACT_APP_API_KEY,
+          },
           body: JSON.stringify({ 
             buildingName: buildingName,
             venueName: venueName,

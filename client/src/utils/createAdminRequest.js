@@ -6,6 +6,7 @@ export const CreateAdminRequest = async (requesterEmail, requestText) =>{
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'x-api-key': process.env.REACT_APP_API_KEY,
         },
         body: JSON.stringify({
           requesterEmail,

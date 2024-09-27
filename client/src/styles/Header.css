@@ -2,14 +2,15 @@
 .header-icons {
   display: flex;
   align-items: center; /* Vertical alignment of items */
+  gap: 10px;
 }
 
 .bell-icon {
   color: white;
   font-size: 1.5rem;
   cursor: pointer;
-  margin-right: 20px; /* Space between bell icon and logo */
-  margin-top: 20px;
+  /*margin-right: 20px;  Space between bell icon and logo */
+  margin-top: 18px;
   align-self: flex-start; /* Aligns the bell icon to the start of the container */
   transition: color 0.3s ease, transform 0.3s ease;
 }
@@ -33,45 +34,62 @@
 }
 
 .app-header {
-    background-color: #043673; /* Background color */
-    color: white;              /* Text color */
-    padding: 0;                /* Remove all padding */
-    display: flex;             /* Flexbox for alignment */
-    align-items: center;       /* Center items vertically */
-    position: relative;        /* Relative positioning for the container */
-    min-height: 65px;
-  }
-  
+  background-color: #043673; /* Background color */
+  color: white;              /* Text color */
+  padding: 10px 0;               /* Remove all padding */
+  display: flex;             /* Flexbox for alignment */
+  align-items: center;       /* Center items vertically */
+  position: relative;        /* Relative positioning for the container */
+  min-height: 65px;
+}
+
+.app-header h1 {
+  font-size: 4vw; /* Font size scales with the viewport width */
+  flex-grow: 1;
+  text-align: center;
+  padding-left: 20px;
+}
+
+
+.logo {
+  height: 55px;              /* Adjust height as needed */
+  width: auto;               /* Maintain aspect ratio */
+  cursor: pointer;
+}
+
+.menu-button {
+  color: white;               /* Icon color */
+  font-size: 2.5rem;          /* Adjust font size as needed */
+  cursor: pointer;            /* Pointer cursor on hover */
+  margin-left: 10px;          /* Margin to the left of the icon */
+  margin-right: 10px;         /* Margin to the right of the icon */
+  padding: 10px;              /* Padding around the icon */
+  transition: color 0.3s ease, transform 0.3s ease; /* Smooth transitions */
+}
+
+.menu-button:hover {
+  color: #f0f0f0;             /* Lighter color on hover */
+  transform: scale(1.1);      /* Slightly enlarge the icon on hover */
+}
+
+.menu-button:active {
+  transform: scale(0.95);     /* Slightly shrink the icon on click */
+}
+
+@media screen and (max-width: 768px){
   .app-header h1 {
-    margin: 0;
-    font-size: 4vw; /* Font size scales with the viewport width */
-    flex-grow: 1;
-    text-align: center;
-    padding-left: 20px;
+    font-size: 5vw;
   }
-  
-  
-  .logo {
-    height: 55px;              /* Adjust height as needed */
-    width: auto;               /* Maintain aspect ratio */
-    cursor: pointer;
+}
+
+@media (max-width: 500px) {
+  .app-header h1 {
+    opacity: 0;
   }
-  
-  .icon-img {
-    color: white;               /* Icon color */
-    font-size: 1.5rem;          /* Adjust font size as needed */
-    cursor: pointer;            /* Pointer cursor on hover */
-    margin-left: 10px;          /* Margin to the left of the icon */
-    margin-right: 10px;         /* Margin to the right of the icon */
-    padding: 10px;              /* Padding around the icon */
-    transition: color 0.3s ease, transform 0.3s ease; /* Smooth transitions */
+}
+
+@media screen and (min-width: 1200px) {
+  .app-header h1 {
+    font-size: 46px;
   }
-  
-  .icon-img:hover {
-    color: #f0f0f0;             /* Lighter color on hover */
-    transform: scale(1.1);      /* Slightly enlarge the icon on hover */
-  }
-  
-  .icon-img:active {
-    transform: scale(0.95);     /* Slightly shrink the icon on click */
-  }
+}

@@ -5,6 +5,7 @@ import Reports from '../pages/reports';
 import { auth } from '../firebase';
 import { onAuthStateChanged } from "firebase/auth";
 import { useNavigate } from 'react-router-dom';
+import { getDownloadURL, uploadBytesResumable } from 'firebase/storage';
 
 jest.mock('../firebase', () => ({
     auth: {
@@ -26,6 +27,13 @@ jest.mock('firebase/firestore', () => ({
     getDoc: jest.fn(() => Promise.resolve({
       data: () => ({ isAdmin: true })  // Mock Firestore document with isAdmin
     })),
+}));
+
+jest.mock('firebase/storage', () => ({
+    getStorage: jest.fn(),
+    ref: jest.fn(),
+    uploadBytesResumable: jest.fn(),
+    getDownloadURL: jest.fn(),
 }));
 
 const navigate = jest.fn();

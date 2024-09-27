@@ -39,7 +39,13 @@ const Reports = () => {
                 const queryParams = new URLSearchParams({
                     createdBy: user.email // Pass the user's email to filter reports by the creator
                 });
-                const response = await fetch(`/api/reports?${queryParams.toString()}`);  // Adjust the endpoint if necessary
+                const response = await fetch(`/api/reports?${queryParams.toString()}`, {
+                    method: "GET",
+                    headers: {
+                      'Content-Type': 'application/json',
+                      'x-api-key': process.env.REACT_APP_API_KEY,
+                    },
+                  });  // Adjust the endpoint if necessary
                 const data = await response.json();
                 setReports(data); // Update the state with the fetched reports
             } catch (error) {

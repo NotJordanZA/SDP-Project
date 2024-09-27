@@ -1,6 +1,12 @@
 export const fetchSchedules = async (setSchedules, venueID) => {
     try {
-        const response = await fetch(`/api/schedules/${venueID}`);
+        const response = await fetch(`/api/schedules/${venueID}`, {
+            method: 'GET',
+            headers: {
+              'Content-Type': 'application/json',
+              'x-api-key': process.env.REACT_APP_API_KEY,
+            },
+        });
 
         const data = await response.json();
 

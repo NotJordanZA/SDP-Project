@@ -46,6 +46,16 @@
     background-color: #f1f1f1;
 }
 
+.booking-list-entry.past-booking{
+    background-color: #f1f1f1;
+}
+
+.past-booking-span{
+    margin-left: 10px;
+    font-weight: bold;
+    color: #007BFF;
+}
+
 /* Report details styling */
 .booking-date {
     font-weight: bold;
@@ -69,4 +79,56 @@
 .booking-description {
     font-size: 1rem;
     color: #666;
+}
+
+.manage-booking-buttons{
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+    margin-top: 5px;
+}
+
+.manage-booking-buttons button{
+    padding: 2px 5px;
+    background-color: #043673;
+    color: white;
+    font-size: 1.2rem;
+    border: none;
+    opacity: 1;
+    border-radius: 4px;
+    align-items: center;
+    width: fit-content;
+    cursor: pointer;
+}
+
+.manage-booking-buttons button:hover{
+    background-color: #917248;
+}
+
+.booking-filters-container{
+    background-color: white;
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+    width: 100%;
+    padding: 10px 20px;
+    border-bottom: 1px solid #ddd;
+}
+
+.booking-filters-container input{
+    background-color: #f0f0f0;
+    color: black;
+    border-radius: 4px;
+    height: 20px;
+    border: none;
+    resize: none;
+    padding: 0 10px;
+    box-sizing: border-box;
+    font-size: 1rem;
+}
+
+@media screen and (max-width: 768px){
+    .booking-filters-container{
+        flex-direction: column;
+    }
 }
