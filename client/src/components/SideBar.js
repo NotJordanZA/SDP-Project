@@ -7,7 +7,6 @@ import { getCurrentUser } from '../utils/getCurrentUser';
 
 const Sidebar = ({ isOpen, toggleSidebar }) => {
   const [user, setUser] = useState(null); 
-  // const [adminDropdownOpen, setAdminDropdownOpen] = useState(false); 
   const [userInfo, setUserInfo] = useState({});
   const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
@@ -40,10 +39,7 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
       // If user is signed in
       if (user) {
         try {
-          // Instantiate userInfo object
-          // const userData = await getCurrentUser(user.email);
           getCurrentUser(user.email, setUserInfo);
-          //setUserInfo(userData);
         } catch (error) {
           console.error('Failed to fetch user info: ', error);
         }
@@ -55,23 +51,6 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
     }
   }, [user, isLoading]);
 
-  // useEffect(() => {
-  //   const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-  //     if (currentUser) {
-  //       setUser(currentUser);
-  //     } else {
-  //       setUser(null);
-  //       navigate('/login'); 
-  //     }
-  //   });
-
-  //   return () => unsubscribe();
-  // }, [navigate]);
-
-  // if (user === null) {
-  //   return null;
-  // }
-
   const handleLogout = () => {
     signOut(auth)
       .then(() => {
@@ -82,17 +61,12 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
       });
   };
 
-  // const toggleAdminDropdown = () => {
-  //   setAdminDropdownOpen(!adminDropdownOpen);
-  // };
-
   return (
     <nav className={`sidebar ${isOpen ? 'open' : ''}`}>
       <section className='topSection'>
         <button className="close-btn" onClick={toggleSidebar}>Close</button>
       </section>
       <section className='bottomSection'>
-        {/* <button className="close-btn" onClick={toggleSidebar}>Close</button> */}
         <button className="dashboard-btn" onClick={() => navigate('/home')}>Dashboard</button>
         <button className="venues-btn" onClick={() => navigate('/venues')}>Venues</button>
         <button className="reports-btn" onClick={() => navigate('/bookings')}>Bookings</button>
