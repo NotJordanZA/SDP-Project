@@ -1,5 +1,6 @@
 import '../styles/Bookings.css';
 import { deleteBooking } from '../utils/deleteBookingUtil';
+import { createNotification } from '../utils/createNotificationUtil';
 import { EditBookingForm } from './EditBookingForm';
 import { useState } from 'react';
 
@@ -30,22 +31,8 @@ function BookingRow({bookingDate, venueID, time, bookingDescription, venueBooker
                     recipientEmail: venueBooker,
                 };
             
-                console.log('Notification to be sent:', notification); // Log the notification data
-            
-                const notificationResponse = await fetch('/api/notifications', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'x-api-key': process.env.REACT_APP_API_KEY,
-                    },
-                    body: JSON.stringify(notification),
-                });
-            
-                if (!notificationResponse.ok) {
-                    const errorData = await notificationResponse.json();
-                    console.error('Error creating notification:', errorData);
-                    throw new Error('Failed to create notification');
-                }
+                // Send notification data to the server
+                createNotification(notification);
             }
         }
     }

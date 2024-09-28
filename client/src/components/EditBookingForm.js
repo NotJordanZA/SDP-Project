@@ -6,6 +6,7 @@ import { makeBooking } from '../utils/makeBookingUtil';
 import { deleteBooking } from '../utils/deleteBookingUtil';
 import { getAllVenues } from "../utils/getAllVenuesUtil";
 import { updateBooking } from '../utils/putBookingUitl';
+import { createNotification } from '../utils/createNotificationUtil';
 
 export const EditBookingForm = ({ id, venueName, bookingDate, bookingTime, bookingDescription, onClose, isOpen, isAdmin, bookerEmail, setBookingsList, getBookings}) => {
   const [selectedVenueName, setSelectedVenueName] = useState(venueName);
@@ -157,22 +158,8 @@ export const EditBookingForm = ({ id, venueName, bookingDate, bookingTime, booki
       recipientEmail: bookerEmail, // Assuming the booking details contain the venueBookerEmail
     };
 
-    console.log('Notification to be sent:', notification); // Log the notification data
-
-    const notificationResponse = await fetch('/api/notifications', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-api-key': process.env.REACT_APP_API_KEY,
-      },
-      body: JSON.stringify(notification),
-    });
-
-    if (!notificationResponse.ok) {
-      const errorText = await notificationResponse.text();
-      console.error('Error creating notification:', errorText);
-      throw new Error('Failed to create notification');
-    }
+    // Send notification data to the server
+    createNotification(notification);
     getBookings(bookerEmail, setBookingsList);
     alert('Form submitted successfully');
     onClose();

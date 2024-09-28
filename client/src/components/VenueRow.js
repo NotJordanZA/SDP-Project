@@ -6,6 +6,7 @@ import { deleteVenue } from '../utils/deleteVenueUtil';
 import { VenueForm } from './VenueForm';
 import { fetchSchedules } from '../utils/getSchedulesUtil';
 import { createSchedule } from '../utils/createScheduleUtil';
+import { createNotification } from '../utils/createNotificationUtil';
 import { useState, useEffect, useRef } from "react";
 import { auth } from "../firebase";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -92,20 +93,7 @@ function VenueRow({id, buildingName, venueName, campus, venueType, venueCapacity
             };
     
             // Send notification to the server
-            const notificationResponse = await fetch('/api/notifications', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'x-api-key': process.env.REACT_APP_API_KEY,
-            },
-            body: JSON.stringify(notificationData),
-            });
-    
-            if (!notificationResponse.ok) {
-            throw new Error('Failed to create notification');
-            }
-    
-            console.log('Notification created successfully');
+            createNotification(notificationData);
         }else{
             const scheduleData = {
                 venueID: venueName,
@@ -177,22 +165,7 @@ function VenueRow({id, buildingName, venueName, campus, venueType, venueCapacity
                     console.log('Sending notification data:', notificationData);
 
                     // Send notification data to the server
-                    const notificationResponse = await fetch('/api/notifications', {
-                        method: 'POST',
-                        headers: {
-                        'Content-Type': 'application/json',
-                        'x-api-key': process.env.REACT_APP_API_KEY,
-                        },
-                        body: JSON.stringify(notificationData),
-                    });
-
-                    if (!notificationResponse.ok) {
-                        const errorText = await notificationResponse.text();
-                        console.error('Notification creation error:', errorText);
-                        throw new Error('Failed to create notification');
-                    }
-
-                    console.log('Notification created successfully');
+                    createNotification(notificationData);
                 }
             }
             else{
