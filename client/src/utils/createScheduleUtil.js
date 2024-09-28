@@ -1,5 +1,4 @@
 export const createSchedule = async (scheduleData) => {
-    console.log(scheduleData);
     try {
       const response = await fetch(`/api/schedules/create`, {
         method: 'POST',

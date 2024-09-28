@@ -79,6 +79,33 @@ function VenueRow({id, buildingName, venueName, campus, venueType, venueCapacity
                 bookingDescription: bookingDescriptionText,
             };    
             createSchedule(scheduleData);
+            setSchedules(schedules.concat(scheduleData));
+            // Create notification data
+            const notificationMessage = `A recurring booking has been made in your name by the admin. Booking details: Venue: ${venueName}, Day: Every ${selectedSlot.day}, Time: ${selectedSlot.time}-${endTime.toTimeString().substring(0, 5)}, Description: ${bookingDescriptionText}.`;
+            
+            const notificationData = {
+            dateCreated: new Date().toLocaleString(),
+            notificationMessage,
+            notificationType: 'Recurring Booking Confirmation',
+            read: false,
+            recipientEmail: bookerEmail,
+            };
+    
+            // Send notification to the server
+            const notificationResponse = await fetch('/api/notifications', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'x-api-key': process.env.REACT_APP_API_KEY,
+            },
+            body: JSON.stringify(notificationData),
+            });
+    
+            if (!notificationResponse.ok) {
+            throw new Error('Failed to create notification');
+            }
+    
+            console.log('Notification created successfully');
         }else{
             const scheduleData = {
                 venueID: venueName,
@@ -90,7 +117,7 @@ function VenueRow({id, buildingName, venueName, campus, venueType, venueCapacity
             }; 
             createSchedule(scheduleData);
         }
-        setIsBooking(false);
+        setIsVenueOpen(false);
     }
 
     const toggleVenueForm = () => {
@@ -131,11 +158,42 @@ function VenueRow({id, buildingName, venueName, campus, venueType, venueCapacity
             firstRender.current = false;
             return;
         }
-        const compileBookingData = () => { // Gets all information needed for a booking together and calls the makeBooking function
+        const compileBookingData = async () => { // Gets all information needed for a booking together and calls the makeBooking function
             const booker = isAdmin ? bookerEmail : user.email; // Gets entered booker email or user email
     
             if (bookingDescriptionText !== "" && booker !== ""){
                 makeBooking(booker, venueName, relevantDate, bookingTime, bookingEndingTime, bookingDescriptionText, setIsVenueOpen, toggleIsBooking, setBookingDescriptionText, setBookingsList);
+                if(bookerEmail !== user.email){
+                    // Create notification data
+                    const notificationMessage = `A booking has been made in your name by the admin. Booking details: venueID: ${venueName}, bookingDate: ${relevantDate}, bookingStartTime: ${bookingTime}, bookingEndTime: ${bookingEndingTime}, bookingDescription: ${bookingDescriptionText}`;
+                    const notificationData = {
+                        dateCreated: new Date().toLocaleString(),
+                        notificationMessage,
+                        notificationType: 'Booking Confirmation',
+                        read: false,
+                        recipientEmail: booker,
+                    };
+
+                    console.log('Sending notification data:', notificationData);
+
+                    // Send notification data to the server
+                    const notificationResponse = await fetch('/api/notifications', {
+                        method: 'POST',
+                        headers: {
+                        'Content-Type': 'application/json',
+                        'x-api-key': process.env.REACT_APP_API_KEY,
+                        },
+                        body: JSON.stringify(notificationData),
+                    });
+
+                    if (!notificationResponse.ok) {
+                        const errorText = await notificationResponse.text();
+                        console.error('Notification creation error:', errorText);
+                        throw new Error('Failed to create notification');
+                    }
+
+                    console.log('Notification created successfully');
+                }
             }
             else{
                 makeBooking(null, venueName, relevantDate, bookingTime, bookingEndingTime, null, setIsVenueOpen, toggleIsBooking, setBookingDescriptionText, setBookingsList);;
