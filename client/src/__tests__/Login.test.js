@@ -2,8 +2,9 @@ import { render, screen, fireEvent, waitFor} from '@testing-library/react';
 import { MemoryRouter } from "react-router-dom";
 import Login from '../pages/Login';
 import { addNewUser } from "../utils/addNewUserUtil";
+import { getCurrentUser } from '../utils/getCurrentUser';
 import * as router from 'react-router-dom';
-import { GoogleAuthProvider, signInWithPopup, getRedirectResult, signOut, deleteUser } from "firebase/auth";
+import { GoogleAuthProvider, signInWithPopup, getRedirectResult, signOut, deleteUser, onAuthStateChanged } from "firebase/auth";
 import { act } from 'react';
 
 jest.mock('react-router-dom', () => ({
@@ -14,7 +15,8 @@ jest.mock('react-router-dom', () => ({
   
 jest.mock("firebase/auth", () => ({
 //return {
-    getAuth: jest.fn(),
+    getAuth: jest.fn(() => ({currentUser: { email: 'test@wits.ac.za' }})),
+    onAuthStateChanged: jest.fn(),
     GoogleAuthProvider: jest.fn(),
     signInWithPopup: jest.fn(),
     getRedirectResult: jest.fn(),
@@ -28,7 +30,11 @@ jest.mock('firebase/storage', () => ({
 }));
 
 jest.mock('../utils/addNewUserUtil', () => ({
-addNewUser: jest.fn(),
+    addNewUser: jest.fn(),
+}));
+
+jest.mock('../utils/getCurrentUser', () => ({
+    getCurrentUser: jest.fn(),
 }));
 
 GoogleAuthProvider.credentialFromResult = jest.fn();
@@ -41,6 +47,16 @@ describe("Login", () => {
 
     beforeEach(() => {
         jest.spyOn(router, 'useNavigate').mockImplementation(() => navigate);
+
+        onAuthStateChanged.mockImplementation((auth, callback) => {
+            // Simulate that a user is logged in, and return a mock unsubscribe function
+            callback(null);
+            return jest.fn(); // This is the mock unsubscribe function
+        });
+
+        getCurrentUser.mockImplementation((currentUserEmail, setUserInfo) => {
+            setUserInfo(null);
+        });
     })
     // beforeEach(() => {
     //     render(
