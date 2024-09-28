@@ -80,9 +80,9 @@ function Venues(){
       }
     }, [user, isLoading]);
 
-    useEffect(() => {
-      console.log(userInfo);
-    }, [userInfo]);
+    // useEffect(() => {
+    //   console.log(userInfo);
+    // }, [userInfo]);
     
     useEffect(() => {
       // getAllVenues(setVenueList, setAllVenues);
