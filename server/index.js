@@ -572,24 +572,71 @@ app.post('/api/venues', async (req, res) => {
     }
 });
 
-// // Get a single venue by ID
-app.get('/api/venues/:id', async (req, res) => {
-    const id = req.params.id;
+// Get venues by field
+app.get("/api/venues/findByField", async (req, res) => {
+    // Extract optional query parameters from the request
+    const { buildingName, campus, isClosed, timeSlots, venueCapacity, venueName, venueType } = req.query;
     let api_key = req.header("x-api-key"); // Fetches API key from request
-    if(api_key === process.env.REACT_APP_API_KEY || api_key === process.env.EVENTS_API_KEY){ // Checks if API key is valid
+
+    // Check for valid API key
+    if (api_key === process.env.REACT_APP_API_KEY || api_key === process.env.EVENTS_API_KEY) {
+        const venuesCollection = collection(db, "Venues"); 
+
         try {
-            const venueDoc = await getDoc(doc(db, 'Venues', id));
-            if (venueDoc.exists()) {
-                res.status(200).json({ id: venueDoc.id, ...venueDoc.data() });
-            } else {
-                res.status(404).json({ error: "Venue not found" });
+            // Start building the query
+            let venuesQuery = venuesCollection;
+
+            // Apply filters if query parameters are provided
+            if (buildingName) {
+                venuesQuery = query(venuesQuery, where("buildingName", "==", buildingName));
             }
+
+            if (campus) {
+                venuesQuery = query(venuesQuery, where("campus", "==", campus));
+            }
+
+            if (isClosed !== undefined) { 
+                const isClosedBool = isClosed === 'true';
+                venuesQuery = query(venuesQuery, where("isClosed", "==", isClosedBool));
+            }
+
+            if (timeSlots) {
+                const timeSlotsArray = timeSlots.split(',');
+                venuesQuery = query(venuesQuery, where("timeSlots", "array-contains-any", timeSlotsArray));
+            }
+
+            if (venueCapacity) {
+                venuesQuery = query(venuesQuery, where("venueCapacity", "==", parseInt(venueCapacity)));
+            }
+
+            if (venueName) {
+                venuesQuery = query(venuesQuery, where("venueName", "==", venueName));
+            }
+
+            if (venueType) {
+                venuesQuery = query(venuesQuery, where("venueType", "==", venueType));
+            }
+
+            // Execute the query
+            const venuesSnapshot = await getDocs(venuesQuery);
+            const venuesList = [];
+
+            // Iterate over each document and push it to the list
+            venuesSnapshot.forEach((doc) => {
+                venuesList.push({
+                    id: doc.id,
+                    ...doc.data()
+                });
+            });
+
+            // Send the filtered venues as a JSON response
+            res.status(200).json(venuesList);
         } catch (error) {
-            console.error("Error getting venue:", error);
+            console.error("Error getting venues:", error);
             res.status(500).json({ error: "Internal Server Error" });
         }
-    }else{
-        res.status(401).json({ error: "Unauthorized. Please supply valid API key" });
+    } else {
+        res.status(401).json({ error: "Unauthorized. Please supply a valid API key" });
     }
 });
 
