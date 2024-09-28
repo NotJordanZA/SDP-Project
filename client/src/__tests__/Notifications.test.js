@@ -7,6 +7,7 @@ import { onAuthStateChanged } from "firebase/auth";
 
 import { getNotifications } from '../utils/getNotificationsUtil';
 import { handleNotificationRead } from '../utils/putNotificationUtil';
+import { getCurrentUser } from '../utils/getCurrentUser';
 import Notifications from '../components/popupNotif';
 
 jest.mock('../firebase', () => ({
@@ -42,6 +43,22 @@ describe('Notifications Component', () => {
     beforeEach(() => {
         jest.clearAllMocks();
         jest.spyOn(console, 'error').mockImplementation(() => {});  // Suppress error logging during tests
+
+        onAuthStateChanged.mockImplementation((auth, callback) => {
+            // Simulate that a user is logged in, and return a mock unsubscribe function
+            callback({ email: 'test@wits.ac.za' });
+            return jest.fn(); // This is the mock unsubscribe function
+        });
+
+        getCurrentUser.mockImplementation((currentUserEmail, setUserInfo) => {
+            setUserInfo({
+                firstName:'Test',
+                isAdmin:true,
+                isLecturer:true,
+                isStudent:true,
+                lastName:'User',
+            });
+        });
     });
 
     afterEach(() => {
@@ -171,32 +188,56 @@ describe('Notifications Component', () => {
         expect(loadingMessage).toBeInTheDocument();
     });
 
-    // test('handles error when fetching user info', async () => {
-    //     onAuthStateChanged.mockImplementation((auth, callback) => {
-    //         callback({ email: 'test@wits.ac.za' });
-    //         return jest.fn(); 
-    //     });
+    test.skip('handles error when fetching user info', async () => {
+        onAuthStateChanged.mockImplementation((auth, callback) => {
+            callback({ email: 'test@wits.ac.za' });
+            return jest.fn(); 
+        });
 
-    //     getNotifications.mockImplementation(() => {
-    //         throw new Error('Error fetching notifications:');
-    //     });
+          // Mock fetch to simulate a failed response (e.g., 500 Internal Server Error)
+        // global.fetch = jest.fn(() =>
+        //     Promise.resolve({
+        //     ok: false,  // Simulate an unsuccessful response
+        //     status: 500,
+        //     json: () => Promise.resolve({ error: 'Internal Server Error' }),  // Mock error response body
+        //     })
+        // );
 
-    //     render(<Notifications isOpen={true} toggleNotification={jest.fn()} />);
+        // Mock getNotifications such that it simulates an error in fetching the notifications
+        getNotifications.mockImplementation((email, setNotifications) => {
+            console.log("Mocking getNotifications");
+            return Promise.reject(new Error('Error fetching notifications:'));
+        });
 
-    //     await waitFor(() => {
-    //         expect(console.error).toHaveBeenCalledWith('Error fetching notifications:', expect.any(Error));
-    //     });
-    // });
+        // Spy on console.error to retrieve error message
+        const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
 
-    // test('unsubscribes from onAuthStateChanged on unmount', () => {
-    //     const mockUnsubscribe = jest.fn();
-    //     onAuthStateChanged.mockImplementation(() => mockUnsubscribe);
+        render(<Notifications isOpen={true} toggleNotification={jest.fn()} />);
+        
+        await waitFor(() => {
+            // Check if console.error was called
+            expect(consoleErrorSpy).toHaveBeenCalled();
+        });
+        
+        await waitFor(() => {
+            // expect(console.error).toHaveBeenCalledWith('Error:', expect.any(Error));
+            // expect(console.error).toHaveBeenCalled();
+            expect(console.error).toHaveBeenCalledWith('Error:', expect.any(Error));
+        });
 
-    //     const { unmount } = render(<Notifications isOpen={true} toggleNotification={jest.fn()} />);
-    //     unmount();
+        console.error.mockRestore();
+        // global.fetch.mockRestore();
+    });
 
-    //     expect(mockUnsubscribe).toHaveBeenCalledTimes(1);  
-    // });
+    test('unsubscribes from onAuthStateChanged on unmount', () => {
+        const mockUnsubscribe = jest.fn();
+        onAuthStateChanged.mockImplementation(() => mockUnsubscribe);
+
+        const { unmount } = render(<Notifications isOpen={true} toggleNotification={jest.fn()} />);
+        unmount();
+
+        expect(mockUnsubscribe).toHaveBeenCalledTimes(1);  
+    });
 
 
 });

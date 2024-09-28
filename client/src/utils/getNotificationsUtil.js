@@ -1,5 +1,3 @@
-
-
 export const getNotifications = async (currentUserEmail, setNotifications) =>{
     try{
       const response = await fetch(`/api/notifications/${currentUserEmail}`, { // API call which GETs notifications
