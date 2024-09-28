@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import '../styles/Notifications.css'; 
-import { getCurrentUser } from "../utils/getCurrentUser"; 
+// import { getCurrentUser } from "../utils/getCurrentUser"; 
 import { auth } from "../firebase";
 import { onAuthStateChanged } from "firebase/auth";
+import { NotifItem } from "./NotifItem";
 import { getNotifications } from '../utils/getNotificationsUtil'; // Import the getNotifications function
 import { handleNotificationRead } from '../utils/putNotificationUtil'; // Import the handleNotificationRead function
+import '../styles/Notifications.css'
 
 const Notifications = ({ isOpen, toggleNotification }) => {
   const [notifications, setNotifications] = useState([]); 
@@ -24,7 +26,8 @@ const Notifications = ({ isOpen, toggleNotification }) => {
       }
     });
     return () => unsubscribe();
-  }, []);
+    // eslint-disable-next-line
+  }, [auth]);
 
   // Fetch user information from Firestore when the user is logged in
   // useEffect(() => {
@@ -66,19 +69,17 @@ const Notifications = ({ isOpen, toggleNotification }) => {
         <ul>
           {notifications.length > 0 ? (
             notifications.map((notification, index) => (
-              <li key={notification.id}>
-                <input 
-                  type="checkbox" 
-                  checked={notification.read} // Pre-check the checkbox if already read
-                  onChange={() => handleNotificationRead (notification, setNotifications)} 
-                /> 
-                {notification.notificationMessage} {/* Display the notification message */}
-              </li>
+              <NotifItem
+                notification={notification}
+                handleNotificationRead={handleNotificationRead}
+                setNotifications={setNotifications}
+              />
             ))
           ) : (
             <li>No notifications available</li>
           )}
         </ul>
+
       </section>
     </nav>
   );
