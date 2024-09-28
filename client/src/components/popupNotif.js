@@ -9,38 +9,38 @@ import { handleNotificationRead } from '../utils/putNotificationUtil'; // Import
 const Notifications = ({ isOpen, toggleNotification }) => {
   const [notifications, setNotifications] = useState([]); 
   const [user, setUser] = useState(null); // currently authenticated user
-  const [userInfo, setUserInfo] = useState({}); // State to store the user's info (fetched from Firestore)
-  const [isLoading, setIsLoading] = useState(true);
+  // const [userInfo, setUserInfo] = useState({}); // State to store the user's info (fetched from Firestore)
+  // const [isLoading, setIsLoading] = useState(true);
 
   // Ensure the user is logged in and listen for Firebase Auth state changes
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
       if (firebaseUser) {
         setUser(firebaseUser); // Store the Firebase authenticated user
-        setIsLoading(false); // Declare that Firebase has finished loading
+        // setIsLoading(false); // Declare that Firebase has finished loading
       } else {
         setUser(null); // If the user isn't logged in, set user to null
-        setIsLoading(false);
+        // setIsLoading(false);
       }
     });
     return () => unsubscribe();
   }, []);
 
   // Fetch user information from Firestore when the user is logged in
-  useEffect(() => {
-    const fetchUserInfo = async () => {
-      if (user && user.email) {
-        try {
-          await getCurrentUser(user.email, setUserInfo); // Fetch user info using email and set it in state
-        } catch (error) {
-          console.error('Failed to fetch user info:', error);
-        }
-      }
-    };
-    if (!isLoading && user && user.email) { 
-      fetchUserInfo(); 
-    }
-  }, [user, isLoading]);
+  // useEffect(() => {
+  //   const fetchUserInfo = async () => {
+  //     if (user && user.email) {
+  //       try {
+  //         await getCurrentUser(user.email, setUserInfo); // Fetch user info using email and set it in state
+  //       } catch (error) {
+  //         console.error('Failed to fetch user info:', error);
+  //       }
+  //     }
+  //   };
+  //   if (!isLoading && user && user.email) { 
+  //     fetchUserInfo(); 
+  //   }
+  // }, [user, isLoading]);
 
   // Fetch notifications based on the user's email and filter those where read=false
   useEffect(() => {
@@ -53,6 +53,7 @@ const Notifications = ({ isOpen, toggleNotification }) => {
         console.log("Fetched unread notifications:", unreadNotifications);
       });
     }
+    // eslint-disable-next-line
   }, [user && user.email]);
 
   return (
