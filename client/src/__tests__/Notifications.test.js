@@ -96,9 +96,9 @@ describe('Notifications Component', () => {
         render(<Notifications isOpen={true} toggleNotification={jest.fn()} />);
 
         await waitFor(() => {
-            const notificationItems = screen.getAllByRole('checkbox');
+            const notificationItems = screen.getAllByTestId('checkmark-button');
             expect(notificationItems.length).toBe(2); // Expect two notifications
-            expect(notificationItems[0].checked).toBe(false); // Checkbox should not be checked
+            expect(notificationItems[0]).not.toHaveClass('checkmark.checked'); // Checkbox should not be checked
         });
     });
 
@@ -142,8 +142,8 @@ describe('Notifications Component', () => {
 
         render(<Notifications isOpen={true} toggleNotification={jest.fn()} />);
 
-        const checkbox = await screen.findByRole('checkbox');
-        fireEvent.click(checkbox);
+        const checkmark = await screen.findByTestId('checkmark-button')
+        fireEvent.click(checkmark);
 
         await waitFor(() => {
             expect(handleNotificationRead).toHaveBeenCalledWith(
@@ -166,7 +166,7 @@ describe('Notifications Component', () => {
         const mockToggleNotification = jest.fn();
         render(<Notifications isOpen={true} toggleNotification={mockToggleNotification} />);
 
-        const closeButton = screen.getByText(/Close/i);
+        const closeButton = screen.getByText(/X/i);
         fireEvent.click(closeButton);  // Simulate close button click
 
         expect(mockToggleNotification).toHaveBeenCalledTimes(1);  

@@ -3,9 +3,8 @@ import '../styles/Notifications.css';
 // import { getCurrentUser } from "../utils/getCurrentUser"; 
 import { auth } from "../firebase";
 import { onAuthStateChanged } from "firebase/auth";
-import { NotifItem } from "./NotifItem";
+import { NotifItem } from './NotifsItem';
 import { getNotifications } from '../utils/getNotificationsUtil'; // Import the getNotifications function
-import { handleNotificationRead } from '../utils/putNotificationUtil'; // Import the handleNotificationRead function
 import '../styles/Notifications.css'
 
 const Notifications = ({ isOpen, toggleNotification }) => {
@@ -62,7 +61,7 @@ const Notifications = ({ isOpen, toggleNotification }) => {
   return (
     <nav className={`popupNotif-panel ${isOpen ? 'open' : ''}`}>
       <section className='popupNotif-topSection'>
-        <button className="popupNotif-close-btn" onClick={toggleNotification}>Close</button>
+        <button className="popupNotif-close-btn" onClick={toggleNotification}>X</button>
       </section>
       <section className='popupNotif-list'>
         <h2 className='popupNotif-heading'>Your Notifications</h2>
@@ -71,7 +70,6 @@ const Notifications = ({ isOpen, toggleNotification }) => {
             notifications.map((notification, index) => (
               <NotifItem
                 notification={notification}
-                handleNotificationRead={handleNotificationRead}
                 setNotifications={setNotifications}
               />
             ))

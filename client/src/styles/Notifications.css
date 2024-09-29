@@ -5,7 +5,7 @@
   top: 80px;
   width: 300px;
   height: 100%;
-  background-color: white;
+  background-color: #043673;
   transition: right 0.3s ease-in-out;
   z-index: 1000;
   box-shadow: -5px 0px 15px 0px rgba(0, 0, 0, 0.5);
@@ -29,12 +29,14 @@
   background-color: #043673;
   color: white;
   border: none;
-  padding: 10px 20px;
+  /* padding: 10px 20px; */
   border-radius: 8px;
   cursor: pointer;
-  margin-bottom: 20px; /* Add margin to create space between the button and heading */
+  margin-bottom: 10px; /* Add margin to create space between the button and heading */
   margin-top: 10px;
   margin-left: 10px;
+  font-weight: bold;
+  font-size: 1.5em;
 }
 .popupNotif-close-btn:hover {
   background-color: #917248;
@@ -45,18 +47,34 @@
   padding: 0;
 }
 
+.checkmark {
+  color: grey;
+  font-size: 1.3rem;
+  border: none;
+  background: none;
+  cursor: pointer;
+}
+
+.checkmark:hover {
+  color: #917248;
+}
+
+.checkmark.checked {
+  color: #043673;
+}
+
 .popupNotif-list li {
-  padding: 10px 5px;
+  padding: 10px 10px;
   display: flex;
   align-items: center;
-  color: white; /* notification text white */
+  color: #043673; /* notification text white */
   white-space: pre-line;
   margin-right: 10px;
   margin-left: 10px;
   margin-top: 10px;
   margin-bottom: 10px;
   gap: 10px;
-  background-color: #043673;
+  background-color: white;
   border-radius: 15px;
 }
 
