@@ -7,6 +7,7 @@ import { getCurrentUser } from '../utils/getCurrentUser';
 import { getAllVenues } from "../utils/getAllVenuesUtil";
 import { getCurrentDatesBookings } from "../utils/getCurrentDatesBookingsUtil";
 import { getCurrentDaySchedules } from "../utils/getCurrentDaysSchedules";
+import { fetchSchedules } from "../utils/getSchedulesUtil";
 import { formatDate } from "../utils/formatDateUtil";
 import { auth } from "../firebase";
 import { useNavigate } from "react-router-dom";
@@ -23,6 +24,7 @@ function Venues(){
     const [user, setUser] = useState(null);
     const [isManaging, setIsManaging] = useState(false);
     const [isScheduling, setIsScheduling] = useState(false);
+    const [schedules, setSchedules] = useState([]);
     // const user = auth.currentUser;
     const studentVenueTypes = ["Tutorial Room", "Study Room"];
     const lecturerVenueTypes = ["Tutorial Room", "Study Room", "Lecture Venue", "Lab", "Test Venue"];
@@ -87,6 +89,7 @@ function Venues(){
     useEffect(() => {
       // getAllVenues(setVenueList, setAllVenues);
       callGetAllVenues();
+      fetchSchedules(setSchedules);
     }, []);// Only runs on first load
 
     useEffect(() => {
@@ -142,6 +145,8 @@ function Venues(){
             isManaging={isManaging}
             getAllVenues={callGetAllVenues}
             isScheduling={isScheduling}
+            schedules={schedules}
+            setSchedules={setSchedules}
           />
         );
       }
@@ -162,6 +167,8 @@ function Venues(){
             isManaging={false}
             getAllVenues={null}
             isScheduling={null}
+            schedules={null}
+            setSchedules={null}
           />
         )
       }
@@ -182,6 +189,8 @@ function Venues(){
             isManaging={false}
             getAllVenues={null}
             isScheduling={null}
+            schedules={null}
+            setSchedules={null}
           />
         )
       }
