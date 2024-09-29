@@ -283,7 +283,7 @@ app.get("/api/bookings/findByField", async (req, res) => {
     // Extract optional query parameters from the request
     const { venueID, bookingDate, bookingEndTime, bookingStartTime, venueBooker, bookingDescription} = req.query;
     let api_key = req.header("x-api-key"); // Fetches API key from request
-    if(api_key === process.env.REACT_APP_API_KEY || api_key === process.env.EVENTS_API_KEY){ // Checks if API key is valid
+    if(api_key === process.env.REACT_APP_API_KEY || api_key === process.env.EVENTS_API_KEY || api_key === process.env.DINING_API_KEY){ // Checks if API key is valid
         const bookingsCollection = collection(db, "Bookings"); // Reference to the "Bookings" collection in Firestore
 
         try {
@@ -410,7 +410,7 @@ app.get("/api/reports", async (req, res) => {
 //GET  all bookings
 app.get("/api/bookings", async (req, res) => {
     let api_key = req.header("x-api-key"); // Fetches API key from request
-    if(api_key === process.env.REACT_APP_API_KEY || api_key === process.env.EVENTS_API_KEY){ // Checks if API key is valid
+    if(api_key === process.env.REACT_APP_API_KEY || api_key === process.env.EVENTS_API_KEY || api_key === process.env.DINING_API_KEY){ // Checks if API key is valid
         try {
             // Reference to the "Bookings" collection
             const bookingsCollectionRef = collection(db, 'Bookings');
@@ -441,7 +441,7 @@ app.get("/api/bookings", async (req, res) => {
 //Get booking by  ID
 app.get("/api/bookings/:id", async (req, res) => {
     let api_key = req.header("x-api-key"); // Fetches API key from request
-    if(api_key === process.env.REACT_APP_API_KEY || api_key === process.env.EVENTS_API_KEY){ // Checks if API key is valid
+    if(api_key === process.env.REACT_APP_API_KEY || api_key === process.env.EVENTS_API_KEY || api_key === process.env.DINING_API_KEY){ // Checks if API key is valid
         const bookingId = req.params.id;
 
         try {
