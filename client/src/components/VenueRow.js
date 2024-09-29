@@ -4,7 +4,6 @@ import { makeBooking } from '../utils/makeBookingUtil';
 import { putVenue } from '../utils/putVenueUtil';
 import { deleteVenue } from '../utils/deleteVenueUtil';
 import { VenueForm } from './VenueForm';
-import { fetchSchedules } from '../utils/getSchedulesUtil';
 import { createSchedule } from '../utils/createScheduleUtil';
 import { createNotification } from '../utils/createNotificationUtil';
 import { useState, useEffect, useRef } from "react";
@@ -12,7 +11,7 @@ import { auth } from "../firebase";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSquareCaretDown, faSquareCaretUp} from '@fortawesome/free-solid-svg-icons';
 
-function VenueRow({id, buildingName, venueName, campus, venueType, venueCapacity, timeSlots, isClosed, bookings, relevantDate, setBookingsList, isAdmin, isManaging, getAllVenues, isScheduling}) {
+function VenueRow({id, buildingName, venueName, campus, venueType, venueCapacity, timeSlots, isClosed, bookings, relevantDate, setBookingsList, isAdmin, isManaging, getAllVenues, isScheduling, schedules, setSchedules}) {
 
     const user = auth.currentUser;
     
@@ -25,8 +24,7 @@ function VenueRow({id, buildingName, venueName, campus, venueType, venueCapacity
     const [bookerEmail, setBookerEmail] = useState("");
     const [timeSlotsArray, setTimeSlotsArray] = useState([]);
     const [isVenueFormOpen, setIsVenueFormOpen] = useState(false);
-    const [selectedSlot, setSelectedSlot] = useState(null); 
-    const [schedules, setSchedules] = useState([]); // eslint-disable-next-line
+    const [selectedSlot, setSelectedSlot] = useState(null); // eslint-disable-next-line
     const [errorMessage, setErrorMessage] = useState(""); 
     const [clickedScheduleEmail, setClickedScheduleEmail] = useState("");
     const [clickedScheduleDescription, setClickedScheduleDescription] = useState("");
@@ -121,10 +119,6 @@ function VenueRow({id, buildingName, venueName, campus, venueType, venueCapacity
     useEffect(() => { // Populates list with the venues time slots
         setTimeSlotsArray(timeSlots);// eslint-disable-next-line
     }, []);
-
-    useEffect(() => {
-        fetchSchedules(setSchedules, venueName)// eslint-disable-next-line
-    }, [isScheduling])
 
     const firstRender = useRef(true);
 
