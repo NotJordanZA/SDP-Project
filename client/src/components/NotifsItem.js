@@ -10,9 +10,9 @@ export function NotifItem ({notification, setNotifications}) {
         setPopupShown(!popupShown);
     }
 
-    const formatNotificationMessage = (rawMessage) => {
+    const formatNotificationMessage = (rawMessage, notifType) => {
         // Check if the message contains a specific keyword to determine its type
-        if (rawMessage.includes("cancelled by the admin")) {
+        if (notifType.includes("Booking Cancelled")) {
             // Notif Type 1: Booking Cancellation
             // eslint-disable-next-line
             const [_, details] = rawMessage.split("These are the booking details:");
@@ -25,21 +25,84 @@ export function NotifItem ({notification, setNotifications}) {
             "${bookingDescription}"
             `;
         
-        } else if (rawMessage.includes("updated by the admin")) {
+        } else if (notifType.includes("Booking Details Updated")) {
             // Notif Type 2: Booking Update
             // eslint-disable-next-line
             const [_, updatedDetails] = rawMessage.split("These are the updated booking details:");
-            const [, oldDescription, newDetails] = updatedDetails.split(/bookingDescription: (.*?) -> (.*?) New details:/);
-            const [venue, date, startTime, endTime, newDescription] = newDetails
-            .match(/venue: (.*?), Date: (.*?), Start Time: (.*?), End Time: (.*?), Description: (.*)/)
-            .slice(1);
+
+            // Initialize variables for old and new values
+            let oldDescription = "", newDescription = "", oldStartTime = "", newStartTime = "";
+            let oldEndTime = "", newEndTime = "", oldDate = "", newDate = "", oldVenue = "", newVenue = "";
+
+            // Use regex to find each field and extract old/new values, if present
+            const descriptionMatch = updatedDetails.match(/bookingDescription: (.*?) -> (.*?)([,.]|$)/);
+            if (descriptionMatch) {
+                oldDescription = descriptionMatch[1].trim();
+                newDescription = descriptionMatch[2].trim();
+            }
+
+            const startTimeMatch = updatedDetails.match(/bookingStartTime: (.*?) -> (.*?)([,.]|$)/);
+            if (startTimeMatch) {
+                oldStartTime = startTimeMatch[1].trim();
+                newStartTime = startTimeMatch[2].trim();
+            }
+
+            const endTimeMatch = updatedDetails.match(/bookingEndTime: (.*?) -> (.*?)([,.]|$)/);
+            if (endTimeMatch) {
+                oldEndTime = endTimeMatch[1].trim();
+                newEndTime = endTimeMatch[2].trim();
+            }
+
+            const dateMatch = updatedDetails.match(/bookingDate: (.*?) -> (.*?)([,.]|$)/);
+            if (dateMatch) {
+                oldDate = dateMatch[1].trim();
+                newDate = dateMatch[2].trim();
+            }
+
+            const venueMatch = updatedDetails.match(/venueID: (.*?) -> (.*?)([,.]|$)/);
+            if (venueMatch) {
+                oldVenue = venueMatch[1].trim();
+                newVenue = venueMatch[2].trim();
+            }
+
+            // Match the new details part (after 'New details:')
+            const [, venue, date, startTime, endTime, description] = updatedDetails
+                .split("New details:")[1]
+                .match(/venue: (.*?), Date: (.*?), Start Time: (.*?), End Time: (.*?), Description: (.*)/)
+                .slice(0);
+
+            // Construct the output message conditionally
+            let message = `This is to inform you that your booking details have been updated by the admin.\n`;
+            if (oldDescription && newDescription) {
+                message += `Description: "${oldDescription}" -> "${newDescription}"\n`;
+            }
+            if (oldStartTime && newStartTime) {
+                message += `Start Time: ${oldStartTime} -> ${newStartTime}\n`;
+            }
+            if (oldEndTime && newEndTime) {
+                message += `End Time: ${oldEndTime} -> ${newEndTime}\n`;
+            }
+            if (oldDate && newDate) {
+                message += `Date: ${oldDate} -> ${newDate}\n`;
+            }
+            if (oldVenue && newVenue) {
+                message += `Venue: ${oldVenue} -> ${newVenue}\n`;
+            }
+            // Add the final details
+            message += `New details:\n${date} in ${venue}, ${startTime}-${endTime}. \n"${description}"`;
+
+            return message;
+            // Construct the output message
+            // return `This is to inform you that your booking details have been updated by the admin.
+            //     ${oldDescription && `Description: "${oldDescription}" -> "${newDescription}"\n`}
+            //     ${oldStartTime && `Start Time: ${oldStartTime} -> ${newStartTime}\n`}
+            //     ${(oldEndTime !== "") && `End Time: ${oldEndTime} -> ${newEndTime}\n`}
+            //     ${oldDate && `Date: ${oldDate} -> ${newDate}\n`}
+            //     ${oldVenue && `Venue: ${oldVenue} -> ${newVenue}\n`}
+            //     New details:
+            //     ${date} in ${venue}, ${startTime}-${endTime}, Description: "${description}".`;
         
-            return `This is to inform you that your booking details have been updated by the admin.
-            "${oldDescription}" -> "${newDescription}"
-            ${date} in ${venue}, ${startTime}-${endTime}.
-            `;
-        
-        } else if (rawMessage.includes("A booking has been made in your name by the admin")) {
+        } else if (notifType.includes("Booking Confirmation") && !(notifType.includes("Recurring"))) {
             // Notif Type 3: Booking Made by Admin
             const [, bookingDetails] = rawMessage.split("Booking details:");
             const [venueID, bookingDate, bookingStartTime, bookingEndTime, bookingDescription] = bookingDetails
@@ -51,7 +114,7 @@ export function NotifItem ({notification, setNotifications}) {
             "${bookingDescription}"
             `;
         
-        } else if (rawMessage.includes("A recurring booking has been made in your name by the admin")) {
+        } else if (notifType.includes("Recurring Booking Confirmation")) {
             // Notif Type 4: Recurring Booking
             const [, recurringDetails] = rawMessage.split("Booking details:");
             const [venue, day, time, description] = recurringDetails
@@ -62,6 +125,16 @@ export function NotifItem ({notification, setNotifications}) {
             ${day} in ${venue}, ${time}.
             "${description}"
             `;
+        } else if (notifType.includes("Report Update")) {
+            // Notif Type 5: Report Update
+            // eslint-disable-next-line
+            const [, reportDetails] = rawMessage.split("Report Details:");
+            const [statusChange, details] = rawMessage
+                .match(/Your report status has been changed to (.*)\. Report Details: (.*)/)
+                .slice(1);
+            
+            return `Your report status has been changed to ${statusChange}. 
+            Report Details: ${details.trim()}`;
         }
         
         // Return the raw message if no format matches
@@ -112,7 +185,7 @@ export function NotifItem ({notification, setNotifications}) {
             <p className='notif-text-bold' onClick={togglePopup}>{timeSince(notification.dateCreated)}</p>
             <p className='notif-text-bold' onClick={togglePopup}>{notification.notificationType}</p>
             {popupShown && (
-            <p>{formatNotificationMessage(notification.notificationMessage)}</p>
+            <p>{formatNotificationMessage(notification.notificationMessage, notification.notificationType)}</p>
             )
             }
             
