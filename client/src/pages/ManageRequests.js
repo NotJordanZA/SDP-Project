@@ -122,8 +122,8 @@ const determinerole = (email) => {
 };
 
   return (
-    <div className="manageadminrequests-container">
-      <h1>Admin Requests Management</h1>
+    <section className="manageadminrequests-container">
+      <h2>Admin Requests Management</h2>
 
       <div className="manageadminrequests-tabs">
         <button
@@ -148,9 +148,9 @@ const determinerole = (email) => {
 
       {/* List of filtered requests based on active tab */}
       {filteredRequests.length > 0 ? (
-        <div className="manageadminrequests-list">
+        <ul className="manageadminrequests-list">
           {filteredRequests.map(request => (
-            <div key={request.id} className={`manageadminrequests-card ${request.requestStatus}`}>
+            <li key={request.id} className={`manageadminrequests-card ${request.requestStatus}`}>
               <h3>
             <strong>  Requester email: </strong>{request.requesterEmail} </h3>
               <p><strong>Role:</strong> {determinerole(request.requesterEmail)}</p>
@@ -159,22 +159,22 @@ const determinerole = (email) => {
 
               {/* Show "Approve" and "Deny" buttons only for pending requests */}
               {request.requestStatus === 'pending' && (
-                <>
-                  <button className="manageadminrequests-approve-btn" onClick={() => handleApproveClick(request.id, setRequests)}>
-                    Approve Request
+                <div className='manageadminrequests-button-container'>
+                  <button className="approve" onClick={() => handleApproveClick(request.id, setRequests)}>
+                    APPROVE
                   </button>
-                  <button className="manageadminrequests-deny-btn" onClick={() => handleDenyClick(request.id)}>
-                    Deny Request
+                  <button className="deny" onClick={() => handleDenyClick(request.id)}>
+                    DENY
                   </button>
-                </>
+                </div>
               )}
-            </div>
+            </li>
           ))}
-        </div>
+        </ul>
       ) : (
         <p>No {activeTab} requests available</p>
       )}
-    </div>
+    </section>
   );
 }
 

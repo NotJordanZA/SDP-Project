@@ -189,9 +189,8 @@ function Reports() {
   );
 
   return (
-    <div className="reports-container">
-      <h1>Reports Management</h1>
-
+    <section className="reports-container">
+      <h2>Reports Management</h2>
       {/* Tabs */}
       <div className="tabs">
         <button className={activeTab.toLowerCase() === 'pending' ? 'active' : ''} onClick={() => handleTabChange('Pending')}>
@@ -207,9 +206,9 @@ function Reports() {
 
       {/* Report List */}
       {filteredReports.length > 0 ? (
-        <div className="reports-list">
+        <ul className="reports-list">
           {filteredReports.map(report => (
-            <div key={report.id} className={`report-card ${report.reportStatus}`}>
+            <li key={report.id} className={`report-card ${report.reportStatus}`}>
               <h3>{report.reportText}</h3>
               <p><strong>Venue:</strong> {report.venueID}</p>
               <p><strong>Type:</strong> {report.reportType}</p>
@@ -246,7 +245,7 @@ function Reports() {
                 <>
                   <p><strong>Resolution Log:</strong> {report.resolutionLog || "_____"}</p>
                   {report.reportStatus !== "Resolved" && (
-                    <>
+                    <div className='manage-reports-button-container'>
                       <button className="edit-log-btn" onClick={() => handleEditLogClick(report.id, report.resolutionLog)}>
                         Edit Resolution Log
                       </button>
@@ -256,13 +255,13 @@ function Reports() {
                       {report.reportStatus === "In Progress" && (
                         <button className="resolve-btn" onClick={() => handleResolveClick(report.id)}>Resolved</button>
                       )}
-                    </>
+                    </div>
                   )}
                 </>
               )}
-            </div>
+            </li>
           ))}
-        </div>
+        </ul>
       ) : (
         <p>No {activeTab} reports available for this type</p>
       )}
@@ -276,7 +275,7 @@ function Reports() {
           </div>
         </div>
       )}
-    </div>
+    </section>
   );
 }
 

@@ -1,6 +1,6 @@
-export const fetchSchedules = async (setSchedules, venueID) => {
+export const fetchSchedules = async (setSchedules) => {
     try {
-        const response = await fetch(`/api/schedules/${venueID}`, {
+        const response = await fetch(`/api/schedules`, {
             method: 'GET',
             headers: {
               'Content-Type': 'application/json',

@@ -115,8 +115,8 @@ test('renders ManageRequests components with correct data', () => {
         <ManageRequests />
   
     );
-    const approveButton = screen.getByText('Approve Request');
-    const denyButton = screen.getByText('Deny Request');
+    const approveButton = screen.getByText('APPROVE');
+    const denyButton = screen.getByText('DENY');
     expect(approveButton).toBeInTheDocument();
     expect(denyButton).toBeInTheDocument();
   });
@@ -128,7 +128,7 @@ test('renders ManageRequests components with correct data', () => {
          <ManageRequests />
    
      );
-     const approveButton = screen.getByText('Approve Request');
+     const approveButton = screen.getByText('APPROVE');
      fireEvent.click(approveButton);
      expect(handleApproveClick).toHaveBeenCalled();
   

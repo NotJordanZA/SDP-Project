@@ -1,13 +1,13 @@
 const { getDoc, setDoc, updateDoc, doc, deleteDoc, getDocs, collection, query, where } = require('firebase/firestore');
 const { initializeApp } = require('firebase/app');
-const { getFirestore } = require("firebase/firestore");
+const { getFirestore,  addDoc } = require('firebase/firestore');
 const express = require("express");
 const cors = require('cors');
 const multer = require('multer');
 const {onRequest} = require("firebase-functions/v2/https");
 const { getStorage, ref, uploadBytes, getDownloadURL } = require('firebase/storage'); 
 const logger = require("firebase-functions/logger");
-// const PORT = process.env.PORT || 3001; //Must be commented out for production build
+const PORT = process.env.PORT || 3001; //Must be commented out for production build
 const dotenv = require('dotenv').config({ path: './.env' });
 
 const app = express();
@@ -283,7 +283,7 @@ app.get("/api/bookings/findByField", async (req, res) => {
     // Extract optional query parameters from the request
     const { venueID, bookingDate, bookingEndTime, bookingStartTime, venueBooker, bookingDescription} = req.query;
     let api_key = req.header("x-api-key"); // Fetches API key from request
-    if(api_key === process.env.REACT_APP_API_KEY || api_key === process.env.EVENTS_API_KEY){ // Checks if API key is valid
+    if(api_key === process.env.REACT_APP_API_KEY || api_key === process.env.EVENTS_API_KEY || api_key === process.env.DINING_API_KEY){ // Checks if API key is valid
         const bookingsCollection = collection(db, "Bookings"); // Reference to the "Bookings" collection in Firestore
 
         try {
@@ -338,42 +338,30 @@ app.get("/api/bookings/findByField", async (req, res) => {
     }
 });
 
-// Submit a report API
-app.post("/api/reports", async (req, res) => {
-    let api_key = req.header("x-api-key"); // Fetches API key from request
-    if(api_key === process.env.REACT_APP_API_KEY){ // Checks if API key is valid
-        const { venueID, roomNumber, reportType, reportText, photos } = req.body;
 
-        // Check that the necessary fields are provided
-        if (!venueID || !roomNumber || !reportType || !reportText) {
-            return res.status(400).json({ error: "All fields are required." });
-        }
+app.post('/api/report-submit', async (req, res) => {
+    const { venueID, reportType, reportText, createdBy, photos } = req.body;
+  
+    try {
+      const reportData = {
+        venueID,
+        reportType,
+        reportText,
+        reportStatus: 'pending',
+        resolutionLog: '',
+        createdBy,
+        photos: photos || [],
+      };
+  
+      // Use addDoc to create a new document in the Reports collection
+      const docRef = await addDoc(collection(db, 'Reports'), reportData);
+      res.status(201).json({ id: docRef.id });
+    } catch (error) {
+      console.error('Error creating report:', error);
+      res.status(500).json({ error: 'Failed to create report' });
 
-        // Create a new report document in the Reports collection
-        try {
-            const newReportRef = doc(collection(db, "Reports"));  // Generate a new document reference
-            const newReportData = {
-                venueID,
-                roomNumber,
-                reportType,
-                reportText,
-                reportStatus: "Pending",  // Default status
-                resolutionLog: "No action yet",  // Default resolution log
-                photos: photos || null,  // Handle photos if any
-                createdAt: new Date()  // Timestamp
-            };
-
-            // Add the new report to Firestore
-            await setDoc(newReportRef, newReportData);
-            res.status(201).json({ message: "Report submitted successfully" });
-        } catch (error) {
-            console.error("Error submitting report:", error);
-            res.status(500).json({ error: "Failed to submit report" });
-        }
-    }else{
-        res.status(401).json({ error: "Unauthorized. Please supply valid API key" });
     }
-});
+  });
 
 app.get("/api/reports", async (req, res) => {
     let api_key = req.header("x-api-key"); // Fetches API key from request
@@ -422,7 +410,7 @@ app.get("/api/reports", async (req, res) => {
 //GET  all bookings
 app.get("/api/bookings", async (req, res) => {
     let api_key = req.header("x-api-key"); // Fetches API key from request
-    if(api_key === process.env.REACT_APP_API_KEY || api_key === process.env.EVENTS_API_KEY){ // Checks if API key is valid
+    if(api_key === process.env.REACT_APP_API_KEY || api_key === process.env.EVENTS_API_KEY || api_key === process.env.DINING_API_KEY){ // Checks if API key is valid
         try {
             // Reference to the "Bookings" collection
             const bookingsCollectionRef = collection(db, 'Bookings');
@@ -453,7 +441,7 @@ app.get("/api/bookings", async (req, res) => {
 //Get booking by  ID
 app.get("/api/bookings/:id", async (req, res) => {
     let api_key = req.header("x-api-key"); // Fetches API key from request
-    if(api_key === process.env.REACT_APP_API_KEY || api_key === process.env.EVENTS_API_KEY){ // Checks if API key is valid
+    if(api_key === process.env.REACT_APP_API_KEY || api_key === process.env.EVENTS_API_KEY || api_key === process.env.DINING_API_KEY){ // Checks if API key is valid
         const bookingId = req.params.id;
 
         try {
@@ -584,24 +572,71 @@ app.post('/api/venues', async (req, res) => {
     }
 });
 
-// // Get a single venue by ID
-app.get('/api/venues/:id', async (req, res) => {
-    const id = req.params.id;
+// Get venues by field
+app.get("/api/venues/findByField", async (req, res) => {
+    // Extract optional query parameters from the request
+    const { buildingName, campus, isClosed, timeSlots, venueCapacity, venueName, venueType } = req.query;
     let api_key = req.header("x-api-key"); // Fetches API key from request
-    if(api_key === process.env.REACT_APP_API_KEY || api_key === process.env.EVENTS_API_KEY){ // Checks if API key is valid
+
+    // Check for valid API key
+    if (api_key === process.env.REACT_APP_API_KEY || api_key === process.env.EVENTS_API_KEY) {
+        const venuesCollection = collection(db, "Venues"); 
+
         try {
-            const venueDoc = await getDoc(doc(db, 'Venues', id));
-            if (venueDoc.exists()) {
-                res.status(200).json({ id: venueDoc.id, ...venueDoc.data() });
-            } else {
-                res.status(404).json({ error: "Venue not found" });
+            // Start building the query
+            let venuesQuery = venuesCollection;
+
+            // Apply filters if query parameters are provided
+            if (buildingName) {
+                venuesQuery = query(venuesQuery, where("buildingName", "==", buildingName));
             }
+
+            if (campus) {
+                venuesQuery = query(venuesQuery, where("campus", "==", campus));
+            }
+
+            if (isClosed !== undefined) { 
+                const isClosedBool = isClosed === 'true';
+                venuesQuery = query(venuesQuery, where("isClosed", "==", isClosedBool));
+            }
+
+            if (timeSlots) {
+                const timeSlotsArray = timeSlots.split(',');
+                venuesQuery = query(venuesQuery, where("timeSlots", "array-contains-any", timeSlotsArray));
+            }
+
+            if (venueCapacity) {
+                venuesQuery = query(venuesQuery, where("venueCapacity", "==", parseInt(venueCapacity)));
+            }
+
+            if (venueName) {
+                venuesQuery = query(venuesQuery, where("venueName", "==", venueName));
+            }
+
+            if (venueType) {
+                venuesQuery = query(venuesQuery, where("venueType", "==", venueType));
+            }
+
+            // Execute the query
+            const venuesSnapshot = await getDocs(venuesQuery);
+            const venuesList = [];
+
+            // Iterate over each document and push it to the list
+            venuesSnapshot.forEach((doc) => {
+                venuesList.push({
+                    id: doc.id,
+                    ...doc.data()
+                });
+            });
+
+            // Send the filtered venues as a JSON response
+            res.status(200).json(venuesList);
         } catch (error) {
-            console.error("Error getting venue:", error);
+            console.error("Error getting venues:", error);
             res.status(500).json({ error: "Internal Server Error" });
         }
-    }else{
-        res.status(401).json({ error: "Unauthorized. Please supply valid API key" });
+    } else {
+        res.status(401).json({ error: "Unauthorized. Please supply a valid API key" });
     }
 });
 
@@ -907,7 +942,7 @@ app.get("/api/schedules", async (req, res) => {
                 id: doc.id,
                 ...doc.data()
             }));
-    res.status(200).json({ entry });
+    res.status(200).json(entry);
         } catch (error) {
             console.error("Error retrieving Schedules:", error);
             res.status(500).json({ error: "Internal Server Error" });
@@ -1253,12 +1288,45 @@ app.post('/api/upload-image', upload.single('image'), async (req, res) => {
     }
 });
 
+/////////////////////////aws stuff///////////////////////////
+
+const AWS = require('aws-sdk');
+require('dotenv').config();
+const rekognition = new AWS.Rekognition({
+    accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+    region: process.env.AWS_REGION,
+  });
+  app.post('/api/analyze-photos', upload.array('photos'), async (req, res) => {
+    const photoBuffers = req.files.map(file => file.buffer);
+    
+    try {
+      const promises = photoBuffers.map(buffer => {
+        const params = {
+          Image: {
+            Bytes: buffer,
+          },
+          // Add additional parameters as needed, e.g., FeatureTypes: ['LABELS']
+        };
+        return rekognition.detectLabels(params).promise();
+      });
+  
+      const results = await Promise.all(promises);
+      res.status(200).json(results);
+    } catch (error) {
+      console.error('Error analyzing photos:', error);
+      res.status(500).json({ error: 'Failed to analyze photos' });
+    }
+  });
+
+
+
 
 
 // Left out for deployment
 // Prints to console the port of the server
-// app.listen(PORT, () => {
-// console.log(`Server listening on ${PORT}`);
-// });
+app.listen(PORT, () => {
+console.log(`Server listening on ${PORT}`);
+});
 
 exports.api = onRequest(app);

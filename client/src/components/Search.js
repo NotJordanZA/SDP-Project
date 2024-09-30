@@ -141,7 +141,11 @@ export default function Search({venueList, setVenueList, bookingsList, isManagin
                     <button className="search-row-button" onClick = {searchVenue} data-testid='search-icon-button'><FontAwesomeIcon icon={faSearch}/></button>
                     <button className="search-row-button" onClick = {toggleFilterDropwdown} data-testid='filter-icon-button'><FontAwesomeIcon icon={faSliders}/></button>
                     {isAdmin && (
-                        <button className={`search-manage-button ${isManaging ? "clicked" : ""}`} onClick={() => setIsManaging(!isManaging)}>MANAGE</button>
+                        <button className={`search-manage-button ${isManaging ? "clicked" : ""}`}
+                         onClick={() => {setIsManaging(!isManaging);
+                            if (isScheduling) {
+                                toggleIsScheduling();
+                          }}}>MANAGE</button>
                     )}
                 </div>
                 <div className={`filter-dropdown ${isFilterOpen ? "open" : "closed"}`}>{/* Conditional rendering for filter optoins */}
