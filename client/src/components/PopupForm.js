@@ -151,7 +151,7 @@ const PopupForm = ({ isOpen, onClose }) => {
             affected_area: formData.venue,  // Use the selected venue as the affected area
           };
   
-          const alertResponse = await fetch('https://--/LUKERENTON/Security/1.0.0/alertsPost', {
+          const alertResponse = await fetch('https://campussafetyapi.example.com/Security/1.0.0/alertsPost', {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
