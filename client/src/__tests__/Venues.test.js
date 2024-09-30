@@ -48,6 +48,25 @@ const mockStudentUserInfo = {
     lastName:'User',
 };
 
+const mockSchedules = [
+    { 
+        bookingDay: "Monday",
+        bookingDescription: "Information Systems 3 (INFO1011A) lecture",
+        bookingEndTime: "08:45",
+        bookingStartTime: "08:00",
+        venueBooker: "2223@wits.ac.za",
+        venueID: "WSS02"  
+    },
+    { 
+        bookingDay: "Friday",
+        bookingDescription: "INFO2001 lab",
+        bookingEndTime: "15:00",
+        bookingStartTime: "14:15",
+        venueBooker: "12@wits.ac.za",
+        venueID: "WSS02"
+    }
+]
+
 jest.mock('react-router-dom', () => ({
     ...jest.requireActual('react-router-dom'),
     useLocation: jest.fn(),
@@ -108,6 +127,7 @@ const setIsVenueOpen = jest.fn();
 const toggleIsBooking = jest.fn();
 const setBookingDescriptionText = jest.fn();
 const setBookingsList = jest.fn();
+const setSchedules = jest.fn();
 
 const navigate = jest.fn();
 
@@ -536,8 +556,8 @@ describe("Venues", () => {
                     bookingStartTime: "14:15",
                     venueBooker: "12@wits.ac.za",
                     venueID: "WSS02"
-                }
-            ]);
+                }]
+            );
         });
         render(<VenueRow
             key={'WSS02'}
@@ -556,6 +576,8 @@ describe("Venues", () => {
             isManaging={true}
             getAllVenues={getAllVenues}
             isScheduling={true}
+            schedules={mockSchedules}
+            setSchedules={setSchedules}
         />); //Render VenueRow
         const testVenueRow = screen.getByText('WSS02'); //Get a VenueRow by its displayed Venue Name
         fireEvent.click(testVenueRow); //Click the VenueRow to show its dropdown menu

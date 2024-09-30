@@ -1,124 +1,145 @@
-
+/* Container for the requests to grow and fill the page */
 .manageadminrequests-container {
-    padding: 40px 20px;
-    max-width: 900px;
-    margin: 0 auto;
-    background-color: #ffffff;
-    border-radius: 8px;
-    box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.1);
-    
-  }
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  height: 100vh;
+  padding: 20px;
+  background-color: #f0f4f9;
+}
+
+.manageadminrequests-container h2 {
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
+  font-size: 1.6rem;
+  color: #003d7d;
+  padding: 15px 20px;
+  background-color: #e6f0ff;
+  margin-top: 20px;
+  border-bottom: 1px solid #ddd;
+  width: 100%;
+  max-width: 1200px;
+}
+
+/* Improved style for the request list */
+.manageadminrequests-list {
+  width: 100%;
+  max-width: 1200px;
+  background-color: #fff;
+  border-bottom-left-radius: 8px;
+  border-bottom-right-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  overflow-y: auto;
+  max-height: 60vh;
+}
+
+.manageadminrequests-list h2 {
+  font-size: 1.6rem;
+  color: #003d7d;
+  padding: 15px 20px;
+  background-color: #e6f0ff;
+  margin: 0;
+  border-bottom: 1px solid #ddd;
+}
+
+.manageadminrequests-list ul {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+
+.manageadminrequests-list li {
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  border-bottom: 1px solid #ddd;
+  transition: background-color 0.3s ease;
+}
+
+.manageadminrequests-list li:hover {
+  background-color: #f1f1f1;
+}
+
+.manageadminrequests-button-container{
+  display: flex;
+  flex-direction: row;
+  margin-top: 5px;
+  gap: 5px;
+}
+
+.manageadminrequests-button-container button{
+  padding: 2px 5px;
+  font-size: 1.2rem;
+  border: none;
+  opacity: 1;
+  border-radius: 4px;
+  align-items: center;
+  width: fit-content;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.manageadminrequests-button-container button.approve{
+  background-color: #043673;
+  color: white;
+}
+
+.manageadminrequests-button-container button.deny{
+  color: white;
+  background-color: #730404;
+}
+
+.manageadminrequests-button-container button:hover{
+  background-color: #917248;
+}
   
   
-  .manageadminrequests-container h1 {
-    text-align: center;
-  
-    margin-bottom: 30px;
-    font-size: 2.5em;
-    color: #043673;
-    font-weight: bold;
-  }
-  
-  /* Tabs section */
+/* Tabs section */
+.manageadminrequests-tabs {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  border-bottom: 1px solid #ddd;
+  background-color: white;
+  transition: background-color 0.3s ease;
+  width: 100%;
+  max-width: 1200px;
+}
+
+.manageadminrequests-tabs button {
+  padding: 10px 30px;
+  margin: 0 10px;
+  border: none;
+  background-color: transparent;
+  color: #555;
+  font-size: 1.2em;
+  cursor: pointer;
+  transition: color 0.3s, border-bottom 0.3s;
+  border-bottom: 3px solid transparent;
+}
+
+/* Active tab */
+.manageadminrequests-tabs button.active {
+  color: #917248;
+  font-weight: bold;
+  border-bottom: 3px solid #917248;
+}
+
+/* Hover state for non-active tabs */
+.manageadminrequests-tabs button:hover:not(.active) {
+  color: #917248;
+  background-color: transparent !important; /* Ensure transparency */
+  border-bottom: 3px solid transparent; /* Keep the bottom border transparent */
+}
+
+.manageadminrequests-tabs button:hover:not(.active) {
+  background-color: transparent !important; /* Force transparency */
+}
+
+@media (max-width: 768px) {
   .manageadminrequests-tabs button {
-    padding: 10px 30px;
-    margin: 0 10px;
-    border: none;
-    background-color: transparent;
-    color: #555;
-    font-size: 1.2em;
-    cursor: pointer;
-    transition: color 0.3s, border-bottom 0.3s;
-    border-bottom: 3px solid transparent;
+    font-size: 0.9rem;
   }
-  
-  /* Active tab */
-  .manageadminrequests-tabs button.active {
-    color: #917248;
-    font-weight: bold;
-    border-bottom: 3px solid #917248;
-  }
-  
-  /* Hover state for non-active tabs */
-  .manageadminrequests-tabs button:hover:not(.active) {
-    color: #917248;
-    background-color: transparent !important; /* Ensure transparency */
-    border-bottom: 3px solid transparent; /* Keep the bottom border transparent */
-  }
-  
-  .manageadminrequests-tabs button:hover:not(.active) {
-    background-color: transparent !important; /* Force transparency */
-  }
-  
-  
-  .manageadminrequests-list {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-  }
-  
-  /* Request card styling */
-  .manageadminrequests-card {
-    padding: 20px;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    background-color: #fdfdfd;
-    transition: box-shadow 0.3s;
-  }
-  
-  .manageadminrequests-card h3 {
-    margin: 0 0 10px 0;
-    font-size: 1.5em;
-    color: #043673;
-  }
-  
-  .manageadminrequests-card p {
-    margin: 5px 0;
-    font-size: 1.1em;
-    color: #043673;
-  }
-  
-  .manageadminrequests-card.pending {
-    border-left: 5px ;
-  }
-  
-  .manageadminrequests-card.approved {
-    border-left: 5px ;
-  }
-  
-  .manageadminrequests-card:hover {
-    box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.15);
-  }
-  
-  /* button styling */
-  .manageadminrequests-approve-btn {
-    margin-top: 15px;
-    padding: 10px 20px;
-    border-radius: 4px;
-    background-color: #043673;
-    color: white;
-    border: none;
-    padding: 8px 16px;
-    cursor: pointer;
-    font-size: 1em;
-    transition: background-color 0.3s;
-  }
-  
-  .manageadminrequests-approve-btn:hover {
-    background-color: #043673;
-  }
-  .manageadminrequests-deny-btn {
-    margin-top: 15px;
-    padding: 10px 20px;
-    border-radius: 4px;
-    background-color: #917248;
-    color: white;
-    border: none;
-    padding: 8px 16px;
-    cursor: pointer;
-    margin-left: 10px;
-  }
-  .manageadminrequests-deny-btn:hover {
-    background-color: #67481d;
-  }
+}
   

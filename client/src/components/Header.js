@@ -30,7 +30,7 @@ const Header = ({ title, toggleSidebar,toggleNotification }) => {
         {user && (
           <i 
             onClick={toggleSidebar} 
-            className="fa-solid fa-bars icon-img" 
+            className="fa-solid fa-bars menu-button" 
             data-testid="sidebar-toggle"
           ></i>
         )}

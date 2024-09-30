@@ -10,7 +10,7 @@
   transition: all 0.3s ease;
   padding-top: 0px;
   z-index: 100000;
-  border-top-right-radius: 15px;
+  /* border-top-right-radius: 15px; */
 }
 
 /* Sidebar when open */
@@ -21,10 +21,9 @@
 /* Top section of the sidebar */
 .topSection {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0 20px;
+  flex-direction: column;
   background-color: #002d64;
+  align-items: center;
 }
 
 /* Bottom section of the sidebar */
@@ -33,88 +32,41 @@
   flex-direction: column;
   background-color: #002d64;
   align-items: center;
-  padding: 10px;
+  /* padding: 10px; */
 }
 
-/* Close button styling */
-.close-btn {
-  margin-bottom: 10px;
-  margin-top: 10px;
-  padding: 10px;
+.topSection button{
+  width: 100%;
+  border: none;
+  border-radius: 0%;
+  color: white;
   background-color: #002d64;
-  color: white;
-  border: 2px solid #917248;
+  /* color: #002d64;  
+  background-color: #f0f0f0; */
+  border-bottom: 1px solid #f0f0f0;
+  /* padding: 20px 0; */
+  height: 81px;
+  font-size: 1.6rem;
   cursor: pointer;
-  border-radius: 15px;
 }
 
-/* General button styling for main items */
-.dashboard-btn,
-.venues-btn,
-.reports-btn,
-.logout-btn,
-.admin-btn {
-  display: inline-block;
-  margin: 10px 0;
-  padding: 10px 20px;
-  background-color: #917248;
-  color: white;
+.topSection button:hover{
+  background-color: #6f5233
+}
+
+.bottomSection button{
+  width: 100%;
   border: none;
-  cursor: pointer;
-  text-align: center;
-  border-radius: 5px;
-}
-
-/* Hover effect for main buttons */
-.dashboard-btn:hover,
-.venues-btn:hover,
-.reports-btn:hover,
-.logout-btn:hover {
-  background-color: #6f5233;
-}
-
-/* Admin sub-buttons container */
-.admin-subbuttons {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding-left: 0;
-  opacity: 0; /* Initially hidden */
-  height: 0;
-  transition: all 0.3s ease-out; /* Smooth animation */
-  overflow: hidden;
-}
-
-/* Admin sub-buttons when open */
-.admin-subbuttons.open {
-  opacity: 1;
-  height: auto; /* Expand to fit content */
-}
-
-/* Sub-button styling */
-.sub-btn {
-  display: flex;
-  justify-content: center;
-  margin: 5px 0;
-  padding: 5px 10px;
-  background-color: #4c73f5;
+  border-radius: 0%;
   color: white;
-  border: none;
+  background-color: #002d64;
+  border-bottom: 1px solid #f0f0f0;
+  /* padding: 20px 0; */
+  height: 81px;
+  font-size: 1.6rem;
   cursor: pointer;
-  text-align: center;
-  border-radius: 5px;
-  font-size: 60%;
-  width: 100%; /* Make the button fill the available width */
-  max-width: 200px; /* Limit max width to ensure alignment */
 }
 
-/* Hover effect for sub-buttons */
-.sub-btn:hover {
-  background-color: #3b5fc9; /* Darker blue on hover */
-}
-
-/* Logout button hover */
-.logout-btn:hover {
+.bottomSection button:hover{
   background-color: #6f5233;
 }
