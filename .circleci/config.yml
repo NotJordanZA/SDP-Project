@@ -65,6 +65,9 @@ jobs:
             echo "REACT_APP_API_KEY=${REACT_APP_API_KEY}" >> .env
             echo "EVENTS_API_KEY=${EVENTS_API_KEY}" >> .env
             echo "DINING_API_KEY=${DINING_API_KEY}" >> .env
+            echo "AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}" >> .env
+            echo "AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}" >> .env
+            echo "AWS_REGION=${AWS_REGION}" >> .env
           working_directory: server
       - run:
           name: Deploy API to Firebase
