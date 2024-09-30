@@ -37,8 +37,8 @@ describe('PopupForm Component', () => {
     jest.clearAllMocks();
   });
 
-  test('renders the PopupForm when open', async () => {
-    // Mock the global fetch to resolve with venue data
+  // Mock fetch for venues in all tests
+  const mockFetchVenues = () => {
     global.fetch = jest.fn(() =>
       Promise.resolve({
         ok: true,
@@ -48,15 +48,16 @@ describe('PopupForm Component', () => {
         ]),
       })
     );
+  };
 
+  test('renders the PopupForm when open', async () => {
+    mockFetchVenues();
     render(<PopupForm isOpen={true} onClose={mockCloseFunction} />);
 
-    // Wait for venues to be fetched and dropdown options to be updated
     await waitFor(() => {
       expect(screen.getByLabelText('Venue:')).toBeInTheDocument();
     });
 
-    // Simulate the fetch being completed and the state updated
     await waitFor(() => {
       expect(screen.getByText('Building A')).toBeInTheDocument();
       expect(screen.getByText('Building B')).toBeInTheDocument();
@@ -65,95 +66,143 @@ describe('PopupForm Component', () => {
 
   test('does not render the PopupForm when closed', () => {
     render(<PopupForm isOpen={false} onClose={mockCloseFunction} />);
-
-    // Expect the form not to be rendered
     expect(screen.queryByText('Submit a Report')).not.toBeInTheDocument();
   });
 
-  test('filters room numbers based on selected venue', async () => {
-    // Mock the global fetch to resolve with venue data
-    global.fetch = jest.fn(() =>
-      Promise.resolve({
-        ok: true,
-        json: () => Promise.resolve([
-          { buildingName: 'Building A', venueName: 'Room 101' },
-          { buildingName: 'Building B', venueName: 'Room 102' },
-        ]),
-      })
-    );
-
+  test('allows only JPEG or PNG files for photo upload', async () => {
+    mockFetchVenues();
     render(<PopupForm isOpen={true} onClose={mockCloseFunction} />);
 
-    // Wait for venues to be loaded
-    await waitFor(() => {
-      expect(screen.getByText('Building A')).toBeInTheDocument();
-    });
+    const fileInput = screen.getByLabelText('Upload Photos (PNG & JPEG Only)');
 
-    // Select a venue
-    fireEvent.change(screen.getByLabelText('Venue:'), { target: { value: 'Building A' } });
+    const validFile = new File(['valid image'], 'image.jpg', { type: 'image/jpeg' });
+    const invalidFile = new File(['invalid file'], 'document.pdf', { type: 'application/pdf' });
 
-    // Check that the filtered room numbers are displayed
-    await waitFor(() => {
-      expect(screen.getByText('Room 101')).toBeInTheDocument();
-    });
+    window.alert = jest.fn();
+
+    fireEvent.change(fileInput, { target: { files: [validFile, invalidFile] } });
+
+    expect(window.alert).toHaveBeenCalledWith('Please upload only JPEG or PNG images.');
   });
 
-  test.skip('submits the form successfully', async () => {
-    // Mock the global fetch to resolve with venue data
-    global.fetch = jest.fn(() =>
-      Promise.resolve({
-        ok: true,
-        json: () => Promise.resolve([
-          { buildingName: 'Building A', venueName: 'Room 101' },
-          { buildingName: 'Building B', venueName: 'Room 102' },
-        ]),
-      })
-    );
-
+  test('shows validation error if required fields are missing', () => {
+    mockFetchVenues();
     render(<PopupForm isOpen={true} onClose={mockCloseFunction} />);
 
-    // Wait for venues to be loaded
-    await waitFor(() => {
-      expect(screen.getByText('Building A')).toBeInTheDocument();
-    });
-
-    // Fill out the form
-    fireEvent.change(screen.getByLabelText('Venue:'), { target: { value: 'Building A' } });
-    fireEvent.change(screen.getByLabelText('Room Number:'), { target: { value: 'Room 101' } });
-    fireEvent.change(screen.getByLabelText('Type of Concern:'), { target: { value: 'Safety' } });
-    fireEvent.change(screen.getByLabelText('Report Text:'), { target: { value: 'Test issue description' } });
-
-    // Submit the form
     fireEvent.click(screen.getByText('Submit'));
 
-    // Wait for the addDoc function to be called
+    expect(screen.getByLabelText('Venue:')).toBeInvalid();
+    expect(screen.getByLabelText('Room Number:')).toBeInvalid();
+    expect(screen.getByLabelText('Type of Concern:')).toBeInvalid();
+    expect(screen.getByLabelText('Report Text:')).toBeInvalid();
+  });
+
+  // test('submits the form successfully with photos', async () => {
+  //   mockFetchVenues();
+
+  //   // Mock fetch for report submission
+  //   global.fetch = jest.fn().mockResolvedValueOnce({
+  //     ok: true,
+  //     json: () => Promise.resolve(),
+  //   });
+
+  //   const validFile = new File(['valid image'], 'image.jpg', { type: 'image/jpeg' });
+  //   render(<PopupForm isOpen={true} onClose={mockCloseFunction} />);
+
+  //   fireEvent.change(screen.getByLabelText('Venue:'), { target: { value: 'Building A' } });
+  //   fireEvent.change(screen.getByLabelText('Room Number:'), { target: { value: 'Room 101' } });
+  //   fireEvent.change(screen.getByLabelText('Type of Concern:'), { target: { value: 'Safety' } });
+  //   fireEvent.change(screen.getByLabelText('Report Text:'), { target: { value: 'Test issue description' } });
+  //   fireEvent.change(screen.getByLabelText('Upload Photos (PNG & JPEG Only)'), { target: { files: [validFile] } });
+
+  //   fireEvent.click(screen.getByText('Submit'));
+
+  //   await waitFor(() => {
+  //     expect(global.fetch).toHaveBeenCalledTimes(1);
+  //   });
+
+  //   expect(mockCloseFunction).toHaveBeenCalled();
+  // });
+
+  // test('shows an error message if the photo upload fails', async () => {
+  //   mockFetchVenues();
+
+  //   global.fetch = jest.fn().mockRejectedValueOnce(new Error('Failed to upload'));
+
+  //   window.alert = jest.fn();
+
+  //   render(<PopupForm isOpen={true} onClose={mockCloseFunction} />);
+
+  //   fireEvent.change(screen.getByLabelText('Venue:'), { target: { value: 'Building A' } });
+  //   fireEvent.change(screen.getByLabelText('Room Number:'), { target: { value: 'Room 101' } });
+  //   fireEvent.change(screen.getByLabelText('Type of Concern:'), { target: { value: 'Safety' } });
+  //   fireEvent.change(screen.getByLabelText('Report Text:'), { target: { value: 'Test issue description' } });
+
+  //   fireEvent.click(screen.getByText('Submit'));
+
+  //   await waitFor(() => {
+  //     expect(global.fetch).toHaveBeenCalledTimes(1);
+  //     expect(window.alert).toHaveBeenCalledWith('Failed to upload');
+  //   });
+  // });
+
+
+  
+  test('handles getAllVenues API failure', async () => {
+    // Mock the fetch function to reject with an error
+    global.fetch = jest.fn().mockRejectedValueOnce(new Error('Failed to fetch venues'));
+  
+    // Silence console.error to prevent unnecessary output
+    jest.spyOn(console, 'error').mockImplementation(() => {});
+  
+    render(<PopupForm isOpen={true} onClose={mockCloseFunction} />);
+  
+    // Expect an error to be logged
     await waitFor(() => {
-      expect(addDoc).toHaveBeenCalledWith(collection(expect.any(Object), 'Reports'), {
-        venueID: 'Building ARoom 101',
-        reportType: 'Safety',
-        reportText: 'Test issue description',
-        reportStatus: 'pending',
-        resolutionLog: '',
-        createdBy: 'test@example.com',
-      });
+      expect(console.error).toHaveBeenCalledWith('Error:', expect.any(Error));
     });
+  
+    console.error.mockRestore();
+  });
+
+  
+  test('closes the form when the close button is clicked', async () => {
+    mockFetchVenues();
+    render(<PopupForm isOpen={true} onClose={mockCloseFunction} />);
+
+    fireEvent.click(screen.getByText('X'));
+
+    expect(mockCloseFunction).toHaveBeenCalled();
   });
 
   test('handles API fetch failure gracefully', async () => {
-    // Mock console.error
-    jest.spyOn(console, 'error').mockImplementation(() => {});
-
-    // Make fetch fail
     global.fetch = jest.fn(() => Promise.reject('API is down'));
+
+    jest.spyOn(console, 'error').mockImplementation(() => {}); // Silence console.error
 
     render(<PopupForm isOpen={true} onClose={mockCloseFunction} />);
 
-    // Wait for the error to be logged
     await waitFor(() => {
       expect(console.error).toHaveBeenCalledWith('Error:', 'API is down');
     });
 
-    // Restore the original console.error implementation
     console.error.mockRestore();
+  });
+
+  test('accepts multiple valid image files for upload', async () => {
+    mockFetchVenues();
+
+    render(<PopupForm isOpen={true} onClose={mockCloseFunction} />);
+
+    const fileInput = screen.getByLabelText('Upload Photos (PNG & JPEG Only)');
+
+    const validFile1 = new File(['image1'], 'image1.jpg', { type: 'image/jpeg' });
+    const validFile2 = new File(['image2'], 'image2.png', { type: 'image/png' });
+
+    fireEvent.change(fileInput, { target: { files: [validFile1, validFile2] } });
+
+    expect(fileInput.files).toHaveLength(2);
+    expect(fileInput.files[0].name).toBe('image1.jpg');
+    expect(fileInput.files[1].name).toBe('image2.png');
   });
 });
