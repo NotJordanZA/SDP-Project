@@ -91,7 +91,7 @@ const PopupForm = ({ isOpen, onClose }) => {
   
     try {
       setUploading(true);
-      
+  
       const venueID = formData.roomNumber;
       let imageUrls = [];
   
@@ -144,10 +144,30 @@ const PopupForm = ({ isOpen, onClose }) => {
   
         if (fireDetected) {
           alert('Fire detected in one of the uploaded photos!');
+  
+          // Step 3: Send emergency alert to your friend's API
+          const alertData = {
+            message: `Fire detected in ${formData.venue}. Evacuate immediately.`,
+            affected_area: formData.venue,  // Use the selected venue as the affected area
+          };
+  
+          const alertResponse = await fetch('https://--/LUKERENTON/Security/1.0.0/alertsPost', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(alertData),
+          });
+  
+          if (!alertResponse.ok) {
+            throw new Error('Failed to send emergency alert');
+          }
+  
+          console.log('Emergency alert sent successfully');
         }
       }
   
-      // Step 3: Send report data to the API (this part is executed regardless of report type)
+      // Step 4: Send report data to your API (this part is executed regardless of report type)
       const reportData = {
         venueID,
         reportType: formData.reportType,
@@ -178,6 +198,7 @@ const PopupForm = ({ isOpen, onClose }) => {
       setUploading(false);
     }
   };
+  
   
 
   if (!isOpen) return null;
