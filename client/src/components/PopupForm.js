@@ -36,14 +36,19 @@ const PopupForm = ({ isOpen, onClose }) => {
     const validFiles = files.filter(file =>
       file.type === 'image/jpeg' || file.type === 'image/png'
     );
-
+  
     if (validFiles.length !== files.length) {
       alert('Please upload only JPEG or PNG images.');
     }
-
+  
+    if (validFiles.length > 3) {
+      alert('You can only upload a maximum of 3 photos.');
+      return;
+    }
+  
     setFormData((prevData) => ({
       ...prevData,
-      photos: validFiles, // Store only valid image files
+      photos: validFiles, // Store only valid image files and limit to 3
     }));
   };
 
@@ -152,7 +157,7 @@ const PopupForm = ({ isOpen, onClose }) => {
         );
   
         if (fireDetected) {
-          alert('Fire detected in one of the uploaded photos!');
+          alert('Fire detected! Alerting Campus Safety:');
   
 // Step 3: Try to send emergency alert to your friend's API (don't block if it fails)
 // Step 3: Try to send emergency alert to your friend's API (don't block if it fails)
@@ -176,13 +181,13 @@ try {
     const errorText = await alertResponse.text();
     console.error('Failed to send emergency alert:', alertResponse.status, alertResponse.statusText, errorText);
   } else {
+    alert('Campus Safety have been alerted. Please evacuate the building.');
     console.log('Emergency alert sent successfully:', await alertResponse.json());
   }
 } catch (error) {
+  alert('Please evacuate the building and contact campus safety!');
   console.error('Error sending emergency alert:', error.message || error);
 }
-
-
         }
       }
   
@@ -217,37 +222,6 @@ try {
       setUploading(false);
     }
   };
-  
-  const tryConnect = async () => {
-    try {
-      const alertData = {
-        description: "Fire detected in Solomon Mahlangu House",
-        building_name: "Solomon Mahlangu House",
-        type: 'fire',
-        photo: null,  // Explicitly set to `null`
-      };
-  
-      console.log('Data being sent:', alertData);  // Log the data
-  
-      const alertResponse = await fetch('https://campussafetyapp.azurewebsites.net/incidents/report-incidents-external', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(alertData),
-      });
-  
-      if (!alertResponse.ok) {
-        const errorText = await alertResponse.text();
-        console.error('Failed to send emergency alert:', alertResponse.status, alertResponse.statusText, errorText);
-      } else {
-        console.log('Emergency alert sent successfully:', await alertResponse.json());
-      }
-    } catch (error) {
-      console.error('Error sending emergency alert:', error.message || error);
-    }
-  };
-  
 
 
   if (!isOpen) return null;
@@ -257,7 +231,6 @@ try {
       <div className="popup-content">
         <button className="close-button" onClick={onClose}>X</button>
         <h2>Submit a Report</h2>
-        <button onClick={tryConnect}>Test API</button> 
         <form onSubmit={handleSubmit}>
           <div className="form-group">
             <label htmlFor="venue">Venue:</label>
@@ -331,16 +304,18 @@ try {
           </div>
 
           <div className="form-group">
-            <label htmlFor="photos">Upload Photos (PNG & JPEG Only)</label>
-            <input
-              type="file"
-              id="photos"
-              name="photos"
-              onChange={handleFileChange}
-              multiple // Allow multiple file uploads
-              accept="image/jpeg, image/png" // Accept only JPEG and PNG files
-            />
-          </div>
+         <label htmlFor="photos">Upload Photos (PNG & JPEG Only, Max 3)</label>
+        <input
+          type="file"
+          id="photos"
+         name="photos"
+         onChange={handleFileChange}
+         multiple // Allow multiple file uploads
+        accept="image/jpeg, image/png" // Accept only JPEG and PNG files
+  />
+  <p>{formData.photos.length} / 3 photos selected</p>
+</div>
+
 
           <button type="submit" className="submit-button" disabled={uploading}>
             {uploading ? 'Submitting...' : 'Submit'}
