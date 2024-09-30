@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import '../styles/EditBookingPopupForm.css';
 import Select from 'react-select';
-import { getAllBookings } from '../utils/getAllBookingsUtil';
 import { makeBooking } from '../utils/makeBookingUtil';
 import { deleteBooking } from '../utils/deleteBookingUtil';
 import { getAllVenues } from "../utils/getAllVenuesUtil";
