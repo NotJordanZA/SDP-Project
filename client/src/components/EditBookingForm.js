@@ -1,20 +1,18 @@
 import React, { useEffect, useState } from 'react';
 import '../styles/EditBookingPopupForm.css';
 import Select from 'react-select';
-import { getAllBookings } from '../utils/getAllBookingsUtil';
 import { makeBooking } from '../utils/makeBookingUtil';
 import { deleteBooking } from '../utils/deleteBookingUtil';
 import { getAllVenues } from "../utils/getAllVenuesUtil";
 import { updateBooking } from '../utils/putBookingUitl';
 import { createNotification } from '../utils/createNotificationUtil';
 
-export const EditBookingForm = ({ id, venueName, bookingDate, bookingTime, bookingDescription, onClose, isOpen, isAdmin, bookerEmail, setBookingsList, getBookings}) => {
+export const EditBookingForm = ({ id, venueName, bookingDate, bookingTime, bookingDescription, onClose, isOpen, isAdmin, bookerEmail, setBookingsList, getBookings, bookingsList}) => {
   const [selectedVenueName, setSelectedVenueName] = useState(venueName);
   const [selectedBookingDate, setSelectedBookingDate] = useState(bookingDate.replace(/:/g, '-'));
   const [selectedBookingDescription, setSelectedBookingDescription] = useState(bookingDescription);
   const [bookingStartTime, setBookingStartTime] = useState(bookingTime.substring(0, 5));
   const [bookingEndTime, setBookingEndTime] = useState(bookingTime.substring(6, 11));
-  const [existingBookings, setExistingBookings] = useState([]);
   const [venuesList, setVenuesList] = useState('');
   const [uniqueVenues, setUniqueVenues] = useState([]);
   
@@ -44,10 +42,6 @@ export const EditBookingForm = ({ id, venueName, bookingDate, bookingTime, booki
     }
   }, [bookingStartTime, bookingEndTime])
 
-  useEffect(()=>{
-    getAllBookings(null, setExistingBookings);
-  },[])
-
   const onFormClose = () => {
     setSelectedVenueName(venueName);
     setSelectedBookingDate(bookingDate);
@@ -65,12 +59,12 @@ export const EditBookingForm = ({ id, venueName, bookingDate, bookingTime, booki
   };
   
   const isBookingConflict = () => {
-    if (!Array.isArray(existingBookings) || existingBookings.length === 0) {
+    if (!Array.isArray(bookingsList) || bookingsList.length === 0) {
       console.log('No bookings to check against');
       return false; // No bookings to check against
     }
   
-    return existingBookings.some(existingBooking => {
+    return bookingsList.some(existingBooking => {
       const existingBookingStart = new Date(`${existingBooking.bookingDate}T${existingBooking.bookingStartTime}`);
       const existingBookingEnd = new Date(`${existingBooking.bookingDate}T${existingBooking.bookingEndTime}`);
       const newBookingStart = new Date(`${selectedBookingDate}T${bookingStartTime}`);
@@ -121,12 +115,12 @@ export const EditBookingForm = ({ id, venueName, bookingDate, bookingTime, booki
 
     // Check if ID will remain the same
     if (venueName === selectedVenueName && bookingTime.substring(0, 5) === bookingStartTime && bookingDate === selectedBookingDate) {
-        updateBooking(id, bookerEmail, selectedVenueName, selectedBookingDate, bookingStartTime, bookingEndTime, selectedBookingDescription, null, null, null, setExistingBookings)
+        updateBooking(id, bookerEmail, selectedVenueName, selectedBookingDate, bookingStartTime, bookingEndTime, selectedBookingDescription, null, null, null, null)
     }else{
       // Make a new booking with the updated details
-      makeBooking(bookerEmail, selectedVenueName, selectedBookingDate, bookingStartTime, bookingEndTime, selectedBookingDescription, null, null, null, setExistingBookings);
+      makeBooking(bookerEmail, selectedVenueName, selectedBookingDate, bookingStartTime, bookingEndTime, selectedBookingDescription, null, null, null, null);
       // Delete the outdated booking
-      deleteBooking(id, setExistingBookings, bookerEmail);
+      deleteBooking(id, null, bookerEmail);
     }
     
     // Identify the fields that have changed
@@ -203,10 +197,6 @@ export const EditBookingForm = ({ id, venueName, bookingDate, bookingTime, booki
                 isClearable={false}
                 isMulti={false}
                 styles={{
-                    control: (provided) => ({
-                      ...provided,
-                      marginRight: '20px',
-                    }),
                     menu: (provided) => ({
                       ...provided,
                       zIndex: 9999, // Set z-index to a high value to ensure it's on top
@@ -235,7 +225,10 @@ export const EditBookingForm = ({ id, venueName, bookingDate, bookingTime, booki
             ):(
               <Select
                 defaultValue={findOption(timeOptions, bookingStartTime)}
-                onChange={(selectedOption) => setBookingStartTime(selectedOption?.value || '')}
+                onChange={(selectedOption) => {setBookingStartTime(selectedOption?.value || '');
+                  const slotEnd = new Date((new Date(`1970-01-01T${selectedOption?.value || ''}:00`)).getTime() + 45 * 60000); // Convert to Date for easier comparisions
+                  setBookingEndTime(((slotEnd.getHours() < 10 ? '0' : '') + slotEnd.getHours())+":"+((slotEnd.getMinutes() < 10 ? '0' : '') + slotEnd.getMinutes()));// Puts time in the correct format, hh:mm
+                }}
                 options={timeOptions}
                 isClearable={false}
                 isMulti={false}

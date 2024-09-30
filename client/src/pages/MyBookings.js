@@ -65,7 +65,8 @@ function MyBookings() {
         if(!userInfo.isAdmin && !isLoading){
           getCurrentUsersBookings(user.email, setBookingsList);// Gets the bookings of the current user by their email
           console.log(userInfo);
-        }else{
+        }else if(userInfo.isAdmin && !isLoading){
+          console.log("I am here");
           getAllBookings(null, setBookingsList);
         }// eslint-disable-next-line
     }, [userInfo]);// Only runs if user is defined
@@ -125,9 +126,10 @@ function MyBookings() {
             bookingDescription={booking.bookingDescription}
             venueBooker = {booking.venueBooker}
             currentEmail = {user.email}
-            getBookings = {userInfo.isAdmin ? getAllBookings : getCurrentUsersBookings}
+            getBookings = {!userInfo.isAdmin ? getCurrentUsersBookings: getAllBookings}
             setBookingsList={setBookingsList}
             isAdmin = {userInfo.isAdmin}
+            bookingsList = {bookingsList}
           />
         );
     });

@@ -91,7 +91,8 @@ export default function Search({venueList, setVenueList, bookingsList, isManagin
 
     const campusOptions = [ //All options for campus
         {value:"east", label:"East Campus"},
-        {value:"west", label:"West Campus"}
+        {value:"west", label:"West Campus"},
+        {value:"education", label:"Education Campus"},
     ]
 
     const venueTypeOptions = [ //All options for venue type

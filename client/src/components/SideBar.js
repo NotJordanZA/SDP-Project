@@ -67,12 +67,12 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
         <button className="close-btn" onClick={toggleSidebar}>Close</button>
       </section>
       <section className='bottomSection'>
-        <button className="dashboard-btn" onClick={() => navigate('/home')}>Dashboard</button>
-        <button className="venues-btn" onClick={() => navigate('/venues')}>Venues</button>
-        <button className="reports-btn" onClick={() => navigate('/bookings')}>Bookings</button>
-        <button className="reports-btn" onClick={() => userInfo.isAdmin? navigate('/manage-reports') :navigate('/reports')}>Reports</button>
-        <button className="reports-btn" onClick={() => userInfo.isAdmin? navigate('/manage-requests') :navigate('/requests')}>Requests</button>
-        <button className="logout-btn" onClick={handleLogout}>Logout</button>
+        <button className="dashboard-btn" onClick={() => {navigate('/home'); toggleSidebar()}}>Dashboard</button>
+        <button className="venues-btn" onClick={() => {navigate('/venues'); toggleSidebar()}}>Venues</button>
+        <button className="reports-btn" onClick={() => {navigate('/bookings'); toggleSidebar()}}>Bookings</button>
+        <button className="reports-btn" onClick={() => {userInfo.isAdmin? navigate('/manage-reports') :navigate('/reports'); toggleSidebar()}}>Reports</button>
+        <button className="reports-btn" onClick={() => {userInfo.isAdmin? navigate('/manage-requests') :navigate('/requests'); toggleSidebar()}}>Requests</button>
+        <button className="logout-btn" onClick={() => {handleLogout();toggleSidebar()}}>Logout</button>
       </section>
     </nav>
   );

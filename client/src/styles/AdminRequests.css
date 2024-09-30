@@ -28,6 +28,19 @@
     border-bottom: 1px solid #ddd;
 }
 
+.admin-request-list button {
+    border-radius: 100px;
+    border: none;
+    background-color: #003d7d;
+    color: #e6f0ff;
+    padding: 3px 10px;
+    font-weight: bold;
+    font-size: 1.1rem;
+    transform: translateY(-2px);
+    margin-left: 3px;
+    cursor: pointer;
+}
+
 .admin-request-list ul {
     list-style-type: none;
     padding: 0;
@@ -56,4 +69,20 @@
 .admin-request-description {
     font-size: 1rem;
     color: #666;
+}
+
+.info-popup {
+    position: absolute;
+    background-color: #f9f9f9;
+    border: 1px solid #ccc;
+    padding: 10px;
+    border-radius: 5px;
+    width: 300px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    z-index: 100;
+}
+
+.info-popup p {
+    margin: 0;
+    font-size: 14px;
 }

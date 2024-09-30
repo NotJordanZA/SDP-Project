@@ -26,15 +26,19 @@ export const makeBooking = async(venueBooker, venueID, bookingDate, bookingStart
               toggleIsBooking(); // Changes the booking status, closing the popup
               getCurrentDatesBookings(bookingDate, setBookingsList); // Calls this function again so that the new booking is reflected on the page
               setBookingDescriptionText(""); // Resets the booking description field
-            }else{
+              alert("Booking made successfully!");
+            }else if(setBookingsList){
               getAllBookings(null, setBookingsList);
+              alert("Booking updated successfully!");
             }
             // console.log('Booking added successfully:', data);
             
         } else {
             console.error('Error making booking:', data.error); // Logs error
+            alert("Error with booking");
         }
       } catch (error) {
         console.error('Error:', error); // Logs error
+        alert("Error");
       }
 }
