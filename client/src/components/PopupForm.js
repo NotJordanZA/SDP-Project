@@ -13,8 +13,9 @@ const PopupForm = ({ isOpen, onClose }) => {
     photos: [], // Updated to handle multiple files
   });
 
-  const [venues, setVenues] = useState([]);
-  const [filteredRooms, setFilteredRooms] = useState([]);
+  const [venues, setVenues] = useState([]); // Full venue data
+  const [filteredRooms, setFilteredRooms] = useState([]); // Rooms filtered based on selected building
+  const [uniqueBuildings, setUniqueBuildings] = useState([]); // Unique building names
   const [uploading, setUploading] = useState(false);
 
   const user = auth.currentUser;
@@ -35,54 +36,67 @@ const PopupForm = ({ isOpen, onClose }) => {
     const validFiles = files.filter(file =>
       file.type === 'image/jpeg' || file.type === 'image/png'
     );
-
+  
     if (validFiles.length !== files.length) {
       alert('Please upload only JPEG or PNG images.');
     }
-
+  
+    if (validFiles.length > 3) {
+      alert('You can only upload a maximum of 3 photos.');
+      return;
+    }
+  
     setFormData((prevData) => ({
       ...prevData,
-      photos: validFiles, // Store only valid image files
+      photos: validFiles, // Store only valid image files and limit to 3
     }));
   };
 
-  // Fetch all venues from the API
-  const getAllVenues = async () => {
-    try {
-      const response = await fetch('/api/venues', {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          'x-api-key': process.env.REACT_APP_API_KEY,
-        },
-        cache: 'no-store',
-      });
-
-      const data = await response.json();
-      if (response.ok) {
-        setVenues(data);
-      } else {
-        console.error('Error fetching venues:', data.error);
-      }
-    } catch (error) {
-      console.error('Error:', error);
-    }
-  };
-
   useEffect(() => {
+    // Fetch all venues from the API
+    const getAllVenues = async () => {
+      try {
+        const response = await fetch('/api/venues', {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            'x-api-key': process.env.REACT_APP_API_KEY,
+          },
+          cache: 'no-store',
+        });
+  
+        const data = await response.json();
+        if (response.ok) {
+          // Store all venue data
+          setVenues(data);
+          
+          // Extract unique building names and sort them alphabetically
+          const uniqueBuildings = Array.from(new Set(data.map(venue => venue.buildingName)))
+            .sort((a, b) => a.localeCompare(b)); // Sort alphabetically
+          
+          setUniqueBuildings(uniqueBuildings); // Set state for unique buildings
+        } else {
+          console.error('Error fetching venues:', data.error);
+        }
+      } catch (error) {
+        console.error('Error:', error);
+      }
+    };
+  
     getAllVenues();
   }, []);
 
   // Filter room numbers based on selected building name (venue)
   useEffect(() => {
     if (formData.venue) {
+      // Filter all venues to get rooms for the selected building
       const matchingRooms = venues
         .filter(v => v.buildingName === formData.venue)
-        .map(v => v.venueName);
+        .map(v => v.venueName); // Get all room names for the selected building
 
       setFilteredRooms(matchingRooms);
     } else {
-      setFilteredRooms([]);
+      setFilteredRooms([]); // Reset rooms if no building is selected
     }
   }, [formData.venue, venues]);
 
@@ -91,7 +105,7 @@ const PopupForm = ({ isOpen, onClose }) => {
   
     try {
       setUploading(true);
-      
+  
       const venueID = formData.roomNumber;
       let imageUrls = [];
   
@@ -143,11 +157,41 @@ const PopupForm = ({ isOpen, onClose }) => {
         );
   
         if (fireDetected) {
-          alert('Fire detected in one of the uploaded photos!');
+          alert('Fire detected! Alerting Campus Safety:');
+  
+// Step 3: Try to send emergency alert to your friend's API (don't block if it fails)
+// Step 3: Try to send emergency alert to your friend's API (don't block if it fails)
+try {
+  const alertData = {
+    description: `Fire detected in ${formData.venue}.`,
+    building_name: formData.venue,  // Use snake_case for field names if required by the API
+    type: 'fire',
+    photo: null  // Assuming the API does not need a photo in this call
+  };
+  console.log(alertData)
+  const alertResponse = await fetch('https://campussafetyapp.azurewebsites.net/incidents/report-incidents-external', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(alertData),
+  });
+
+  if (!alertResponse.ok) {
+    const errorText = await alertResponse.text();
+    console.error('Failed to send emergency alert:', alertResponse.status, alertResponse.statusText, errorText);
+  } else {
+    alert('Campus Safety have been alerted. Please evacuate the building.');
+    console.log('Emergency alert sent successfully:', await alertResponse.json());
+  }
+} catch (error) {
+  alert('Please evacuate the building and contact campus safety!');
+  console.error('Error sending emergency alert:', error.message || error);
+}
         }
       }
   
-      // Step 3: Send report data to the API (this part is executed regardless of report type)
+      // Step 4: Send report data to your API (this part is executed regardless of alert status)
       const reportData = {
         venueID,
         reportType: formData.reportType,
@@ -178,7 +222,7 @@ const PopupForm = ({ isOpen, onClose }) => {
       setUploading(false);
     }
   };
-  
+
 
   if (!isOpen) return null;
 
@@ -198,9 +242,9 @@ const PopupForm = ({ isOpen, onClose }) => {
               required
             >
               <option value="" disabled>Select a venue</option>
-              {venues.map((venue) => (
-                <option key={venue.id} value={venue.buildingName}>
-                  {venue.buildingName}
+              {uniqueBuildings.map((buildingName, index) => (
+                <option key={index} value={buildingName}>
+                  {buildingName}
                 </option>
               ))}
             </select>
@@ -217,8 +261,8 @@ const PopupForm = ({ isOpen, onClose }) => {
             >
               <option value="" disabled>Select a room number</option>
               {Array.isArray(filteredRooms) && filteredRooms.length > 0 ? (
-                filteredRooms.map((room) => (
-                  <option key={room} value={room}>
+                filteredRooms.map((room, index) => (
+                  <option key={index} value={room}>
                     {room}
                   </option>
                 ))
@@ -260,16 +304,18 @@ const PopupForm = ({ isOpen, onClose }) => {
           </div>
 
           <div className="form-group">
-            <label htmlFor="photos">Upload Photos (PNG & JPEG Only)</label>
-            <input
-              type="file"
-              id="photos"
-              name="photos"
-              onChange={handleFileChange}
-              multiple // Allow multiple file uploads
-              accept="image/jpeg, image/png" // Accept only JPEG and PNG files
-            />
-          </div>
+         <label htmlFor="photos">Upload Photos (PNG & JPEG Only, Max 3)</label>
+        <input
+          type="file"
+          id="photos"
+         name="photos"
+         onChange={handleFileChange}
+         multiple // Allow multiple file uploads
+        accept="image/jpeg, image/png" // Accept only JPEG and PNG files
+  />
+  <p>{formData.photos.length} / 3 photos selected</p>
+</div>
+
 
           <button type="submit" className="submit-button" disabled={uploading}>
             {uploading ? 'Submitting...' : 'Submit'}

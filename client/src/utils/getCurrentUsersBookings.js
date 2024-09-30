@@ -10,7 +10,7 @@ export const getCurrentUsersBookings = async (currentUserEmail, setBookingsList)
 
       const data = await response.json();
       if (response.ok) {
-        console.log('Bookings by ' + currentUserEmail +' fetched successfully');
+        // console.log('Bookings by ' + currentUserEmail +' fetched successfully');
         setBookingsList(data); // Sets bookingList with API response
       } else {
         console.error('Error fetching bookings by ' + currentUserEmail +':', data.error); // Logs API error

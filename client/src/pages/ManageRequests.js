@@ -88,8 +88,6 @@ function AdminRequests() {
   // }, [user, isLoading]);
 
   useEffect(() => {
-   
-
     fetchRequests(setRequests, getAllRequests);
   }, []);
 

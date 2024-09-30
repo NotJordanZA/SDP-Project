@@ -55,7 +55,8 @@ export const VenueForm = ({ id, buildingName, venueName, campus, venueType, venu
 
   const campusOptions = [ //All options for campus
     {value:"East", label:"East Campus"},
-    {value:"West", label:"West Campus"}
+    {value:"West", label:"West Campus"},
+    {value:"Education", label:"Education Campus"},
   ]
 
   const venueTypeOptions = [ //All options for venue type
@@ -125,10 +126,6 @@ export const VenueForm = ({ id, buildingName, venueName, campus, venueType, venu
               options={campusOptions}
               isClearable={true}
               styles={{
-                control: (provided) => ({
-                  ...provided,
-                  marginRight: '20px',
-                }),
                 menu: (provided) => ({
                   ...provided,
                   zIndex: 9999, // Set z-index to a high value to ensure it's on top
@@ -146,10 +143,6 @@ export const VenueForm = ({ id, buildingName, venueName, campus, venueType, venu
                 options={venueTypeOptions}
                 isClearable={true}
                 styles={{
-                  control: (provided) => ({
-                    ...provided,
-                    marginRight: '20px',
-                  }),
                   menu: (provided) => ({
                     ...provided,
                     zIndex: 9999, // Set z-index to a high value to ensure it's on top
@@ -176,10 +169,6 @@ export const VenueForm = ({ id, buildingName, venueName, campus, venueType, venu
               isClearable={true}
               isMulti={true}
               styles={{
-                  control: (provided) => ({
-                    ...provided,
-                    marginRight: '20px',
-                  }),
                   menu: (provided) => ({
                     ...provided,
                     zIndex: 9999, // Set z-index to a high value to ensure it's on top
@@ -196,10 +185,6 @@ export const VenueForm = ({ id, buildingName, venueName, campus, venueType, venu
               options={closureOptions}
               isClearable={true}
               styles={{
-                control: (provided) => ({
-                  ...provided,
-                  marginRight: '20px',
-                }),
                 menu: (provided) => ({
                   ...provided,
                   zIndex: 9999, // Set z-index to a high value to ensure it's on top

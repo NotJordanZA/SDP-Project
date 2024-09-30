@@ -7,7 +7,7 @@ import { useNavigate } from "react-router-dom";
 import { auth } from "../firebase"; 
 import { onAuthStateChanged } from 'firebase/auth';
 
-const Header = ({ title, toggleSidebar }) => {
+const Header = ({ title, toggleSidebar,toggleNotification }) => {
   const [user, setUser] = useState(null);
   const navigate = useNavigate();
 
@@ -34,14 +34,17 @@ const Header = ({ title, toggleSidebar }) => {
             data-testid="sidebar-toggle"
           ></i>
         )}
-        <h1>{title}</h1>
+        <h1 id='title-text' onClick={() => navigate("/home")}>{title}</h1>
         <div className="header-icons">
           {/* Bell icon for notifications */}
           {user && (
             <i 
+            
               className="fa-solid fa-bell bell-icon" 
               data-testid="bell-icon"
-              //onClick={() => navigate("/notifications")}
+              onClick={toggleNotification}
+             // onClick={() => navigate("/notifications")}
+        
             />
           )}
           {/* Logo */}
