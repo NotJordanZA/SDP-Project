@@ -254,21 +254,36 @@ app.post("/api/bookings/create", async (req, res) => {
 
             // adding a document to the Bookings collection
             const newBookingRef = doc(db, 'Bookings', `${venueID}-${bookingDate}-${bookingStartTime}`);//the document name/id is the venueID with the date and start time of the bookings
-            const bookingData = {
-                venueBooker,
-                venueID,
-                bookingDate,
-                bookingStartTime,
-                bookingEndTime,
-                bookingDescription,
-            
-            };
+            if(api_key === process.env.EVENTS_API_KEY){
+                const bookingData = {
+                    venueBooker,
+                    venueID,
+                    bookingDate,
+                    bookingStartTime,
+                    bookingEndTime,
+                    bookingDescription,
+                    "externalBooking":"events"
+                };
+                // Save the booking data 
+                await setDoc(newBookingRef, bookingData);
 
-            // Save the booking data 
-            await setDoc(newBookingRef, bookingData);
+                // Returns the  ID of the newly created booking
+                res.status(200).json({ message: "Booking created successfully", bookingID: newBookingRef.id });
+            }else{
+                const bookingData = {
+                    venueBooker,
+                    venueID,
+                    bookingDate,
+                    bookingStartTime,
+                    bookingEndTime,
+                    bookingDescription,
+                };
+                // Save the booking data 
+                await setDoc(newBookingRef, bookingData);
 
-            // Returns the  ID of the newly created booking
-            res.status(200).json({ message: "Booking created successfully", bookingID: newBookingRef.id });
+                // Returns the  ID of the newly created booking
+                res.status(200).json({ message: "Booking created successfully", bookingID: newBookingRef.id });
+            }
         } catch (error) {
             console.error("Error creating booking:", error);
             res.status(500).json({ error: "Internal Server Error" });
@@ -505,6 +520,7 @@ app.put("/api/bookings/:id", async (req, res) => {
         res.status(401).json({ error: "Unauthorized. Please supply valid API key" });
     }
 });
+
 //Delete a booking by ID
 app.delete("/api/bookings/:id", async (req, res) => {
     const bookingId = req.params.id;
@@ -525,7 +541,30 @@ app.delete("/api/bookings/:id", async (req, res) => {
             console.error("Error deleting booking:", error.message);
             res.status(500).json({ error: "Internal Server Error" });
         }
-    }else{
+    }else if(api_key === process.env.EVENTS_API_KEY){
+        try {
+            const bookingDocRef = doc(db, 'Bookings', bookingId);
+            const bookingDoc = await getDoc(bookingDocRef);
+
+            if (!bookingDoc.exists()) {
+                return res.status(404).json({ error: "Booking not found" });
+            }
+
+            const bookingData = bookingDoc.data();
+
+            // Check if this booking was made by events
+            if (bookingData.externalBooking === 'events') {
+                await deleteDoc(bookingDocRef);
+                return res.status(200).json({ message: "Booking deleted successfully", bookingID: bookingId });
+            } else {
+                return res.status(403).json({ error: "Forbidden. You can only delete bookings made using your API key" });
+            }
+        } catch (error) {
+            console.error("Error deleting booking:", error.message);
+            res.status(500).json({ error: "Internal Server Error" });
+        }
+    }
+    else{
         res.status(401).json({ error: "Unauthorized. Please supply valid API key" });
     }
 });
