@@ -4,11 +4,14 @@ import { createNotification } from '../utils/createNotificationUtil';
 import { EditBookingForm } from './EditBookingForm';
 import { useState } from 'react';
 
-function BookingRow({bookingDate, venueID, time, bookingDescription, venueBooker, currentEmail, getBookings, setBookingsList, isAdmin}){
+function BookingRow({bookingDate, venueID, time, bookingDescription, venueBooker, currentEmail, getBookings, setBookingsList, isAdmin, bookingsList}){
 
     const [isEditBookingFormOpen, setIsEditBookingFormOpen] = useState(false);
 
     const toggleEditBookingForm = () => {
+        if(isEditBookingFormOpen){
+            getBookings(venueBooker, setBookingsList);
+        }
         setIsEditBookingFormOpen(!isEditBookingFormOpen);
     }
 
@@ -57,6 +60,7 @@ function BookingRow({bookingDate, venueID, time, bookingDescription, venueBooker
                 bookerEmail={venueBooker}
                 getBookings={getBookings}
                 setBookingsList={setBookingsList}
+                bookingsList={bookingsList}
             />
             <li key={venueID + "-" + bookingDate + "-" + time.substring(0, 5)} className={`booking-list-entry ${hasBookingDatePassed() ? 'past-booking' : ''}`}>
                 <span className="booking-date">{bookingDate}{hasBookingDatePassed() && (<span className='past-booking-span'>PAST BOOKING</span>)}</span>

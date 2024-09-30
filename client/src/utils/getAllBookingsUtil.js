@@ -11,6 +11,7 @@ export const getAllBookings = async (currentUserEmail, setBookingsList) =>{ // G
       const data = await response.json();
       if (response.ok) {
         setBookingsList(data); // Sets bookingList with API response
+        // console.log("Got all bookings from: ", location);
       } else {
         console.error('Error fetching bookings:', data.error); // Logs API error
       }

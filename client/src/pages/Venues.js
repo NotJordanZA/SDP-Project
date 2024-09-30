@@ -81,13 +81,8 @@ function Venues(){
         fetchUserInfo(); //Get user info
       }
     }, [user, isLoading]);
-
-    // useEffect(() => {
-    //   console.log(userInfo);
-    // }, [userInfo]);
     
     useEffect(() => {
-      // getAllVenues(setVenueList, setAllVenues);
       callGetAllVenues();
       fetchSchedules(setSchedules);
     }, []);// Only runs on first load
@@ -104,10 +99,6 @@ function Venues(){
         getCurrentDaySchedules(weekday[displayDate.getDay()], bookingsList, setBookingsList);
       }// eslint-disable-next-line
     }, [formattedDate]); // Only runs when formattedDate changes
-
-  //   useEffect(() => {
-  //     console.log("Updated bookings list:", bookingsList);
-  // }, [bookingsList]); // Runs whenever bookingsList changes
 
     const handleDateChange = (newDate) => { // Function for changing the selected date
       setDisplayDate(newDate);

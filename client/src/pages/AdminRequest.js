@@ -10,6 +10,7 @@ import PopupForm from "../components/AdminRequestForm";
 function AdminRequest() {
     const [requestsList, setRequestsList] = useState([]);
     const [isPopupOpen, setIsPopupOpen] = useState(false);
+    const [isInfoPopupOpen, setIsInfoPopupOpen] = useState(false);
     // const [isLoading, setIsLoading] = useState(true);
     const [user, setUser] = useState(null);
     
@@ -46,6 +47,10 @@ function AdminRequest() {
         setIsPopupOpen(!isPopupOpen);
         getCurrentUsersAdminRequests(currentUserEmail, setRequestsList);
     }
+
+  const infoButtonClick = () => {
+    setIsInfoPopupOpen(!isInfoPopupOpen);
+  };
     
     const currentUserEmail = user ? user.email : null; // Gets current user email if not null, otherwise sets it to null
     // console.log(currentUserEmail);
@@ -72,7 +77,19 @@ function AdminRequest() {
             <PopupForm isOpen={isPopupOpen} onClose={onClose} userEmail={currentUserEmail}/>
 
             <div className="admin-request-list" data-testid="admin-request-list">
-                <h2 data-testid="admin-request-heading">My Admin Requests</h2>
+                <h2 data-testid="admin-request-heading">My Admin Requests
+                   <button onClick={infoButtonClick}>i</button>
+                   {/* Conditional rendering of the info popup */}
+                   {isInfoPopupOpen && (
+                      <div className="info-popup">
+                          <p>
+                              Would you like to do something you don't have the permissions for? <br/>
+                              e.g: booking a special venue like the Great Hall, or moving the location of your booking?<br/>
+                              Make a request to the admins!
+                          </p>
+                      </div>
+                   )}
+                </h2>
                 <ul>
                     {requestComponents.length > 0 ? (
                         requestComponents
