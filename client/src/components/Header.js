@@ -34,7 +34,7 @@ const Header = ({ title, toggleSidebar,toggleNotification }) => {
             data-testid="sidebar-toggle"
           ></i>
         )}
-        <h1>{title}</h1>
+        <h1 id='title-text' onClick={() => navigate("/home")}>{title}</h1>
         <div className="header-icons">
           {/* Bell icon for notifications */}
           {user && (
