@@ -1,45 +1,45 @@
-/* Notification.css */
+/* Updated Notification.css */
 .popupNotif-panel {
-  position: absolute;
+  position: fixed; /* Changed to fixed for better alignment */
   right: -300px;
   top: 80px;
   width: 300px;
-  height: 100%;
+
+  height: calc(100% - 65px);
   background-color: #043673;
   transition: right 0.3s ease-in-out;
   z-index: 1000;
   box-shadow: -5px 0px 15px 0px rgba(0, 0, 0, 0.5);
-
+  overflow-y: scroll;
 }
 
 .popupNotif-heading {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0 20px;
-  background-color: #917248; /* background */
-  color: white; /* White text */
+  padding: 10px 20px; /* Ensure proper padding */
+  background-color: #917248;
+  color: white;
+  margin: 0; /* Ensure no margin on heading */
 }
 
 .popupNotif-panel.open {
-  right: 0;
+  right: 0; /* Fully open the panel */
 }
 
 .popupNotif-close-btn {
   background-color: #043673;
   color: white;
   border: none;
-  /* padding: 10px 20px; */
   border-radius: 8px;
   cursor: pointer;
-  margin-bottom: 10px; /* Add margin to create space between the button and heading */
-  margin-top: 10px;
-  margin-left: 10px;
+  margin: 10px;
   font-weight: bold;
   font-size: 1.5em;
 }
-.popupNotif-close-btn:hover {
-  background-color: #917248;
+
+.popupNotif-list {
+  padding: 0 20px; /* Adjust padding to center content */
 }
 
 .popupNotif-list ul {
@@ -47,35 +47,16 @@
   padding: 0;
 }
 
-.checkmark {
-  color: grey;
-  font-size: 1.3rem;
-  border: none;
-  background: none;
-  cursor: pointer;
-}
-
-.checkmark:hover {
-  color: #917248;
-}
-
-.checkmark.checked {
-  color: #043673;
-}
-
 .popupNotif-list li {
-  padding: 10px 10px;
+  padding: 10px;
   display: flex;
   align-items: center;
-  color: #043673; /* notification text white */
+  color: #043673;
   white-space: pre-line;
-  margin-right: 10px;
-  margin-left: 10px;
-  margin-top: 10px;
-  margin-bottom: 10px;
-  gap: 10px;
+  margin: 10px 0;
   background-color: white;
   border-radius: 15px;
+  gap: 10px;
 }
 
 .notif-text-container {
@@ -85,9 +66,5 @@
 
 .notif-text-bold {
   font-weight: bold;
+  cursor: pointer;
 }
-
-/* .notifications-list input {
-  margin-right: 10px;
-  margin-left: 10px;
-} */

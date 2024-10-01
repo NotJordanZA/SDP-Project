@@ -355,6 +355,12 @@ app.get("/api/bookings/findByField", async (req, res) => {
 
 
 app.post('/api/report-submit', async (req, res) => {
+    let api_key = req.header("x-api-key"); // Fetches API key from request
+    if(api_key === process.env.REACT_APP_API_KEY){ // Checks if API key is valid
+
+
+
+
     const { venueID, reportType, reportText, createdBy, photos } = req.body;
   
     try {
@@ -376,7 +382,7 @@ app.post('/api/report-submit', async (req, res) => {
       res.status(500).json({ error: 'Failed to create report' });
 
     }
-  });
+  }else{res.status(401).json({ error: "Unauthorized. Please supply valid API key" });}});
 
 app.get("/api/reports", async (req, res) => {
     let api_key = req.header("x-api-key"); // Fetches API key from request
@@ -1337,6 +1343,8 @@ const rekognition = new AWS.Rekognition({
     region: process.env.AWS_REGION,
   });
   app.post('/api/analyze-photos', upload.array('photos'), async (req, res) => {
+    let api_key = req.header("x-api-key"); // Fetches API key from request
+    if(api_key === process.env.REACT_APP_API_KEY || api_key === process.env.EVENTS_API_KEY || api_key === process.env.DINING_API_KEY){
     const photoBuffers = req.files.map(file => file.buffer);
     
     try {
@@ -1356,7 +1364,8 @@ const rekognition = new AWS.Rekognition({
       console.error('Error analyzing photos:', error);
       res.status(500).json({ error: 'Failed to analyze photos' });
     }
-  });
+  }else{res.status(401).json({ error: "Unauthorized. Please supply valid API key" });
+}});
 
 
 
@@ -1365,7 +1374,7 @@ const rekognition = new AWS.Rekognition({
 // Left out for deployment
 // Prints to console the port of the server
 // app.listen(PORT, () => {
-// console.log(`Server listening on ${PORT}`);
+//     console.log(`Server listening on ${PORT}`);
 // });
 
 exports.api = onRequest(app);
