@@ -4,13 +4,13 @@
   right: -300px;
   top: 80px;
   width: 300px;
-  height: calc(100% - 80px); /* To ensure it doesn’t overflow */
+
+  height: calc(100% - 65px);
   background-color: #043673;
   transition: right 0.3s ease-in-out;
   z-index: 1000;
   box-shadow: -5px 0px 15px 0px rgba(0, 0, 0, 0.5);
-  overflow-y: auto; /* Added to allow scrolling if content overflows */
-  padding: 0; /* Reset padding if any */
+  overflow-y: scroll;
 }
 
 .popupNotif-heading {
@@ -57,4 +57,14 @@
   background-color: white;
   border-radius: 15px;
   gap: 10px;
+}
+
+.notif-text-container {
+  display: flex;
+  flex-direction: column;
+}
+
+.notif-text-bold {
+  font-weight: bold;
+  cursor: pointer;
 }
