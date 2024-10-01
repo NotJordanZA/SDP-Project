@@ -10,9 +10,10 @@
     background-color: #043673;
     color: white;
     border: none;
-    border-radius: 8px;
+    border-radius: 15px;
     padding: 12px 24px;
-    font-size: 1.1rem;
+    font-size: 2rem;
+    font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
     cursor: pointer;
     transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
@@ -152,7 +153,14 @@
     max-width: 100%;
     max-height: 100%;
 }
-
+.goldenLabel{
+    background-color: #917248;
+    color: white;
+    text-align: center;
+    padding: 10px;
+    border-radius: 15px;
+    font-weight: bold;
+}
 .close-button {
     position: absolute;
     top: 10px;
