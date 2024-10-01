@@ -66,7 +66,8 @@ export const VenueForm = ({ id, buildingName, venueName, campus, venueType, venu
     {value:"Test Venue", label:"Test Venue"},
     {value:"lab", label:"Lab"},
     {value:"Theatre", label:"Theatre"},
-    {value:"Field", label:"Field"}
+    {value:"Field", label:"Field"},
+    {value:"other", label:"Other"}
   ]
 
   const closureOptions = [ //All options for closure status

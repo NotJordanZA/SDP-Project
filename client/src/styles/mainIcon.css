@@ -1,74 +1,86 @@
-/* src/styles/mainIcon.css */
+/* mainIcon.css */
+
+/* Icon Card styling (MainIcon) */
 .main-icon {
-    background-color: #043673;  /* Background color */
-    display: inline-flex;
+    background-color: #043673;
+    display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    padding: 30px;              /* Increased padding for better spacing */
-    border-radius: 15px;        /* Smooth rounded corners */
-    width: 180px;               /* Increased width for better visual balance */
-    height: 200px;              /* Increased height to comfortably fit icon and text */
-    margin: 25px;               /* Adequate margin for spacing between icons */
-    box-shadow: 0 6px 14px rgba(0, 0, 0, 0.2); /* Slightly stronger shadow for emphasis */
+    padding: 30px; /* Slightly larger padding for desktop */
+    border-radius: 15px;
+    width: 100%; /* Ensure full width inside its grid cell */
+    aspect-ratio: 1 / 1; /* Maintain square shape for the icons */
+    box-shadow: 0 6px 14px rgba(0, 0, 0, 0.2);
     transition: transform 0.3s ease, box-shadow 0.3s ease;
-    text-decoration: none;      /* Ensure there's no text underline */
-    color: white;               /* Ensure text color remains white */
-}
-
-.main-icon:hover {
-    transform: translateY(-8px);  /* Lift effect on hover */
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);  /* Increased shadow on hover */
-}
-
-/* Icon text styling */
-.icon-text {
-    color: white; /* Ensure text color remains white */
-    font-size: 1.4em;              /* Slightly larger font size for better readability */
+    text-decoration: none;
+    color: white;
+  }
+  
+  .main-icon:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+  }
+  
+  /* Icon text styling */
+  .icon-text {
+    color: white;
+    font-size: 1.4em; /* Adjusted font size for desktop */
     font-weight: bold;
     text-align: center;
-    margin-top: 10px;             /* Space between icon and text */
-}
-
-/* Icon styling */
-.icon-img {
-    font-size: 4em;               /* Larger icon size for visual impact */
-    margin-bottom: 0;            /* Space between icon and text */
+    margin-top: 10px;
+  }
+  
+  /* Icon styling */
+  .icon-img {
+    font-size: 5em; /* Adjust icon size for desktop */
+    margin-bottom: 0;
     margin-top: 0.5em;
-    color: white;                 /* Ensure icon remains white */
-}
-
-@media (max-width: 520px) {
+    color: white;
+  }
+  
+  /* Responsive design for larger screens (make the icons slightly larger) */
+  @media (min-width: 1024px) {
     .main-icon {
-        margin:0;
-        width: 162px;               
-        height: 180px;  
+      padding: 40px; /* Increase padding for desktop */
     }
-
+  
     .icon-img {
-        font-size: 3.5em;
+      font-size: 6em; /* Increase icon size for desktop */
     }
-}
-
-@media (max-width: 384px) {
+  
+    .icon-text {
+      font-size: 1.5em; /* Increase text size for desktop */
+    }
+  }
+  
+  /* Adjustments for tablet screens */
+  @media (max-width: 768px) {
     .main-icon {
-        margin:0;
-        width: 135px;               
-        height: 150px;  
+      padding: 20px;
     }
+  
     .icon-img {
-        font-size: 3em;
+      font-size: 3.5em; /* Reduced icon size for tablets */
     }
-}
-
-
-@media (max-width: 330px) {
+  
+    .icon-text {
+      font-size: 1.2em; /* Slightly smaller text size for tablets */
+    }
+  }
+  
+  /* Adjustments for mobile screens */
+  @media (max-width: 480px) {
     .main-icon {
-        margin:0;
-        width: 117px;               
-        height: 130px;  
+      padding: 10px; /* Further reduce padding for mobile devices */
     }
+  
     .icon-img {
-        font-size: 3em;
+      font-size: 2em; /* Smaller icon size for mobile screens */
     }
-}
+  
+    .icon-text {
+      font-size: 1em; /* Smaller text size for mobile */
+    }
+  }
+  
