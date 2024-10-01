@@ -690,3 +690,40 @@
   }
 
 }
+
+.alternative-venues-container {
+  margin-left: 20px;
+  margin-bottom: 10px;
+  padding-left: 20px;
+  padding-right: 10px;
+}
+
+.alternative-venues-label {
+  font-size: 1.5rem; /* Match font size to other elements */
+  font-weight: bold;  /* Similar to other labels */
+  text-shadow: 0 5px 5px rgba(0,0,0,.1); /* Similar to .arrow-button */
+}
+
+.alternative-venues-list {
+  list-style-type: none; /* Remove bullet points */
+  padding: 0;
+  margin: 10px 0;
+}
+
+.alternative-venues-item {
+  font-size: 1.2rem; /* Match font size to venue-row-text */
+  padding: 10px 20px; /* Adjust padding to create spacing */
+  background-color: #043673; /* Background color */
+  color: white; /* Text color */
+  margin: 5px 0; /* Space between items */
+  border-radius: 15px; /* Rounded corners */
+  display: inline-block; /* Ensures items adjust based on content */
+  box-shadow: 0 2px 2px rgba(0,0,0,.1); /* Similar box shadow to venue-row-content */
+  max-width: 25%;
+}
+
+.alternative-venues-item:hover {
+  background-color: #917248; /* Hover effect similar to timeslot-button */
+  color: white;
+  cursor: pointer;
+}

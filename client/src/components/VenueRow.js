@@ -11,10 +11,9 @@ import { auth } from "../firebase";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSquareCaretDown, faSquareCaretUp} from '@fortawesome/free-solid-svg-icons';
 
-function VenueRow({id, buildingName, venueName, campus, venueType, venueCapacity, timeSlots, isClosed, bookings, relevantDate, setBookingsList, isAdmin, isManaging, getAllVenues, isScheduling, schedules, setSchedules}) {
+function VenueRow({id, buildingName, venueName, campus, venueType, venueCapacity, timeSlots, isClosed, bookings, relevantDate, setBookingsList, isAdmin, isManaging, getAllVenues, isScheduling, schedules, setSchedules, allVenues}) {
 
     const user = auth.currentUser;
-    
     const [isVenueOpen, setIsVenueOpen] = useState(false);
     const [isBooking, setIsBooking] = useState(false);
     const [bookingTime, setBookingTime] = useState("");
@@ -28,7 +27,7 @@ function VenueRow({id, buildingName, venueName, campus, venueType, venueCapacity
     const [errorMessage, setErrorMessage] = useState(""); 
     const [clickedScheduleEmail, setClickedScheduleEmail] = useState("");
     const [clickedScheduleDescription, setClickedScheduleDescription] = useState("");
-
+    const [suggestedVenues, setSuggestedVenues] = useState([]);
 
     const daysOfWeek = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"]; //schedule table columns
 
@@ -61,6 +60,12 @@ function VenueRow({id, buildingName, venueName, campus, venueType, venueCapacity
         }
     };
     
+    const venueInfo = {
+        venueName: venueName,
+        campus: campus,
+        capacity: venueCapacity,
+    };
+
 
     const handleScheduleButtonClick = async () => {
         const [hours, minutes] = selectedSlot.time.split(':');
@@ -135,6 +140,29 @@ function VenueRow({id, buildingName, venueName, campus, venueType, venueCapacity
         }
     }, [bookingTime, customEndTime])
 
+
+    useEffect(() => {
+        // Debugging: Log the entire allVenues array to ensure it's populated
+        console.log("All venues:", allVenues);
+    
+        // Normalize campus to lowercase and ensure capacity is a number before comparison
+        const filteredVenues = allVenues
+            .filter((venue) => {
+                // Normalize the campus comparison to lowercase, and ensure capacities are numbers
+                const isSameCampus = venue.campus.toLowerCase() === campus.toLowerCase();
+                const isSameCapacity = Number(venue.capacity) === Number(venueCapacity);
+                const isDifferentVenue = venue.venueName !== venueName;
+                return isSameCampus && isSameCapacity && isDifferentVenue;
+            })
+            .slice(0, 3); // Get up to 3 venues
+    
+        // Debugging: Log the filtered venues
+        console.log("Filtered suggested venues:", filteredVenues);
+    
+        setSuggestedVenues(filteredVenues);
+    }, [allVenues, campus, venueCapacity, venueName]);
+    
+    
     useEffect(() => {
         if (firstRender.current){// Doesn't run on first render in order to give bookingTime and bookingEndTime time to reflect changes
             firstRender.current = false;
@@ -316,6 +344,21 @@ function VenueRow({id, buildingName, venueName, campus, venueType, venueCapacity
                                         to
                                         <input className= 'times-input' placeholder='End Time' type="time" min={"14:15"} value={customEndTime} onClick={(e) => { e.stopPropagation();}} onChange={ (e) => {setCustomEndTime(e.target.value)}}></input>
                                     </div>
+                                    <div className="alternative-venues-container">
+    <label className="alternative-venues-label">Alternative Venues</label>
+    {suggestedVenues.length > 0 ? (
+        <ul className="alternative-venues-list">
+            {suggestedVenues.map((venue) => (
+                <li className="alternative-venues-item" key={venue.venueName}>
+                    {venue.venueName} (Capacity: {venue.capacity})
+                </li>
+            ))}
+        </ul>
+    ) : (
+        <p>No similar venues available.</p> // Message if no venues match the criteria
+    )}
+</div>
+
                                     <div className="admin-book-action-container">
                                         <textarea className={`description-input ${isBooking ? "shown" : "hidden"}`} data-testid = 'description-input-id' value = { bookingDescriptionText } onChange={(e) => setBookingDescriptionText(e.target.value)} required placeholder="Input a booking description" onClick={(e) => e.stopPropagation()}></textarea>
                                         <input className={`email-input ${isBooking ? "shown" : "hidden"}`} data-testid = 'email-input-id' value = { bookerEmail } onChange={(e) => setBookerEmail(e.target.value)} required placeholder="Input booker email" onClick={(e) => e.stopPropagation()}></input>
