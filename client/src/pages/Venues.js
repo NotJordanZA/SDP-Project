@@ -123,7 +123,6 @@ function Venues(){
       venueName: venue.venueName,
       campus: venue.campus,
       capacity: venue.venueCapacity,
-      timeSlots: venue.timeSlots,
   }));
     //Map the elements of venueList onto VenueRow components and add them to an array
     const venueComponents = venueList.map((venue) => {

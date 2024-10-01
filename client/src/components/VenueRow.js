@@ -64,7 +64,6 @@ function VenueRow({id, buildingName, venueName, campus, venueType, venueCapacity
         venueName: venueName,
         campus: campus,
         capacity: venueCapacity,
-        timeSlots: timeSlots,
     };
 
 
