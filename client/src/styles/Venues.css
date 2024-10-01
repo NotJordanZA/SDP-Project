@@ -6,7 +6,12 @@
     background: none;
     cursor: pointer;
 }
-
+#venuesLabel{
+  font-size: 1.5em;
+  display: block;
+  border-radius: 0;
+  
+}
 .date-button{
     font-size: 1.6rem;
     border: none;

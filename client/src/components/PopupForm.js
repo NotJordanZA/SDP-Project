@@ -133,61 +133,76 @@ const PopupForm = ({ isOpen, onClose }) => {
       }
   
       // Step 2: Conditionally analyze photos using Rekognition only if reportType is 'Safety'
+      let fireDetected = false;
       if (formData.reportType === "Safety") {
-        const formDataForAnalysis = new FormData();
-        formData.photos.forEach(photo => {
-          formDataForAnalysis.append('photos', photo);
-        });
+        try {
+          const formDataForAnalysis = new FormData();
+          formData.photos.forEach(photo => {
+            formDataForAnalysis.append('photos', photo);
+          });
   
-        const analysisResponse = await fetch('/api/analyze-photos', {
-          method: 'POST',
-          body: formDataForAnalysis,
-        });
+          const analysisResponse = await fetch('/api/analyze-photos', {
+            method: 'POST',
+            body: formDataForAnalysis,
+          });
   
-        if (!analysisResponse.ok) {
-          throw new Error('Failed to analyze photos');
-        }
+          if (!analysisResponse.ok) {
+            throw new Error('Failed to analyze photos');
+          }
   
-        const analysisResults = await analysisResponse.json();
-        console.log('Rekognition analysis results:', analysisResults);
+          const analysisResults = await analysisResponse.json();
+          console.log('Rekognition analysis results:', analysisResults);
   
-        // Check for fire detection in analysis results
-        const fireDetected = analysisResults.some(result => 
-          result.Labels.some(label => label.Name === 'Fire' && label.Confidence > 70) // Adjust confidence threshold as needed
-        );
+          // Check for fire detection in analysis results
+          fireDetected = analysisResults.some(result => 
+            result.Labels.some(label => label.Name === 'Fire' && label.Confidence > 70) // Adjust confidence threshold as needed
+          );
   
-        if (fireDetected) {
-          alert('Fire detected! Alerting Campus Safety:');
+          if (fireDetected) {
+            // List of buildings to bypass the friend's API
+            const excludedBuildings = [
+              'WEC Marang Block',
+              'WEC Leseding Block',
+              'WEC Linder Auditorium',
+              'WEC Khanya Block',
+              'WEC Centre',
+              'WEC Bohlaleng Block'
+            ];
   
-// Step 3: Try to send emergency alert to your friend's API (don't block if it fails)
-// Step 3: Try to send emergency alert to your friend's API (don't block if it fails)
-try {
-  const alertData = {
-    description: `Fire detected in ${formData.venue}.`,
-    building_name: formData.venue,  // Use snake_case for field names if required by the API
-    type: 'fire',
-    photo: null  // Assuming the API does not need a photo in this call
-  };
-  console.log(alertData)
-  const alertResponse = await fetch('https://campussafetyapp.azurewebsites.net/incidents/report-incidents-external', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(alertData),
-  });
-
-  if (!alertResponse.ok) {
-    const errorText = await alertResponse.text();
-    console.error('Failed to send emergency alert:', alertResponse.status, alertResponse.statusText, errorText);
-  } else {
-    alert('Campus Safety have been alerted. Please evacuate the building.');
-    console.log('Emergency alert sent successfully:', await alertResponse.json());
-  }
-} catch (error) {
-  alert('Please evacuate the building and contact campus safety!');
-  console.error('Error sending emergency alert:', error.message || error);
-}
+            if (excludedBuildings.includes(formData.venue)) {
+              alert('Fire detected! Please evacuate the building and alert Education Campus Safety.');
+            } else {
+              // Send alert to the friend's API if the building is not excluded
+              alert('Fire detected! Alerting Campus Safety:');
+  
+              const alertData = {
+                description: `Fire detected in ${formData.venue}.`,
+                building_name: formData.venue,
+                type: 'fire',
+                photo: null // Assuming the API does not need a photo in this call
+              };
+  
+              const alertResponse = await fetch('https://campussafetyapp.azurewebsites.net/incidents/report-incidents-external', {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(alertData),
+              });
+  
+              if (!alertResponse.ok) {
+                const errorText = await alertResponse.text();
+                console.error('Failed to send emergency alert:', alertResponse.status, alertResponse.statusText, errorText);
+              } else {
+                alert('Campus Safety have been alerted. Please evacuate the building.');
+              }
+            }
+          } else {
+            alert('Unable to detect fire. Please inform campus safety of any immediate dangers.');
+          }
+        } catch (error) {
+          alert('Unable to detect fire. Please inform campus safety of any immediate dangers.');
+          console.error('Error analyzing photos:', error);
         }
       }
   
@@ -222,7 +237,8 @@ try {
       setUploading(false);
     }
   };
-
+  
+  
 
   if (!isOpen) return null;
 
