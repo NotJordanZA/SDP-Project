@@ -92,7 +92,7 @@ function Venues(){
           timeSlots: venue.timeSlots,
         }));
     
-        console.log(venueArray); // You can log or use this array as needed.
+       // console.log(venueArray); // You can log or use this array as needed.
       }
     }, [venueList]); // This will run whenever venueList changes.
     
@@ -119,7 +119,12 @@ function Venues(){
     const handleDateChange = (newDate) => { // Function for changing the selected date
       setDisplayDate(newDate);
     };
-
+    const venueArray = venueList.map(venue => ({
+      venueName: venue.venueName,
+      campus: venue.campus,
+      capacity: venue.venueCapacity,
+      timeSlots: venue.timeSlots,
+  }));
     //Map the elements of venueList onto VenueRow components and add them to an array
     const venueComponents = venueList.map((venue) => {
       // Find all bookings for this venue
@@ -154,6 +159,7 @@ function Venues(){
             isScheduling={isScheduling}
             schedules={schedules}
             setSchedules={setSchedules}
+            allVenues = {venueArray}
           />
         );
       }
@@ -176,6 +182,7 @@ function Venues(){
             isScheduling={null}
             schedules={null}
             setSchedules={null}
+            allVenues = {venueArray}
           />
         )
       }
@@ -198,6 +205,7 @@ function Venues(){
             isScheduling={null}
             schedules={null}
             setSchedules={null}
+            allVenues = {venueArray}
           />
         )
       }
