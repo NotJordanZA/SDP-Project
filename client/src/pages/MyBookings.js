@@ -134,42 +134,48 @@ function MyBookings() {
         );
     });
 
-    return(
-        <section className="booking-page" data-testid="booking-page">
-            <div className="booking-list" data-testid="booking-list">
-                <h2 data-testid="booking-heading">{userInfo.isAdmin ? "All Bookings" : "My Bookings"}</h2>
-                {userInfo.isAdmin && (
-                  <div className="booking-filters-container">
-                    <label htmlFor="filter-date">Filter by Date:</label>
-                    <input
-                      type="date"
-                      value={filterDate}
-                      onChange={(e) => setFilterDate(e.target.value)}
-                    />
-                    <label htmlFor="filter-bookerEmail">Filter by Booker Email:</label>
-                    <input
-                      value={filterBookerEmail}
-                      placeholder="lucky@wits.ac.za"
-                      onChange={(e) => setFilterBookerEmail(e.target.value)}
-                    />
-                    <label htmlFor="filter-venue">Filter by Venue:</label>
-                    <input
-                      value={filterVenue}
-                      placeholder="CLM101"
-                      onChange={(e) => setFilterVenue(e.target.value)}
-                    />
-                  </div>
-                )}
-                <ul>
-                    {bookingComponents.length > 0 ? (
-                        bookingComponents
-                    ): (
-                        <li className="booking-list-entry">No bookings available</li>
-                    )}
-                </ul>
+    return (
+      <section className="booking-page" data-testid="booking-page">
+        {!userInfo.isAdmin && (
+          <label className="goldenLabel">
+            See a list of all of your current bookings below and make any changes you need. Feel free to file an admin request for any issues with bookings on our requests page.
+          </label>
+        )}
+        <div className="booking-list" data-testid="booking-list">
+          <h2 data-testid="booking-heading">{userInfo.isAdmin ? "All Bookings" : "My Bookings"}</h2>
+          {userInfo.isAdmin && (
+            <div className="booking-filters-container">
+              <label htmlFor="filter-date">Filter by Date:</label>
+              <input
+                type="date"
+                value={filterDate}
+                onChange={(e) => setFilterDate(e.target.value)}
+              />
+              <label htmlFor="filter-bookerEmail">Filter by Booker Email:</label>
+              <input
+                value={filterBookerEmail}
+                placeholder="lucky@wits.ac.za"
+                onChange={(e) => setFilterBookerEmail(e.target.value)}
+              />
+              <label htmlFor="filter-venue">Filter by Venue:</label>
+              <input
+                value={filterVenue}
+                placeholder="CLM101"
+                onChange={(e) => setFilterVenue(e.target.value)}
+              />
             </div>
-        </section>
+          )}
+          <ul>
+            {bookingComponents.length > 0 ? (
+              bookingComponents
+            ) : (
+              <li className="booking-list-entry">No bookings available</li>
+            )}
+          </ul>
+        </div>
+      </section>
     );
+    
 }
 
 export default MyBookings;
