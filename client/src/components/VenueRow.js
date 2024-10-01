@@ -61,6 +61,13 @@ function VenueRow({id, buildingName, venueName, campus, venueType, venueCapacity
         }
     };
     
+    const venueInfo = {
+        venueName: venueName,
+        campus: campus,
+        capacity: venueCapacity,
+        timeSlots: timeSlots,
+    };
+
 
     const handleScheduleButtonClick = async () => {
         const [hours, minutes] = selectedSlot.time.split(':');

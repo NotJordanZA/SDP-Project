@@ -81,7 +81,23 @@ function Venues(){
         fetchUserInfo(); //Get user info
       }
     }, [user, isLoading]);
+
+
+    useEffect(() => {
+      if (venueList.length > 0) {
+        const venueArray = venueList.map(venue => ({
+          venueName: venue.venueName,
+          campus: venue.campus,
+          capacity: venue.venueCapacity,
+          timeSlots: venue.timeSlots,
+        }));
     
+        console.log(venueArray); // You can log or use this array as needed.
+      }
+    }, [venueList]); // This will run whenever venueList changes.
+    
+
+
     useEffect(() => {
       callGetAllVenues();
       fetchSchedules(setSchedules);
