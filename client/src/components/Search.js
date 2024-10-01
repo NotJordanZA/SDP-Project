@@ -102,7 +102,8 @@ export default function Search({venueList, setVenueList, bookingsList, isManagin
         {value:"test venue", label:"Test Venue"},
         {value:"lab", label:"Lab"},
         {value:"theatre", label:"Theatre"},
-        {value:"field", label:"Field"}
+        {value:"field", label:"Field"},
+        {value:"other", label:"Other"}
     ]
 
     const closureOptions = [ //All options for closure status
