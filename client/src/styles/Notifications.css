@@ -1,11 +1,11 @@
 /* Updated Notification.css */
 .popupNotif-panel {
-  position: fixed; /* Changed to fixed for better alignment */
+  position: absolute; /* Changed to fixed for better alignment */
   right: -300px;
   top: 80px;
   width: 300px;
-
-  height: calc(100% - 65px);
+  min-height: calc(100vh - 65px);
+  height: 100d;
   background-color: #043673;
   transition: right 0.3s ease-in-out;
   z-index: 1000;
@@ -17,7 +17,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 10px 20px; /* Ensure proper padding */
+  padding: 0 20px; /* Ensure proper padding */
   background-color: #917248;
   color: white;
   margin: 0; /* Ensure no margin on heading */
@@ -25,6 +25,20 @@
 
 .popupNotif-panel.open {
   right: 0; /* Fully open the panel */
+}
+
+.checkmark {
+  color: grey;
+  font-size: 1.3rem;
+  border: none;
+  background: none;
+  cursor: pointer;
+}
+.checkmark:hover {
+  color: #917248;
+}
+.checkmark.checked {
+  color: #043673;
 }
 
 .popupNotif-close-btn {
@@ -38,13 +52,13 @@
   font-size: 1.5em;
 }
 
-.popupNotif-list {
-  padding: 0 20px; /* Adjust padding to center content */
-}
+/* .popupNotif-list { */
+  /* padding: 0 20px; Adjust padding to center content */
+/* } */
 
 .popupNotif-list ul {
   list-style-type: none;
-  padding: 0;
+  padding: 0 20px;
 }
 
 .popupNotif-list li {
