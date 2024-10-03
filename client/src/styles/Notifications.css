@@ -5,7 +5,7 @@
   top: 80px;
   width: 300px;
   min-height: calc(100vh - 65px);
-  height: 100d;
+  /* height: 100d; */
   background-color: #043673;
   transition: right 0.3s ease-in-out;
   z-index: 1000;
