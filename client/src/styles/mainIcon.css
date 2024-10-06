@@ -1,21 +1,19 @@
-/* mainIcon.css */
-
-/* Icon Card styling (MainIcon) */
+/* Default desktop styles */
 .main-icon {
-    background-color: #043673;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 30px; /* Slightly larger padding for desktop */
-    border-radius: 15px;
-    width: 100%; /* Ensure full width inside its grid cell */
-    aspect-ratio: 1 / 1; /* Maintain square shape for the icons */
-    box-shadow: 0 6px 14px rgba(0, 0, 0, 0.2);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-    text-decoration: none;
-    color: white;
-  }
+  background-color: #043673;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border-radius: 15px;
+  padding: 5px;
+  width: 150px; /* Set the width */
+  height: 150px; /* Set the height */
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.2);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  color: white;
+}
+
   
   .main-icon:hover {
     transform: translateY(-8px);
@@ -25,7 +23,6 @@
   /* Icon text styling */
   .icon-text {
     color: white;
-    font-size: 1.4em; /* Adjusted font size for desktop */
     font-weight: bold;
     text-align: center;
     margin-top: 10px;
@@ -33,54 +30,7 @@
   
   /* Icon styling */
   .icon-img {
-    font-size: 5em; /* Adjust icon size for desktop */
+    font-size: 3em; /* Adjust icon size for desktop */
     margin-bottom: 0;
-    margin-top: 0.5em;
     color: white;
   }
-  
-  /* Responsive design for larger screens (make the icons slightly larger) */
-  @media (min-width: 1024px) {
-    .main-icon {
-      padding: 40px; /* Increase padding for desktop */
-    }
-  
-    .icon-img {
-      font-size: 6em; /* Increase icon size for desktop */
-    }
-  
-    .icon-text {
-      font-size: 1.5em; /* Increase text size for desktop */
-    }
-  }
-  
-  /* Adjustments for tablet screens */
-  @media (max-width: 768px) {
-    .main-icon {
-      padding: 20px;
-    }
-  
-    .icon-img {
-      font-size: 3.5em; /* Reduced icon size for tablets */
-    }
-  
-    .icon-text {
-      font-size: 1.2em; /* Slightly smaller text size for tablets */
-    }
-  }
-  
-  /* Adjustments for mobile screens */
-  @media (max-width: 480px) {
-    .main-icon {
-      padding: 10px; /* Further reduce padding for mobile devices */
-    }
-  
-    .icon-img {
-      font-size: 2em; /* Smaller icon size for mobile screens */
-    }
-  
-    .icon-text {
-      font-size: 1em; /* Smaller text size for mobile */
-    }
-  }
-  
