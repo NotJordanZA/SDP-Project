@@ -1,5 +1,6 @@
 /* homePage.css */
 
+/* Grid layout for homepage */
 .home-page {
   display: flex;
   flex-wrap: wrap;
@@ -7,7 +8,6 @@
   gap: 20px;
   padding: 20px;
 }
-
 
 .welcome-section {
   display: flex;
@@ -22,10 +22,10 @@
 
 .welcome-name {
   font-size: 1rem;
+
   font-weight: bolder;
   color: white;
 }
-
 .home {
   display: grid;
   grid-template-columns: repeat(2, 1fr); /* 2 columns */
@@ -96,5 +96,18 @@
 
   .main-icon p {
     font-size: 0.85rem;
+
   }
 }
+
+@media (max-width: 480px) {
+  .home-page {
+      grid-template-columns: repeat(2, 1fr); 
+      gap: 0.8em;
+      padding: 10px;
+  }
+
+  .main-icon {
+      width: 90px;
+      height: 90px;
+  }}
