@@ -13,9 +13,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding-top: 15px;
-  padding-left: 15px;
-  padding-right: 15px;
+  padding: 15px;
   background-color: #917248;
   border-radius: 15px;
   width: fit-content; /* Ensure the section adjusts to the size of its content */
