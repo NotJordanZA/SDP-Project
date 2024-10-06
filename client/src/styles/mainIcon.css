@@ -37,3 +37,10 @@
   margin-top: 0.5em;
   color: white;                 /* Ensure icon remains white */
 }
+
+@media (max-width: 768px) {
+  .main-icon {
+    margin: 0;
+  }
+
+}
