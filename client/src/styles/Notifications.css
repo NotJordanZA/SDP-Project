@@ -1,16 +1,17 @@
 /* Updated Notification.css */
 .popupNotif-panel {
-  position: absolute; /* Changed to fixed for better alignment */
+  position: fixed; /* Changed to fixed for better alignment */
   right: -300px;
-  top: 80px;
+  /* top: 80px; */
   width: 300px;
-  min-height: calc(100vh - 65px);
-  height: calc(100vh - 65px);
+  /* min-height: calc(100vh - 65px);
+  height: calc(100vh - 65px); */
+  height: 100vh;
   /* height: 100d; */
   background-color: #043673;
   transition: right 0.3s ease-in-out;
   z-index: 1000;
-  box-shadow: -5px 0px 15px 0px rgba(0, 0, 0, 0.5);
+  /* box-shadow: -5px 0px 15px 0px rgba(0, 0, 0, 0.5); */
   overflow-y: scroll;
   overscroll-behavior: auto;
 }
@@ -19,7 +20,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0 20px; /* Ensure proper padding */
+  padding: 2px 20px 2px 20px; /* Ensure proper padding */
   background-color: #917248;
   color: white;
   margin: 0; /* Ensure no margin on heading */
@@ -27,6 +28,7 @@
 
 .popupNotif-panel.open {
   right: 0; /* Fully open the panel */
+  box-shadow: -5px 0px 15px 0px rgba(0, 0, 0, 0.5);
 }
 
 .checkmark {
