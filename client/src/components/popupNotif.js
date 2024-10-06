@@ -58,6 +58,16 @@ const Notifications = ({ isOpen, toggleNotification }) => {
     // eslint-disable-next-line
   }, [user && user.email]);
 
+  const sortNotifs = (notifs) => {
+    return notifs.sort((a, b) => {
+      const dateA = new Date(a.dateCreated.split(', ')[0].split('/').reverse().join('-') + 'T' + a.dateCreated.split(', ')[1]);
+      const dateB = new Date(b.dateCreated.split(', ')[0].split('/').reverse().join('-') + 'T' + b.dateCreated.split(', ')[1]);
+      return dateB - dateA;
+    });
+  };
+
+  sortNotifs(notifications);
+
   return (
     <nav className={`popupNotif-panel ${isOpen ? 'open' : ''}`}>
       <section className='popupNotif-topSection'>
