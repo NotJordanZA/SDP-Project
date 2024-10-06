@@ -59,3 +59,79 @@ Both Students and Lecturers can receive notifications for:
 - Status updates on reports and requests.
 - Changes made by admins to their bookings.
 - New bookings made by admins on their behalf.
+
+## Installation
+
+1. Clone this repository:
+    ```bash
+    git clone https://github.com/NotJordanZA/SDP-Project.git
+    ```
+2. Navigate into the project directory:
+    ```bash
+    cd SDP-Project
+    ```
+3. Navigate into the client directory:
+    ```bash
+    cd client
+    ```
+
+4. Install required dependencies:
+    ```bash
+    npm install
+    ```
+
+5. Navigate into the server directory:
+    ```bash
+    cd ../server
+    ```
+
+6. Install required dependencies:
+    ```bash
+    npm install
+    ```
+
+## Usage
+
+To run the system:
+1. Navigate into the project directory:
+    ```bash
+    cd SDP-Project
+    ```
+
+2. Navigate into the server directory:
+    ```bash
+    cd server
+    ```
+
+3. Ensure that _ALL_ lines containing the word `PORT` are *uncommented* in `index.js`. There are 4 occurences of `PORT`, two in a single line at the top of the `index.js` file, and two at the bottom of the file.
+
+4. Start the local backend:
+    ```bash
+    npx nodemon index.js
+    ```
+
+5. Navigate into the client directory:
+    ```bash
+    cd ../client
+    ```
+
+6. Start the local frontend:
+    ```bash
+    npm run start
+    ```
+
+## Deployment
+To deploy the system:
+1. Ensure that _ALL_ lines containing the word `PORT` are *commented out* in `index.js`. There are 4 occurences of `PORT`, two in a single line at the top of the `index.js` file, and two at the bottom of the file.
+
+2. Merge into the `development` branch:
+    - Make sure that your feature branch is ready to be merged. Open a pull request and merge your branch into the `development` branch.
+    
+3. CircleCI Checks:
+    - After merging into the `development` branch, CircleCI will automatically run the necessary checks (tests, builds, etc.). Ensure all checks pass.
+
+4. Merge into the `main` branch:
+    - Once CircleCI confirms that the checks have passed on the `development` branch, open a pull request to merge into the `main` branch.
+
+5. Automatic Deployment:
+    - Once the `main` branch is updated, the application will be automatically deployed.
