@@ -10,9 +10,11 @@ export const getCurrentDaySchedules = async (bookingDay, bookingsList, setBookin
 
       const data = await response.json();
       if (response.ok) {
-        console.log('Schedules on ' + bookingDay +' fetched successfully');
+        // console.log("Bookings first");
+        // console.log(bookingsList);
+        // console.log('Schedules on ' + bookingDay +' fetched successfully');
         setBookingsList(bookingsList.concat(data));
-        console.log(bookingsList.concat(data));
+        // console.log(bookingsList.concat(data));
       } else {
         console.error('Error fetching schedules on ' + bookingDay +':', data.error);
       }
