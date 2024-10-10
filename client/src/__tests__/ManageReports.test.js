@@ -7,6 +7,7 @@ import { onAuthStateChanged } from "firebase/auth";
 import ManageReports from '../pages/ManageReports';
 import { fetchAllReports, updateRep } from '../utils/AdminfetchAllReports';
 import { waitFor } from '@testing-library/react';
+import { getCurrentUser } from '../utils/getCurrentUser';
 
 // Mock necessary modules
 jest.mock('react-router-dom', () => ({
@@ -24,6 +25,10 @@ jest.mock("firebase/auth", () => ({
   onAuthStateChanged: jest.fn(),
 }));
 
+jest.mock('../utils/getCurrentUser', () => ({
+  getCurrentUser: jest.fn(),
+}));
+
 jest.mock('../utils/AdminfetchAllReports', () => ({
   fetchAllReports: jest.fn(),
   updateRep: jest.fn(),
@@ -39,6 +44,16 @@ describe('ManageReports Component - Set Report to In Progress', () => {
     onAuthStateChanged.mockImplementation((auth, callback) => {
       callback({ email: 'test@wits.ac.za' });
       return jest.fn(); // Mock unsubscribe function
+    });
+
+    getCurrentUser.mockImplementation((currentUserEmail, setUserInfo) => {
+      setUserInfo({
+          firstName:'Test',
+          isAdmin:true,
+          isLecturer:true,
+          isStudent:true,
+          lastName:'User',
+      });
     });
 
     // Set up mock for navigation

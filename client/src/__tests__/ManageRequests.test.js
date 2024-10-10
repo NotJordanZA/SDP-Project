@@ -27,7 +27,9 @@ jest.mock('firebase/firestore', () => ({
   })),
 }));
 
-jest.mock('../utils/getCurrentUser');
+jest.mock('../utils/getCurrentUser', () => ({
+  getCurrentUser: jest.fn(),
+}));
 
 
 jest.mock('../utils/getAllRequests', () => ({
@@ -54,6 +56,16 @@ describe('ManageRequests Component', () => {
       callback({ email: 'test@wits.ac.za' });
       // console.log("Unsubscribe returned!");
       return jest.fn(); // This is the mock unsubscribe function
+    });
+
+    getCurrentUser.mockImplementation((currentUserEmail, setUserInfo) => {
+      setUserInfo({
+          firstName:'Test',
+          isAdmin:true,
+          isLecturer:true,
+          isStudent:true,
+          lastName:'User',
+      });
     });
   
     // Mock useNavigate function
