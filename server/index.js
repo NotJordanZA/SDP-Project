@@ -7,7 +7,7 @@ const multer = require('multer');
 const {onRequest} = require("firebase-functions/v2/https");
 const { getStorage, ref, uploadBytes, getDownloadURL } = require('firebase/storage'); 
 const logger = require("firebase-functions/logger");
-// const PORT = process.env.PORT || 3001; //Must be commented out for production build
+const PORT = process.env.PORT || 3001; //Must be commented out for production build
 const dotenv = require('dotenv').config({ path: './.env' });
 
 const app = express();
@@ -250,6 +250,36 @@ app.post("/api/bookings/create", async (req, res) => {
                         return res.status(409).json({ error: "There is already a booking within the requested timeframe." });
                     }
                 });
+            }
+
+            // Check for overlapping schedules
+            const schedulesRef = collection(db, 'Schedules'); // Get already made bookings
+            const scheduleDay = new Date(bookingDate).toLocaleString('en-US', { weekday: 'long' }); // Get the day of the week from booking date
+
+            const scheduleQuery = query(
+                schedulesRef,
+                where('venueID', '==', venueID),
+                where('bookingStartTime', '<', bookingEndTime),
+                where('bookingEndTime', '>', bookingStartTime),
+                where('bookingDay', '==', scheduleDay) // Check for schedules on the same day
+            );
+
+            const schedulesSnapshot = await getDocs(scheduleQuery); // Get results from schedule query
+
+            if (!schedulesSnapshot.empty) {
+                for (const doc of schedulesSnapshot.docs) {
+                    const existingSchedule = doc.data();
+                    const scheduleStartTime = existingSchedule.bookingStartTime;
+                    const scheduleEndTime = existingSchedule.bookingEndTime;
+
+                    if (
+                        (bookingStartTime >= scheduleStartTime && bookingStartTime < scheduleEndTime) ||
+                        (bookingEndTime > scheduleStartTime && bookingEndTime <= scheduleEndTime) ||
+                        (bookingStartTime <= scheduleStartTime && bookingEndTime >= scheduleEndTime)
+                    ) {
+                        return res.status(409).json({ error: "There is a conflicting schedule for this day." });
+                    }
+                }
             }
 
             // adding a document to the Bookings collection
@@ -1373,8 +1403,8 @@ const rekognition = new AWS.Rekognition({
 
 // Left out for deployment
 // Prints to console the port of the server
-// app.listen(PORT, () => {
-//     console.log(`Server listening on ${PORT}`);
-// });
+app.listen(PORT, () => {
+    console.log(`Server listening on ${PORT}`);
+});
 
 exports.api = onRequest(app);

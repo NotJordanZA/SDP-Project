@@ -1,4 +1,4 @@
-export const getCurrentDatesBookings = async (bookingDate, setBookingsList) =>{
+export const getCurrentDatesBookings = async (bookingDate, bookingsList,  setBookingsList) =>{
     try{
       const response = await fetch(`/api/bookings/findByField?bookingDate=${bookingDate}`, {
         method: 'GET',
@@ -10,9 +10,7 @@ export const getCurrentDatesBookings = async (bookingDate, setBookingsList) =>{
 
       const data = await response.json();
       if (response.ok) {
-        console.log('Bookings on ' + bookingDate +' fetched successfully');
-        setBookingsList(data);
-        // console.log(data);
+        return data;
       } else {
         console.error('Error fetching bookings on ' + bookingDate +':', data.error);
       }

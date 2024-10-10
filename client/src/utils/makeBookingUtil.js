@@ -35,7 +35,7 @@ export const makeBooking = async(venueBooker, venueID, bookingDate, bookingStart
             
         } else {
             console.error('Error making booking:', data.error); // Logs error
-            alert("Error with booking");
+            return "error";
         }
       } catch (error) {
         console.error('Error:', error); // Logs error
