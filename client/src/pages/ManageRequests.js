@@ -8,6 +8,8 @@ import { getCurrentUser } from '../utils/getCurrentUser';
 import '../styles/ManageRequests.css';
 import {fetchRequests} from '../utils/getAllRequests';
 import {handleApproveClick} from '../utils/AdminhandleApprovecClick';
+import { handledenyClick} from '../utils/AdminhandledenyReq';
+
 export const getAllRequests = async () => {
   const response = await fetch(`/api/adminRequests`, {
     method: "GET",
@@ -105,17 +107,17 @@ function AdminRequests() {
 
 
   //this function handles denying a request
-  const handleDenyClick = async (requestId) => {
-    try {
-      await updateReq(requestId, { requestStatus: "denied" });
+  // const handleDenyClick = async (requestId) => {
+  //   try {
+  //     await updateReq(requestId, { requestStatus: "denied" });
 
-      //refresh the list of requests after the update
-      const requestsFromAPI = await getAllRequests();
-      setRequests(requestsFromAPI.AdReq);
-    } catch (error) {
-      console.error("Error denying request:", error);
-    }
-  };
+  //     //refresh the list of requests after the update
+  //     const requestsFromAPI = await getAllRequests();
+  //     setRequests(requestsFromAPI.AdReq);
+  //   } catch (error) {
+  //     console.error("Error denying request:", error);
+  //   }
+  // };
 
   //organize requests based on the active tab ('pending', 'approved', or 'denied')
   const filteredRequests = requests.filter(request => request.requestStatus === activeTab);
@@ -173,7 +175,7 @@ const determinerole = (email) => {
                   <button className="approve" onClick={() => handleApproveClick(request.id, setRequests)}>
                     APPROVE
                   </button>
-                  <button className="deny" onClick={() => handleDenyClick(request.id)}>
+                  <button className="deny" onClick={() =>  handledenyClick(request.id,setRequests)}>
                     DENY
                   </button>
                 </div>
