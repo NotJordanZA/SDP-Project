@@ -235,7 +235,6 @@ export const EditBookingForm = ({ id, venueName, bookingDate, bookingTime, booki
                 styles={{
                     control: (provided) => ({
                       ...provided,
-                      marginRight: '20px',
                     }),
                     menu: (provided) => ({
                       ...provided,
