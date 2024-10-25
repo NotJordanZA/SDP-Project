@@ -141,5 +141,9 @@
   .manageadminrequests-tabs button {
     font-size: 0.9rem;
   }
+
+  .manageadminrequests-tabs{
+    flex-direction: column;
+  }
 }
   
