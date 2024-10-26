@@ -46,7 +46,7 @@ function Venues(){
         // If user is authenticated
         if (firebaseUser) {
           setUser(firebaseUser); //Set current user
-          console.log(user);
+          // console.log(user);
         } else {
           navigate("/login"); //Reroute to login if user not signed in
         }
@@ -199,7 +199,7 @@ function Venues(){
             {
               venueComponents.length > 0 ? 
                 (
-                  <div data-testid="venue-list">
+                  <div className="venues-list" data-testid="venue-list">
                       {venueComponents}
                   </div>
                 ):(

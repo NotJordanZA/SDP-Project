@@ -25,7 +25,7 @@ function AdminRequest() {
           // If user is authenticated
           if (firebaseUser) {
             setUser(firebaseUser); //Set current user
-            console.log(user);
+            // console.log(user);
           } else {
             navigate("/login"); //Reroute to login if user not signed in
           }

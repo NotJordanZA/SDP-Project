@@ -52,7 +52,7 @@ const Notifications = ({ isOpen, toggleNotification }) => {
         // Filter notifications where read == false
         const unreadNotifications = notificationsData.filter(notification => !notification.read);
         setNotifications(unreadNotifications); // Store only unread notifications in state
-        console.log("Fetched unread notifications:", unreadNotifications);
+        // console.log("Fetched unread notifications:", unreadNotifications);
       });
     }
     // eslint-disable-next-line

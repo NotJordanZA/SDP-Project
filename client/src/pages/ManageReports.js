@@ -289,10 +289,10 @@ function Reports() {
                             Edit Resolution Log
                           </button>
                           {report.reportStatus === "pending" && (
-                            <button className="progress-btn" onClick={() => handleInProgressClick(report.id)}>In Progress</button>
+                            <button className="progress-btn" onClick={() => handleInProgressClick(report.id)}>Set In Progress</button>
                           )}
                           {report.reportStatus === "In Progress" && (
-                            <button className="resolve-btn" onClick={() => handleResolveClick(report.id)}>Resolved</button>
+                            <button className="resolve-btn" onClick={() => handleResolveClick(report.id)}>Set Resolved</button>
                           )}
                         </div>
                       )}
