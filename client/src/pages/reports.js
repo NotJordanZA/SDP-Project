@@ -74,8 +74,7 @@ const Reports = () => {
 
     return (
         <section className="report-page">
-            <button onClick={togglePopup} className="open-popup-button">Submit a Report</button>
-            <label className="goldenLabel">Please inform our staff of any safety, equipment, information, or miscellaneous concerns and issus by submitting a report above.<br></br>You can view your existing reports in the window below.<br></br><br></br>Notice: Safety Alerts on Education Campus are currently in progress. Please alert Education Campus Safety directly of any immediate threats.<br></br></label>
+            <label className="goldenLabel">Please inform our staff of any safety, equipment, information, or miscellaneous concerns and issus by submitting a report below.<br></br>You can view your existing reports in the window below.<br></br><br></br>Notice: Safety Alerts on Education Campus are currently in progress. Please alert Education Campus Safety directly of any immediate threats.<br></br></label>
             <PopupForm isOpen={isPopupOpen} onClose={togglePopup} />       
             <div className="report-list">
                 <h2>My Reports</h2>
@@ -123,6 +122,7 @@ const Reports = () => {
                     </div>
                 </div>
             )}
+            <button onClick={togglePopup} className="open-popup-button">Submit a Report</button>
         </section>
     );
 };

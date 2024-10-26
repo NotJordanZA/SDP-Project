@@ -25,7 +25,7 @@ function AdminRequest() {
           // If user is authenticated
           if (firebaseUser) {
             setUser(firebaseUser); //Set current user
-            console.log(user);
+            // console.log(user);
           } else {
             navigate("/login"); //Reroute to login if user not signed in
           }
@@ -73,7 +73,6 @@ function AdminRequest() {
 
     return(
         <section className="admin-request-page" data-testid="admin-request-page">
-            <button onClick={togglePopup} className="open-popup-button">Submit a Request</button>
             <label className="goldenLabel">Submit a request or complaint to our admin team using the button above. You can view the status of your existing requests below.</label>
             <PopupForm isOpen={isPopupOpen} onClose={onClose} userEmail={currentUserEmail}/>
 
@@ -99,6 +98,7 @@ function AdminRequest() {
                     )}
                 </ul>
             </div>
+            <button onClick={togglePopup} className="open-popup-button">Submit a Request</button>
         </section>
     );
 }

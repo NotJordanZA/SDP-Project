@@ -128,3 +128,13 @@
 .manage-reports-button-container button:hover{
   background-color: #917248;
 }
+
+@media (max-width: 768px) {
+  .tabs button {
+    font-size: 0.9rem;
+  }
+
+  .tabs{
+    flex-direction: column;
+  }
+}
