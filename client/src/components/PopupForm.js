@@ -143,6 +143,7 @@ const PopupForm = ({ isOpen, onClose }) => {
   
           const analysisResponse = await fetch('/api/analyze-photos', {
             method: 'POST',
+            'x-api-key': process.env.REACT_APP_API_KEY,
             body: formDataForAnalysis,
           });
   
@@ -214,11 +215,11 @@ const PopupForm = ({ isOpen, onClose }) => {
         createdBy: email,
         photos: imageUrls,
       };
-  
       const response = await fetch('/api/report-submit', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'x-api-key': process.env.REACT_APP_API_KEY,
         },
         body: JSON.stringify(reportData),
       });

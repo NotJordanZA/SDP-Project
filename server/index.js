@@ -387,10 +387,6 @@ app.get("/api/bookings/findByField", async (req, res) => {
 app.post('/api/report-submit', async (req, res) => {
     let api_key = req.header("x-api-key"); // Fetches API key from request
     if(api_key === process.env.REACT_APP_API_KEY){ // Checks if API key is valid
-
-
-
-
     const { venueID, reportType, reportText, createdBy, photos } = req.body;
   
     try {
@@ -403,7 +399,7 @@ app.post('/api/report-submit', async (req, res) => {
         createdBy,
         photos: photos || [],
       };
-  
+      console.log("I got here")
       // Use addDoc to create a new document in the Reports collection
       const docRef = await addDoc(collection(db, 'Reports'), reportData);
       res.status(201).json({ id: docRef.id });
