@@ -1,4 +1,4 @@
-/* src/Styles/Header.css */
+
 .header-icons {
   display: flex;
   align-items: center; /* Vertical alignment of items */
@@ -75,6 +75,23 @@
 .menu-button:active {
   transform: scale(0.95);     /* Slightly shrink the icon on click */
 }
+
+.notificationHeader-notification-container { /*container for the bell icon and red dot */
+  position: relative; 
+  display: flex; 
+  align-items: center; /*center items vertically */
+  justify-content: center; /*center items horizontally */
+}
+
+.notificationHeader-red-dot { /*styling for the red dot */
+ 
+  border-radius: 50%; /*circular shape */
+  border: 9px solid  red;
+  margin-left: -10px; /*slight overlap with the bell icon */
+  align-self: flex-start; /*position the dot at the top of the icon */
+  pointer-events: none; /*allow clicks to pass through */
+}
+
 
 @media screen and (max-width: 768px){
   .app-header h1 {
