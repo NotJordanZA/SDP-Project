@@ -7,7 +7,7 @@ const multer = require('multer');
 const {onRequest} = require("firebase-functions/v2/https");
 const { getStorage, ref, uploadBytes, getDownloadURL } = require('firebase/storage'); 
 const logger = require("firebase-functions/logger");
-const PORT = process.env.PORT || 3001; //Must be commented out for production build
+// const PORT = process.env.PORT || 3001; //Must be commented out for production build
 const dotenv = require('dotenv').config({ path: './.env' });
 
 const app = express();
@@ -1399,8 +1399,8 @@ const rekognition = new AWS.Rekognition({
 
 // Left out for deployment
 // Prints to console the port of the server
-app.listen(PORT, () => {
-    console.log(`Server listening on ${PORT}`);
-});
+// app.listen(PORT, () => {
+//     console.log(`Server listening on ${PORT}`);
+// });
 
 exports.api = onRequest(app);
