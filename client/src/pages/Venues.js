@@ -46,7 +46,7 @@ function Venues(){
         // If user is authenticated
         if (firebaseUser) {
           setUser(firebaseUser); //Set current user
-          console.log(user);
+          // console.log(user);
         } else {
           navigate("/login"); //Reroute to login if user not signed in
         }
@@ -94,10 +94,13 @@ function Venues(){
     
     useEffect(() => {
       // Call getCurrentDatesBookings when formattedDate changes
-      if (formattedDate) {
-        getCurrentDatesBookings(formattedDate, setBookingsList);
-        getCurrentDaySchedules(weekday[displayDate.getDay()], bookingsList, setBookingsList);
-      }// eslint-disable-next-line
+      const getBookedTimes = async () =>{
+        if (formattedDate) {
+          const updatedBookingsList = await getCurrentDatesBookings(formattedDate, bookingsList,  setBookingsList);
+          await getCurrentDaySchedules(weekday[displayDate.getDay()], updatedBookingsList, setBookingsList);
+        }// eslint-disable-next-line
+      }
+      getBookedTimes();// eslint-disable-next-line
     }, [formattedDate]); // Only runs when formattedDate changes
 
     const handleDateChange = (newDate) => { // Function for changing the selected date
@@ -112,9 +115,7 @@ function Venues(){
       // console.log(userInfo.isAdmin);
 
       if (isLoading) {
-        return (
-          <p>Loading...</p>
-        );
+        return null;
       }
 
       if (userInfo.isAdmin === true){
@@ -198,11 +199,18 @@ function Venues(){
             {
               venueComponents.length > 0 ? 
                 (
-                  <div data-testid="venue-list">
+                  <div className="venues-list" data-testid="venue-list">
                       {venueComponents}
                   </div>
                 ):(
-                  <p data-testid="no-venues-message">No Venues Available</p>
+                  <div style={{marginLeft: "25px", fontSize: "1.2rem", fontWeight: "bold"}}>
+                  {isLoading ?
+                  (
+                    <p>Loading...</p>
+                  ):(
+                    <p data-testid="no-venues-message">No Venues Available</p>
+                  )}
+                  </div>
                 )
             }
         </main>

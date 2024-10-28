@@ -4,10 +4,12 @@ import React, { useState, useEffect } from 'react';
 import { auth } from "../firebase";
 import { useNavigate } from "react-router-dom";
 import { onAuthStateChanged } from "firebase/auth";
-// import { getCurrentUser } from '../utils/getCurrentUser';
+import { getCurrentUser } from '../utils/getCurrentUser';
 import '../styles/ManageRequests.css';
 import {fetchRequests} from '../utils/getAllRequests';
 import {handleApproveClick} from '../utils/AdminhandleApprovecClick';
+import { handledenyClick} from '../utils/AdminhandledenyReq';
+
 export const getAllRequests = async () => {
   const response = await fetch(`/api/adminRequests`, {
     method: "GET",
@@ -40,8 +42,8 @@ return response.json();
 function AdminRequests() {
   const [requests, setRequests] = useState([]);
   const [activeTab, setActiveTab] = useState('pending'); 
-  // const [userInfo, setUserInfo] = useState({});
-  // const [isLoading, setIsLoading] = useState(true);
+  const [userInfo, setUserInfo] = useState({});
+  const [isLoading, setIsLoading] = useState(true);
   const [user, setUser] = useState(null);
   const navigate = useNavigate();
 
@@ -52,11 +54,11 @@ function AdminRequests() {
       // If user is authenticated
       if (firebaseUser) {
         setUser(firebaseUser); //Set current user
-        console.log(user);
+        // console.log(user);
       } else {
         navigate("/login"); //Reroute to login if user not signed in
       }
-      // setIsLoading(false); //Declare firebase as no longer loading
+      setIsLoading(false); //Declare firebase as no longer loading
     });
     return () => {
       if (unsubscribe) {
@@ -67,45 +69,55 @@ function AdminRequests() {
   }, [auth, navigate]);
 
   // Get info about the current user from the database once firebase is loaded
-  // useEffect(() => {
-  //   // Fetch current user's info
-  //   const fetchUserInfo = async () => {
-  //     // If user is signed in
-  //     if (user) {
-  //       try {
-  //         // Instantiate userInfo object
-  //         getCurrentUser(user.email, setUserInfo);
-  //       } catch (error) {
-  //         console.error('Failed to fetch user info: ', error);
-  //       }
-  //     }
-  //   };
-  //   // Check if firebase is done loading
-  //   if (!isLoading){
-  //     fetchUserInfo(); //Get user info
-  //   }
-    
-  // }, [user, isLoading]);
+  useEffect(() => {
+    // Fetch current user's info
+    const fetchUserInfo = async () => {
+      // If user is signed in
+      if (user) {
+        try {
+          // Instantiate userInfo object
+          // const userData = await getCurrentUser(user.email);
+          getCurrentUser(user.email, setUserInfo);
+          //setUserInfo(userData);
+        } catch (error) {
+          console.error('Failed to fetch user info: ', error);
+        }
+      }
+    };
+    // Check if firebase is done loading
+    if (!isLoading){
+      fetchUserInfo(); //Get user info
+    } // eslint-disable-next-line
+  }, [user, isLoading]);
+
+  useEffect(() => {
+    if(!userInfo.isAdmin && !isLoading){
+      navigate("/home");
+    }// eslint-disable-next-line
+}, [userInfo]);// Only runs if user is defined
 
   useEffect(() => {
     fetchRequests(setRequests, getAllRequests);
   }, []);
 
+  if (!userInfo.isAdmin && isLoading) {
+    return null;
+  }
   // this function handles approving a request
 
 
   //this function handles denying a request
-  const handleDenyClick = async (requestId) => {
-    try {
-      await updateReq(requestId, { requestStatus: "denied" });
+  // const handleDenyClick = async (requestId) => {
+  //   try {
+  //     await updateReq(requestId, { requestStatus: "denied" });
 
-      //refresh the list of requests after the update
-      const requestsFromAPI = await getAllRequests();
-      setRequests(requestsFromAPI.AdReq);
-    } catch (error) {
-      console.error("Error denying request:", error);
-    }
-  };
+  //     //refresh the list of requests after the update
+  //     const requestsFromAPI = await getAllRequests();
+  //     setRequests(requestsFromAPI.AdReq);
+  //   } catch (error) {
+  //     console.error("Error denying request:", error);
+  //   }
+  // };
 
   //organize requests based on the active tab ('pending', 'approved', or 'denied')
   const filteredRequests = requests.filter(request => request.requestStatus === activeTab);
@@ -120,7 +132,9 @@ const determinerole = (email) => {
 };
 
   return (
-    <section className="manageadminrequests-container">
+    <>
+    {userInfo.isAdmin && (
+      <section className="manageadminrequests-container">
       <h2>Admin Requests Management</h2>
 
       <div className="manageadminrequests-tabs">
@@ -161,7 +175,7 @@ const determinerole = (email) => {
                   <button className="approve" onClick={() => handleApproveClick(request.id, setRequests)}>
                     APPROVE
                   </button>
-                  <button className="deny" onClick={() => handleDenyClick(request.id)}>
+                  <button className="deny" onClick={() =>  handledenyClick(request.id,setRequests)}>
                     DENY
                   </button>
                 </div>
@@ -173,6 +187,8 @@ const determinerole = (email) => {
         <p>No {activeTab} requests available</p>
       )}
     </section>
+    )}
+    </>
   );
 }
 

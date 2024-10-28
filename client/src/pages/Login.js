@@ -86,7 +86,8 @@ function Login(){
             // console.log(user);
             let email = user.email;
             const isWitsEmail = USER_REGEX.test(email);
-            if(isWitsEmail){
+            const isMarkerEmail = (email === "witsinfrastructure1@gmail.com") || (email === "witsinfrastructure2@gmail.com") || (email === "witsinfrastructure3@gmail.com");
+            if(isWitsEmail || isMarkerEmail){
               let displayName = user.displayName;
               let firstName = displayName.split(" ")[0]; // Gets user's first name
               let lastName = displayName.slice(displayName.indexOf(firstName) + firstName.length + 1); // Gets user's last name

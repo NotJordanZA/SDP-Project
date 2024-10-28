@@ -144,26 +144,33 @@ function VenueRow({id, buildingName, venueName, campus, venueType, venueCapacity
             const booker = isAdmin ? bookerEmail : user.email; // Gets entered booker email or user email
     
             if (bookingDescriptionText !== "" && booker !== ""){
-                makeBooking(booker, venueName, relevantDate, bookingTime, bookingEndingTime, bookingDescriptionText, setIsVenueOpen, toggleIsBooking, setBookingDescriptionText, setBookingsList);
-                if(bookerEmail !== user.email){
-                    // Create notification data
-                    const notificationMessage = `A booking has been made in your name by the admin. Booking details: venueID: ${venueName}, bookingDate: ${relevantDate}, bookingStartTime: ${bookingTime}, bookingEndTime: ${bookingEndingTime}, bookingDescription: ${bookingDescriptionText}`;
-                    const notificationData = {
-                        dateCreated: new Date().toLocaleString(),
-                        notificationMessage,
-                        notificationType: 'Booking Confirmation',
-                        read: false,
-                        recipientEmail: booker,
-                    };
-
-                    console.log('Sending notification data:', notificationData);
-
-                    // Send notification data to the server
-                    createNotification(notificationData);
+                let response = await makeBooking(booker, venueName, relevantDate, bookingTime, bookingEndingTime, bookingDescriptionText, setIsVenueOpen, toggleIsBooking, setBookingDescriptionText, setBookingsList);
+                if(response === "error"){
+                    alert("Error making booking. Please try again. If the error subsists, try book a different time.");
+                }else{
+                    if(bookerEmail !== user.email){
+                        // Create notification data
+                        const notificationMessage = `A booking has been made in your name by the admin. Booking details: venueID: ${venueName}, bookingDate: ${relevantDate}, bookingStartTime: ${bookingTime}, bookingEndTime: ${bookingEndingTime}, bookingDescription: ${bookingDescriptionText}`;
+                        const notificationData = {
+                            dateCreated: new Date().toLocaleString(),
+                            notificationMessage,
+                            notificationType: 'Booking Confirmation',
+                            read: false,
+                            recipientEmail: booker,
+                        };
+    
+                        console.log('Sending notification data:', notificationData);
+    
+                        // Send notification data to the server
+                        createNotification(notificationData);
+                    }
                 }
             }
             else{
-                makeBooking(null, venueName, relevantDate, bookingTime, bookingEndingTime, null, setIsVenueOpen, toggleIsBooking, setBookingDescriptionText, setBookingsList);;
+                let response = await makeBooking(null, venueName, relevantDate, bookingTime, bookingEndingTime, null, setIsVenueOpen, toggleIsBooking, setBookingDescriptionText, setBookingsList);
+                if(response === "error"){
+                    alert("Missing Field(s) in Booking");
+                }
             }
         }
         if (bookingTime && bookingEndingTime) { // If updated, compileBookingData

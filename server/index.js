@@ -252,6 +252,36 @@ app.post("/api/bookings/create", async (req, res) => {
                 });
             }
 
+            // Check for overlapping schedules
+            const schedulesRef = collection(db, 'Schedules'); // Get already made bookings
+            const scheduleDay = new Date(bookingDate).toLocaleString('en-US', { weekday: 'long' }); // Get the day of the week from booking date
+
+            const scheduleQuery = query(
+                schedulesRef,
+                where('venueID', '==', venueID),
+                where('bookingStartTime', '<', bookingEndTime),
+                where('bookingEndTime', '>', bookingStartTime),
+                where('bookingDay', '==', scheduleDay) // Check for schedules on the same day
+            );
+
+            const schedulesSnapshot = await getDocs(scheduleQuery); // Get results from schedule query
+
+            if (!schedulesSnapshot.empty) {
+                for (const doc of schedulesSnapshot.docs) {
+                    const existingSchedule = doc.data();
+                    const scheduleStartTime = existingSchedule.bookingStartTime;
+                    const scheduleEndTime = existingSchedule.bookingEndTime;
+
+                    if (
+                        (bookingStartTime >= scheduleStartTime && bookingStartTime < scheduleEndTime) ||
+                        (bookingEndTime > scheduleStartTime && bookingEndTime <= scheduleEndTime) ||
+                        (bookingStartTime <= scheduleStartTime && bookingEndTime >= scheduleEndTime)
+                    ) {
+                        return res.status(409).json({ error: "There is a conflicting schedule for this day." });
+                    }
+                }
+            }
+
             // adding a document to the Bookings collection
             const newBookingRef = doc(db, 'Bookings', `${venueID}-${bookingDate}-${bookingStartTime}`);//the document name/id is the venueID with the date and start time of the bookings
             if(api_key === process.env.EVENTS_API_KEY){
@@ -357,10 +387,6 @@ app.get("/api/bookings/findByField", async (req, res) => {
 app.post('/api/report-submit', async (req, res) => {
     let api_key = req.header("x-api-key"); // Fetches API key from request
     if(api_key === process.env.REACT_APP_API_KEY){ // Checks if API key is valid
-
-
-
-
     const { venueID, reportType, reportText, createdBy, photos } = req.body;
   
     try {
@@ -373,7 +399,7 @@ app.post('/api/report-submit', async (req, res) => {
         createdBy,
         photos: photos || [],
       };
-  
+      console.log("I got here")
       // Use addDoc to create a new document in the Reports collection
       const docRef = await addDoc(collection(db, 'Reports'), reportData);
       res.status(201).json({ id: docRef.id });

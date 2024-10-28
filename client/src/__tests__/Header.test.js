@@ -1,11 +1,11 @@
 import React from 'react';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor} from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import Header from '../components/Header';
 import { auth } from '../firebase';
+import { getNotifications } from '../utils/getNotificationsUtil';
 import { onAuthStateChanged } from 'firebase/auth';
 import { useNavigate } from 'react-router-dom';
-
 jest.mock('firebase/auth', () => ({
     onAuthStateChanged: jest.fn(),
 }));
@@ -14,6 +14,9 @@ jest.mock('../firebase', () => ({
     auth: {
         currentUser: { email: 'test@wits.ac.za' },
     },
+}));
+jest.mock('../utils/getNotificationsUtil', () => ({
+    getNotifications: jest.fn(),
 }));
 
 jest.mock('react-router-dom', () => ({
@@ -24,7 +27,7 @@ jest.mock('react-router-dom', () => ({
 describe('Header Component', () => {
     const mockNavigate = jest.fn();
     const mockToggleSidebar = jest.fn();
-
+    const mockToggleNotification = jest.fn();
     beforeEach(() => {
         jest.clearAllMocks();
         useNavigate.mockReturnValue(mockNavigate);
@@ -34,6 +37,49 @@ describe('Header Component', () => {
             callback({ email: 'test@wits.ac.za' }); // Mock authenticated user
             return jest.fn(); // Mock unsubscribe
         });
+      
+        getNotifications.mockImplementation((email, callback) => {
+            callback([{ id: 1, message: 'New Notification', read: false }]);
+        });
+    });
+    test('renders header with user authenticated and red dot on bell', async () => {
+        render(
+            <Header
+                title="Test Title"
+                toggleSidebar={mockToggleSidebar}
+                toggleNotification={mockToggleNotification}
+            />,
+            { wrapper: MemoryRouter }
+        );
+
+        const bellIcon = screen.getByTestId('bell-icon');
+        expect(bellIcon).toBeInTheDocument();
+
+        const redDot = document.querySelector('.notificationHeader-red-dot'); 
+        expect(redDot).toBeInTheDocument(); //red dot should is visible
+    });
+
+    test('fetches notifications when bell icon is clicked', async () => {
+        render(
+            <Header
+                title="Test Title"
+                toggleSidebar={mockToggleSidebar}
+                toggleNotification={mockToggleNotification}
+            />,
+            { wrapper: MemoryRouter }
+        );
+
+        const bellIcon = screen.getByTestId('bell-icon');
+        fireEvent.click(bellIcon);
+
+        await waitFor(() => {
+            expect(getNotifications).toHaveBeenCalledWith(
+                'test@wits.ac.za',
+                expect.any(Function)
+            );
+        });
+
+        expect(mockToggleNotification).toHaveBeenCalled();
     });
 
     test('renders header with user authenticated', () => {
@@ -96,5 +142,23 @@ describe('Header Component', () => {
         fireEvent.click(toggleIcon);
 
         expect(mockToggleSidebar).toHaveBeenCalled();
+    });
+
+    test('navigates to /home when title is clicked', () => {
+        render(
+            <Header
+                title="Test Title"
+                toggleSidebar={mockToggleSidebar}
+                toggleNotification={mockToggleNotification}
+            />,
+            { wrapper: MemoryRouter }
+        );
+
+        //find the title <h1> element and simulate a click
+        const titleElement = screen.getByText('Test Title');
+        fireEvent.click(titleElement);
+
+        //verify that navigation to /home was called
+        expect(mockNavigate).toHaveBeenCalledWith('/home');
     });
 });
