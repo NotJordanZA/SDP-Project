@@ -1370,9 +1370,11 @@ const rekognition = new AWS.Rekognition({
   });
   app.post('/api/analyze-photos', upload.array('photos'), async (req, res) => {
     let api_key = req.header("x-api-key"); // Fetches API key from request
+
     if(api_key === process.env.REACT_APP_API_KEY || api_key === process.env.EVENTS_API_KEY || api_key === process.env.DINING_API_KEY){
     const photoBuffers = req.files.map(file => file.buffer);
-    
+    console.log(process.env.REACT_APP_API_KEY);
+    console.log("this one")
     try {
       const promises = photoBuffers.map(buffer => {
         const params = {

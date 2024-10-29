@@ -143,13 +143,16 @@ const PopupForm = ({ isOpen, onClose }) => {
   
           const analysisResponse = await fetch('/api/analyze-photos', {
             method: 'POST',
-            'x-api-key': process.env.REACT_APP_API_KEY,
+            headers: {
+              'x-api-key': process.env.REACT_APP_API_KEY,
+            },
             body: formDataForAnalysis,
           });
   
           if (!analysisResponse.ok) {
             throw new Error('Failed to analyze photos');
           }
+          
   
           const analysisResults = await analysisResponse.json();
           console.log('Rekognition analysis results:', analysisResults);
@@ -199,10 +202,10 @@ const PopupForm = ({ isOpen, onClose }) => {
               }
             }
           } else {
-            alert('Unable to detect fire. Please inform campus safety of any immediate dangers.');
+            alert('No fires detected. Please inform campus safety of any immediate dangers.');
           }
         } catch (error) {
-          alert('Unable to detect fire. Please inform campus safety of any immediate dangers.');
+          alert('Unable to use fire recognition system currently. Please inform campus safety of any immediate dangers.');
           console.error('Error analyzing photos:', error);
         }
       }
