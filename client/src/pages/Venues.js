@@ -193,14 +193,14 @@ function Venues(){
 
     return (
         <main>
-          <label className="goldenLabel" id="venuesLabel">Book a venue for a lecture, study session, or test. Click on the date below to select a day then choose from our list of venues. You can use the search and filter features if you're looking for something specific.</label>
+          <label className="goldenLabel" id="venuesLabel">Book a venue for a lecture, study session, or test. Click on the date below to select a day then choose from our list of venues. You can use the search and filter features if you're looking for something specific. <br/> <br/> *Note: The tutoring system is currently unavailable. Please directly contact your tutor to ensure they are aware of the session.</label>
             <DateHeader displayDate={displayDate} onDateChange={handleDateChange} isManaging={isManaging} data-testid="date-header"/>
             <Search venueList = {allVenues} setVenueList = {setVenueList} bookingsList = {bookingsList} isManaging = {isManaging} setIsManaging = {setIsManaging} isAdmin = {userInfo.isAdmin} getAllVenues={callGetAllVenues} toggleIsScheduling={toggleIsScheduling} isScheduling={isScheduling} data-testid="search"/>
             {
               venueComponents.length > 0 ? 
                 (
                   <div className="venues-list" data-testid="venue-list">
-                      {venueComponents}
+                      {venueComponents} 
                   </div>
                 ):(
                   <div style={{marginLeft: "25px", fontSize: "1.2rem", fontWeight: "bold"}}>
