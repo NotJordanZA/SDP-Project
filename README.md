@@ -120,6 +120,23 @@ To run the system:
     npm run start
     ```
 
+7. Login:
+    - Use your wits account, or if you do not have acccess to a wits account, use one of the following:
+    ```bash
+    Marker Admin
+    - email: witsinfrastructure1@gmail.com
+    - password: i@m@NAdm1n!
+    
+    Marker Lecturer
+    - email: witsinfrastructure2@gmail.com
+    - password: i@m@L3c7uR3r!
+    
+    Marker Student
+    - email: witsinfrastructure3@gmail.com
+    - password: i@m@5tuD3n7!
+
+    ```
+
 ## Deployment
 To deploy the system:
 1. Ensure that _ALL_ lines containing the word `PORT` are *commented out* in `index.js`. There are 4 occurences of `PORT`, two in a single line at the top of the `index.js` file, and two at the bottom of the file.
